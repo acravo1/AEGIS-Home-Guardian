@@ -435,9 +435,9 @@ flowchart TD
     CHARGE["Carga"]
 
     LOW --> HOME
-
     HOME --> CHARGE
 ```
+
 
 ---
 
