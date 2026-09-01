@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00AEEF"/>
+      <stop offset="100%" stop-color="#FF8C00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Escudo -->
+<path
+  d="M256 70
+     L390 120
+     L390 220
+     C390 310 330 370 256 410
+     C182 370 122 310 122 220
+     L122 120
+     Z"
+  fill="none"
+  stroke="url(#shieldGradient)"
+  stroke-width="18"/>
+
+  <!-- Letra A -->
+  <path
+    d="M256 130
+       L340 340
+       L295 340
+       L270 280
+       L242 280
+       L217 340
+       L172 340
+       Z"
+    fill="#FFFFFF"/>
+
+  <rect
+    x="220"
+    y="250"
+    width="72"
+    height="18"
+    fill="#FFFFFF"/>
+
+</svg>
