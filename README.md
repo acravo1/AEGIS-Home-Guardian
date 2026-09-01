@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo/aegis.svg" alt="AEGIS Logo" width="220">
+  <img src="assets/logo/AEGIS.svg" alt="AEGIS Logo" width="220">
 lign="center">
   <strong>Autonomous Electronic Guardian Integrated System</strong>
 </p>
