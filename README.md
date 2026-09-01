@@ -1,3 +1,15 @@
+<p align="center">
+  <img src="assets/logo/aegis.svg" alt="AEGIS Logo" width="220">
+lign="center">
+  <strong>Autonomous Electronic Guardian Integrated System</strong>
+</p>
+
+<p align="center">
+  Robô autónomo de vigilância doméstica integrado com Home Assistant e ESPHome.
+</p>
+
+---
+
 # AEGIS
 
 > Autonomous Electronic Guardian Integrated System
