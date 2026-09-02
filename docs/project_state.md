@@ -9,13 +9,14 @@
 Projeto em fase de arquitetura e preparação da plataforma motora.
 
 Estado atual:
-- Arquitetura definida
-- Componentes principais identificados
-- Estrutura modular definida
-- Desenvolvimento de hardware ainda não iniciado
+- Arquitetura definida e congelada
+- Componentes estruturais adquiridos
+- Componentes eletrónicos em validação
+- Fase de assembling e integração planejada
+- Construção física em preparação
 
 Versão:
-- AEGIS v0.1
+- AEGIS v0.1 (Em Desenvolvimento - Fase de Prototipagem)
 
 ---
 

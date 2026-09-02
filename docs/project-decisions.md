@@ -441,53 +441,102 @@ Validação física.
 
 ---
 
-## PD-014
+# PD-014
 
-### Título
+## Título
 
-Motor Driver
+Motor Driver - TB6612FNG Convencional
 
-### Estado
+## Estado
 
-Proposed
+Accepted
 
-### Opções
+## Data
 
-```text
-TB6612FNG convencional
+2026-09-02
 
-TB6612FNG Grove I²C
-```
+## Decisão
 
-### Critério
+Utilizar TB6612FNG em modo convencional com ligações GPIO diretas.
 
-Simplicidade de integração.
+## Justificação
+
+Motivos da escolha:
+
+- maior documentação disponível;
+- compatibilidade comprovada com RP2040;
+- simplicidade de implementação;
+- menor custo;
+- melhor integração com bibliotecas existentes.
+
+## Alternativa Rejeitada
+
+TB6612FNG Grove I²C:
+- Menor documentação;
+- Ainda em avaliação;
+- Complexidade desnecessária;
+- Reservado para futuras expansões.
+
+## Impacto
+
+- Pinout exato em gpio-allocation.md;
+- Esquemático em firmware-protocol.md;
+- Código firmware no repositório de firmware.
 
 ---
 
 ## PD-015
 
-### Título
+## Título
 
-Hub I²C
+Hub I²C - Grove I²C Hub
 
-### Estado
+## Estado
 
-Proposed
+Accepted
 
-### Opções
+## Data
 
-```text
-Hub Grove
+2026-09-02
 
-Bloco de terminais
-+
-Pigtails Grove
-```
+## Decisão
 
-### Critério
+Utilizar Grove I²C Hub como expansor principal do barramento I²C.
 
-Modularidade versus custo.
+## Justificação
+
+Motivos da escolha:
+
+- alinhado com filosofia modular do AEGIS;
+- reduz complexidade de cablagem;
+- compatibilidade automática com Grove;
+- facilita futura expansão de sensores;
+- melhor manutenibilidade.
+
+## Alternativa Rejeitada
+
+Bloco de terminais + Pigtails:
+- Menos modular;
+- Maior potencial de erros de ligação;
+- Menos profissional;
+- Reservado para futuros subsistemas críticos.
+
+## Especificação
+
+Modelo: Grove I²C Hub
+Part Number: 103020006 (ou compatível)
+
+Capacidade: 4 × I²C
+
+Ocupação em Grove Shield: 1 porta I²C
+
+## Impacto
+
+- Simplificação do layout físico;
+- Redução de cabos I²C em Piso 1;
+- Facilita integração de MPU-6050, PCA9685, Grove Motor Driver.
+
+---
 
 ---
 
@@ -496,4 +545,79 @@ Modularidade versus custo.
 Uma decisão só deve aparecer neste documento quando existir consenso suficiente para orientar a evolução futura do projeto.
 
 Este documento constitui a referência oficial para decisões arquiteturais do AEGIS.
+
+---
+
+# Glossário
+
+## Terminologia de Pisos
+
+Padronização oficial para referências a estrutura física:
+
+### Piso 1 - Chassis Base (Movimento)
+
+Também referido como:
+- Piso 1
+- Chassis Base
+- Plataforma de Movimento
+- Camada 1
+
+Componentes:
+- Chassis 4WD
+- RP2040
+- Motores e rodas
+- Sensores de movimento (MPU-6050, HC-SR04)
+
+---
+
+### Piso 2 - Plataforma Principal (Inteligência)
+
+Também referido como:
+- Piso 2
+- Plataforma Principal
+- Camada 2
+- Plataforma de Inteligência
+
+Componentes:
+- ESP32-S3
+- Sistema de Áudio (MAX98357A, INMP441)
+- Powerbank (energia)
+- Distribuição elétrica
+
+---
+
+### Piso 3 - Plataforma Superior (Percepção)
+
+Também referido como:
+- Piso 3
+- Plataforma Superior
+- Camada 3
+- Plataforma de Percepção
+
+Componentes:
+- LEDs RGB
+- Câmara (futura)
+- Microfones
+- Altifalantes
+
+---
+
+## Nomenclatura Recomendada
+
+Para novos documentos, usar:
+```
+"Piso 1 - Movimento"
+"Piso 2 - Inteligência"
+"Piso 3 - Percepção"
+```
+
+Evitar:
+```
+❌ "Chassis"
+❌ "Top platform"
+❌ "Middle layer"
+```
+
+---
+
 ``

@@ -2,8 +2,8 @@
 
 > AEGIS - Autonomous Electronic Guardian Integrated System
 
-Versão: 1.0  
-Estado: Ativo
+Versão: 0.1  
+Estado: Em Desenvolvimento
 
 ---
 

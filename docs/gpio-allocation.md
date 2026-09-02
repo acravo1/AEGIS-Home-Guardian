@@ -57,14 +57,32 @@ Controlador principal do subsistema de movimento.
 
 ---
 
-### Grove Base
+### Grove Shield for XIAO
+
+Modelo:
+```text
+Seeed Grove Shield for XIAO
+```
+
+Compatibilidade:
+```text
+Seeed XIAO RP2040 ✓
+Seeed XIAO ESP32-C3 ✓
+Seeed XIAO nRF52840 ✓
+```
 
 Interfaces disponíveis:
 
 ```text
-I²C × 2
-UART × 1
-Grove Digital × 4
+I²C: 2 portas (SDA/SCL)
+UART: 1 porta (RX/TX)
+Grove Digital: 4 portas (GPIO)
+SPI: 1 porta (não usado)
+```
+
+Referência:
+```text
+Part Number: 103020270
 ```
 
 ---

@@ -35,7 +35,7 @@ flowchart TB
     subgraph P2["Piso 2 - Inteligência"]
         ESP["ESP32-S3"]
         MIC["INMP441 x3"]
-        AMP["PAM8302"]
+        AMP["MAX98357A x3"]
         SPK["Altifalantes"]
     end
 
@@ -114,8 +114,9 @@ flowchart LR
 
     ESP["ESP32-S3"]
 
-    AMP1["PAM8302 #1"]
-    AMP2["PAM8302 #2"]
+    AMP1["MAX98357A #1"]
+    AMP2["MAX98357A #2"]
+    AMP3["MAX98357A #3"]
 
     SPK1["Altifalante #1"]
     SPK2["Altifalante #2"]
@@ -126,9 +127,11 @@ flowchart LR
 
     ESP --> AMP1
     ESP --> AMP2
+    ESP --> AMP3
 
     AMP1 --> SPK1
     AMP2 --> SPK2
+    AMP3 -.->|Futuro| SPK1
 ```
 
 ## Estratégia de Docking
