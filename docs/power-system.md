@@ -1,264 +1,361 @@
 # Power System
 
-> AEGIS - Energy Architecture
+> AEGIS - Power Architecture
 
-Versão: 1.0
-Estado: Em desenvolvimento
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-O sistema energético do AEGIS foi concebido para permitir operação autónoma prolongada, utilizando múltiplas fontes de energia.
+Definir a arquitetura energética do AEGIS.
 
-A implementação será faseada:
+O sistema foi concebido para:
 
-1. Powerbank
-2. Carregamento por indução
-3. Integração solar
-
-Cada etapa deverá ser validada antes da seguinte.
-
----
-
-# Filosofia do Sistema
-
-O AEGIS possui uma arquitetura energética modular.
-
-Objetivos:
-
-- alimentação estável dos sistemas eletrónicos
-- carregamento autónomo
-- redundância energética
-- expansão futura para energia solar
-- proteção contra retorno de corrente
+- operação contínua;
+- carregamento autónomo;
+- integração com Home Assistant;
+- elevada modularidade;
+- manutenção simplificada.
 
 ---
 
-# Arquitetura Atual
+# Filosofia
 
-## Alimentação Principal
+O AEGIS utiliza uma única fonte energética principal.
 
-Hardware:
+Todos os subsistemas são alimentados a partir dessa fonte comum.
 
-- Powerbank USB
+```text
+Powerbank
+    │
+    ▼
+
+Barramento 5V
+
+    ├── RP2040
+    ├── ESP32-S3
+    ├── Sensores
+    ├── Áudio
+    ├── LEDs
+    └── Motores
+```
+
+---
+
+# Fonte Principal
+
+## Powerbank
+
+O powerbank constitui a bateria principal do sistema.
 
 Funções:
 
-- alimentação do robô
-- armazenamento de energia
-- carregamento interno da bateria
+- armazenamento de energia;
+- fornecimento de alimentação;
+- suporte ao carregamento autónomo.
 
 ---
 
-## Fonte de Energia
+## Requisitos Obrigatórios
 
-```mermaid
-flowchart LR
+O powerbank selecionado deverá suportar:
 
-    PB["Powerbank"]
+- pass-through charging;
+- funcionamento durante carregamento;
+- reinício automático da saída;
+- alimentação estável a 5V.
 
-    RP["RP2040"]
-
-    ESP["ESP32-S3"]
-
-    PB --> RP
-    PB --> ESP
-```
+Powerbanks que não cumpram estes requisitos são considerados incompatíveis com o projeto.
 
 ---
 
-# Sistema de Carregamento por Indução
+# Pass-Through Charging
 
-## Objetivo
+## Definição
 
-Permitir carregamento automático na estação base.
+O sistema deverá continuar operacional enquanto o powerbank estiver a carregar.
 
----
-
-## Arquitetura
-
-```mermaid
-flowchart LR
-
-    BASE["Base de Carregamento"]
-
-    RX["Módulo de Indução"]
-
-    PB["Powerbank"]
-
-    BASE --> RX
-
-    RX --> PB
-```
-
----
-
-## Critérios de Sucesso
-
-- carregamento iniciado automaticamente
-- carregamento estável
-- deteção correta do estado de carga
-
----
-
-# Integração Solar (Fase Futura)
-
-Estado:
-
-Planeado
-
-Dependências:
-
-- validação completa da plataforma
-- validação da estação de carga
-- caracterização do consumo energético
-
----
-
-# Arquitetura Futura
-
-```mermaid
-flowchart LR
-
-    SOLAR["Painel Solar"]
-
-    SCH1["Díodo Schottky"]
-
-    INDU["Carregamento por Indução"]
-
-    SCH2["Díodo Schottky"]
-
-    Y["Cabo USB em Y"]
-
-    PB["Powerbank"]
-
-    SOLAR --> SCH1
-
-    SCH1 --> Y
-
-    INDU --> SCH2
-
-    SCH2 --> Y
-
-    Y --> PB
-```
-
----
-
-# Cabo USB em Y
-
-## Objetivo
-
-Combinar duas fontes independentes:
-
-- painel solar
-- carregamento por indução
-
-num único ponto de entrada para o powerbank.
-
----
-
-## Funcionalidade
+Objetivo:
 
 ```text
-Painel Solar
-      │
- Schottky
-      │
-      ├────► USB em Y ─────► Powerbank
-      │
- Schottky
-      │
-Carregamento por Indução
+Carregar
++
+Continuar ligado
 ```
 
 ---
 
-# Díodos Schottky
+## Necessidade
 
-## Objetivo
+Fundamental para:
 
-Impedir circulação de corrente entre fontes.
+- docking autónomo;
+- monitorização da carga;
+- atualizações OTA;
+- integração Home Assistant;
+- funcionamento contínuo.
 
 ---
 
-## Problema
+# Arquitetura de Carregamento
 
-Sem isolamento:
+## Configuração de Referência
 
 ```text
-Painel Solar
-      │
-      ├────────► Indução
 
-ou
+Base de Carga
+      │
+      ▼
 
 Indução
       │
-      ├────────► Painel Solar
-```
+      ▼
 
-Podendo provocar:
+USB-C
+      │
+      ▼
 
-- perdas energéticas
-- aquecimento
-- danos nos módulos
+Powerbank
+(pass-through)
 
----
+      │
+      ▼
 
-## Solução
+Barramento 5V AEGIS
 
-Cada fonte possui um díodo Schottky dedicado.
-
-```mermaid
-flowchart TB
-
-    SOLAR["Solar"]
-
-    SCH1["Schottky"]
-
-    SCH2["Schottky"]
-
-    INDU["Indução"]
-
-    Y["USB em Y"]
-
-    SOLAR --> SCH1
-
-    INDU --> SCH2
-
-    SCH1 --> Y
-
-    SCH2 --> Y
 ```
 
 ---
 
-# Evoluções Futuras
+## Vantagens
 
-## Monitorização de Energia
-
-Objetivos:
-
-- tensão da bateria
-- corrente de carga
-- potência proveniente do painel solar
-- ciclos de carregamento
+- simplicidade;
+- baixo custo;
+- elevada disponibilidade;
+- manutenção fácil.
 
 ---
 
-## Gestão Inteligente de Energia
+# Distribuição Elétrica
 
-Possibilidades futuras:
+## Barramento Principal
 
-- suspensão de serviços não essenciais
-- redução de iluminação
-- regresso antecipado à base
-- otimização da utilização do painel solar
+Tensão:
+
+```text
+5V
+```
 
 ---
 
-# Ordem de Implementação
+## Consumidores
 
-```mermaid
+### RP2040
+
+Função:
+
+- movimento
+- sensores base
+
+---
+
+### ESP32-S3
+
+Função:
+
+- processamento principal
+- áudio
+- comunicações
+
+---
+
+### Sensores
+
+Exemplos:
+
+- MPU6050
+- HC-SR04
+- INMP441
+
+---
+
+### Sistema Áudio
+
+Componentes:
+
+- MAX98357A
+- Altifalantes
+
+---
+
+### Sistema LED
+
+Componentes:
+
+- 5 × KY-009
+
+---
+
+### Driver de Motores
+
+Estado:
+
+Em avaliação.
+
+Opções:
+
+- TB6612FNG convencional;
+- Grove Motor Driver I²C.
+
+---
+
+# Posicionamento do Powerbank
+
+## Localização
+
+Face inferior do Piso 2.
+
+```text
+
+Piso 2
+═══════════════
+
+Powerbank
+
+═══════════════
+
+Piso 1
+```
+
+---
+
+## Justificação
+
+- redução do centro de gravidade;
+- libertação do Piso 2;
+- simplificação da cablagem;
+- melhor equilíbrio.
+
+---
+
+# Integração Grove Base
+
+## Função
+
+A Grove Base do XIAO inclui:
+
+- carregamento de bateria 3.7V;
+- gestão de energia local;
+- LED de carregamento;
+- LED de carga completa.
+
+---
+
+## Utilização no Projeto
+
+A Grove Base não é a fonte energética principal.
+
+Função prevista:
+
+- alimentação local do XIAO;
+- diagnóstico energético;
+- monitorização de estado.
+
+---
+
+# Monitorização Futura
+
+## Estados de Energia
+
+Objetivos futuros:
+
+```text
+Charging
+
+Battery Full
+
+Docked
+
+Undocked
+```
+
+---
+
+## Integração Home Assistant
+
+O sistema deverá publicar:
+
+- estado de carga;
+- estado da docking;
+- disponibilidade energética.
+
+---
+
+# Sistema Solar
+
+## Estado
+
+Planeado.
+
+Não faz parte da arquitetura inicial.
+
+---
+
+## Objetivo Futuro
+
+Fornecer energia complementar.
+
+Não substituirá o sistema principal baseado em powerbank.
+
+---
+
+# Segurança
+
+## Requisitos
+
+Quando a energia atingir níveis críticos:
+
+- terminar patrulha;
+- regressar à base;
+- iniciar carregamento.
+
+---
+
+## Falha de Energia
+
+Em caso de perda de alimentação:
+
+- preservar integridade dos controladores;
+- reiniciar automaticamente quando a energia regressar.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+- Powerbank será a fonte energética principal.
+- Pass-through charging é obrigatório.
+- Powerbank ficará suspenso sob o Piso 2.
+- Arquitetura principal baseada em alimentação 5V.
+
+---
+
+## Em Avaliação
+
+- Modelo final do powerbank.
+- Sistema de docking definitivo.
+- Estratégia de monitorização da carga.
+
+---
+
+# Referências
+
+Documentos relacionados:
+
+- dimensional-reference.md
+- hardware-inventory.md
+- project-decisions.md
+- physical-layout.md
