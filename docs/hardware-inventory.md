@@ -2,7 +2,7 @@
 
 > AEGIS - Hardware Inventory and Procurement Status
 
-Versão: 1.0
+Versão: 2.0
 Estado: Ativo
 
 ---
@@ -14,9 +14,10 @@ Inventário oficial de hardware do projeto AEGIS.
 Este documento representa a fonte oficial de verdade para:
 
 - componentes adquiridos;
-- componentes encomendados;
+- componentes disponíveis;
 - componentes em avaliação;
-- componentes ainda em falta.
+- componentes planeados;
+- componentes em falta.
 
 ---
 
@@ -27,6 +28,7 @@ Este documento representa a fonte oficial de verdade para:
 ### Chassis Base
 
 Estado:
+
 Adquirido
 
 Descrição:
@@ -37,37 +39,117 @@ Descrição:
 
 Dimensões:
 
-- 260 × 155 × 65 mm
+```text
+260 × 155 × 65 mm
+```
 
-Notas:
+Função:
 
-Plataforma mecânica base do protótipo.
-
----
-
-### Placa Acrílica Piso 2
-
-Estado:
-Adquirido
-
-Características:
-
-- Circular
-- Acrílico transparente
-- Ø300 mm
+Plataforma mecânica principal.
 
 ---
 
-### Placa Acrílica Piso 3
+### Piso 2
 
 Estado:
+
 Adquirido
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+### Piso 3
+
+Estado:
+
+Adquirido
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+### Espaçadores
+
+Estado:
+
+Disponíveis
+
+Configuração atualmente validada:
+
+```text
+30 mm
+```
+
+Observações:
+
+Utilizados entre:
+
+- Piso 1 ↔ Piso 2
+
+A mesma configuração é candidata para:
+
+- Piso 2 ↔ Piso 3
+
+---
+
+## Movimento
+
+### Motores DC
+
+Quantidade:
+
+```text
+4
+```
+
+Estado:
+
+Adquirido
+
+Incluídos no chassis.
+
+---
+
+### Rodas
+
+Quantidade:
+
+```text
+4
+```
+
+Estado:
+
+Adquiridas
 
 Características:
 
-- Circular
-- Acrílico transparente
-- Ø300 mm
+```text
+Ø70 mm
+
+Largura 30 mm
+```
 
 ---
 
@@ -76,6 +158,7 @@ Características:
 ### Seeed XIAO RP2040
 
 Estado:
+
 Adquirido
 
 Função:
@@ -87,30 +170,34 @@ Controlador de movimento.
 ### Grove Base for XIAO
 
 Estado:
-Adquirido
+
+Adquirida
 
 Características:
 
-- Gestão bateria integrada
-- Indicadores de carga
 - I²C
 - UART
 - Grove Digital
+- Gestão de bateria
+- Indicadores de carga
 
-Notas:
+Função:
 
-Possibilidade de utilização em formato integral ou reduzido.
+Expansão do RP2040.
 
 ---
 
 ### ESP32-S3
 
 Estado:
+
 Adquirido
 
 Dimensões:
 
-- 62.74 × 25.40 mm
+```text
+62.74 × 25.40 mm
+```
 
 Função:
 
@@ -123,6 +210,7 @@ Controlador principal.
 ### MPU-6050
 
 Estado:
+
 Adquirido
 
 Função:
@@ -134,6 +222,7 @@ IMU.
 ### HC-SR04
 
 Estado:
+
 Adquirido
 
 Função:
@@ -146,14 +235,17 @@ Deteção de obstáculos.
 
 Quantidade:
 
+```text
 3
+```
 
 Estado:
+
 Adquirido
 
 Função:
 
-Captação áudio.
+Microfones I²S.
 
 ---
 
@@ -163,14 +255,17 @@ Captação áudio.
 
 Quantidade:
 
+```text
 3
+```
 
 Estado:
+
 Adquirido
 
 Função:
 
-DAC I²S + Amplificador.
+DAC I²S e amplificação áudio.
 
 ---
 
@@ -178,10 +273,13 @@ DAC I²S + Amplificador.
 
 Quantidade:
 
+```text
 2
+```
 
 Estado:
-Adquirido
+
+Adquiridos
 
 Função:
 
@@ -195,14 +293,17 @@ Reprodução áudio.
 
 Quantidade:
 
+```text
 5
+```
 
 Estado:
-Adquirido
+
+Adquiridos
 
 Função:
 
-Sistema LED.
+Sistema de iluminação RGB.
 
 ---
 
@@ -211,79 +312,181 @@ Sistema LED.
 ### Grove → Grove
 
 Estado:
-Adquirido
+
+Disponível
 
 ---
 
 ### Grove → Pigtail
 
 Estado:
-Adquirido
+
+Disponível
 
 ---
 
-## Outros
+## Distribuição
+
+### Blocos de Terminais
+
+Estado:
+
+Disponíveis
+
+Função prevista:
+
+- distribuição elétrica;
+- distribuição I²C;
+- prototipagem.
+
+---
+
+## Expansão
 
 ### PCA9685
 
+Quantidade:
+
+```text
+1
+```
+
 Estado:
+
 Disponível
+
+Características:
+
+```text
+16 canais PWM
+12 bits
+I²C
+```
 
 Origem:
 
 Projeto ferroviário HO/OO.
 
-Funções futuras possíveis:
+Possíveis utilizações futuras:
 
-- LEDs RGB
-- Servos
-- Animações
-
----
-
-# Encomendado
-
-## Espaçadores
-
-### M2/M3 (a validar)
-
-Estado:
-Encomendado
-
-Dimensões:
-
-- 45 mm
-- 50 mm
-
-Objetivo:
-
-Determinar altura ideal do Piso 2.
+- LEDs;
+- servos;
+- animações;
+- expansão PWM.
 
 ---
 
 # Em Avaliação
 
-## Grove I²C Hub
+## Driver de Motores
+
+### Opção A
+
+TB6612FNG convencional
 
 Estado:
-Em avaliação
 
-Alternativa:
-
-Bloco de terminais + Grove Pigtail.
+Em avaliação.
 
 ---
 
-### Grove Motor Driver (TB6612FNG)
+### Opção B
+
+Seeed Grove I²C Motor Driver (TB6612FNG)
 
 Estado:
-Em avaliação
+
+Em avaliação.
 
 Vantagens:
 
-- Grove nativo
-- Ligações por parafuso
-- Integração simplificada
+- Grove nativo;
+- conectores de parafuso;
+- menor cablagem.
+
+---
+
+## Expansão I²C
+
+### Opção A
+
+Grove I²C Hub
+
+Estado:
+
+Em avaliação.
+
+---
+
+### Opção B
+
+Bloco de terminais
+
++
+Cabos Grove-Pigtail
+
+Estado:
+
+Em avaliação.
+
+Atualmente considerada a solução mais provável.
+
+---
+
+# Planeado
+
+## Câmara
+
+Estado:
+
+Planeada
+
+Função:
+
+- vigilância;
+- streaming;
+- snapshots.
+
+---
+
+## Sensores de Docking
+
+Estado:
+
+Planeados
+
+Função:
+
+- aproximar da base;
+- alinhamento;
+- carregamento.
+
+---
+
+## Sensores de Queda
+
+Estado:
+
+Planeados
+
+Função:
+
+- deteção de escadas;
+- proteção anti-queda.
+
+---
+
+## Saia Translúcida
+
+Estado:
+
+Planeada
+
+Função:
+
+- difusão RGB;
+- ocultação de cablagem;
+- melhoria estética.
 
 ---
 
@@ -292,54 +495,149 @@ Vantagens:
 ## Powerbank
 
 Estado:
+
 Por selecionar
 
-Requisito obrigatório:
+Requisitos obrigatórios:
 
-- Pass-through charging
+```text
+Pass-through charging
+
+Operação durante carregamento
+
+5V estável
+```
+
+Função:
+
+Fonte energética principal do AEGIS.
 
 ---
 
 ## Sistema de Docking
 
 Estado:
-Futuro
+
+Em desenvolvimento
+
+Alternativas em estudo:
+
+- indução;
+- contactos elétricos;
+- compatibilidade experimental com docking Roomba.
 
 ---
 
-## Sensores de Queda
+# Hardware de Referência
+
+## Chassis
+
+Referência utilizada no protótipo:
+
+```text
+Amazon B0CH4G35X8
+```
 
 Estado:
-Planeado
 
-Prioridade:
-Baixa
-
-Justificação:
-
-Projeto público e arquitetura de segurança.
+Referência mecânica.
 
 ---
 
-# Requisitos Arquiteturais
+## LEDs
 
-## Energia
+Referência:
 
-O powerbank principal deverá obrigatoriamente suportar:
-
-- Pass-through charging
-- Alimentação contínua durante carregamento
-- Operação simultânea carga/consumo
+```text
+KY-009 RGB
+```
 
 ---
 
-# Histórico
+## Áudio
 
-Este ficheiro deve ser atualizado sempre que:
+Referências:
 
-- hardware é comprado;
-- hardware é recebido;
-- hardware é removido;
-- hardware é substituído.
+```text
+INMP441
 
-A informação neste documento tem prioridade sobre qualquer informação presente em conversas.
+MAX98357A
+
+Altifalantes 3W
+```
+
+---
+
+# Home Assistant
+
+## Equipamento Externo Relevante
+
+### Roomba i1
+
+Quantidade:
+
+```text
+2
+```
+
+Estado:
+
+Integrados no Home Assistant.
+
+Função futura:
+
+Possível reutilização de:
+
+- telemetria;
+- zonas;
+- mapas;
+- docking.
+
+---
+
+# Estado Geral
+
+## Adquirido
+
+✅ Estrutura principal
+
+✅ Controladores
+
+✅ Sensores V1
+
+✅ Sistema áudio
+
+✅ Sistema LED
+
+✅ Cablagem Grove
+
+---
+
+## Principal Componente em Falta
+
+🔲 Powerbank compatível com pass-through charging
+
+---
+
+# Regras
+
+Sempre que um componente for:
+
+- adquirido;
+- removido;
+- substituído;
+- descartado;
+
+este documento deverá ser atualizado.
+
+Este documento tem prioridade sobre qualquer informação presente em conversas.
+
+---
+
+# Documentos Relacionados
+
+- dimensional-reference.md
+- project-decisions.md
+- physical-layout.md
+- mechanical-design.md
+- power-system.md
