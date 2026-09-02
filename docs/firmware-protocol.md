@@ -1,120 +1,121 @@
 # Firmware Protocol
 
-> AEGIS - RP2040 ↔ ESP32-S3 Communication Protocol
+> AEGIS - Intercontroller Communication Protocol
 
 Versão: 1.0
-Estado: Especificação Inicial
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-Este documento define o protocolo de comunicação entre:
+Definir o protocolo de comunicação entre:
 
-- RP2040
+- Seeed XIAO RP2040
 - ESP32-S3
 
-A comunicação deverá permitir:
+O protocolo foi concebido para:
 
-- envio de comandos;
-- receção de telemetria;
-- diagnóstico;
-- deteção de falhas;
-- evolução futura sem quebra de compatibilidade.
-
----
-
-# Filosofia
-
-O protocolo deve ser:
-
-- simples;
-- legível;
-- facilmente depurável;
-- independente do firmware.
-
-Durante as fases iniciais será utilizado texto ASCII.
+- simplicidade;
+- legibilidade;
+- facilidade de depuração;
+- baixa utilização de recursos.
 
 ---
 
 # Arquitetura
 
-```mermaid
-flowchart LR
+```text
 
-    ESP["ESP32-S3"]
+ESP32-S3
+     ▲
+     │ UART
+     ▼
+RP2040
 
-    UART["UART"]
-
-    RP["RP2040"]
-
-    ESP <-->|TX/RX| UART
-
-    UART <-->|TX/RX| RP
 ```
 
 ---
 
-# Configuração UART
+# Responsabilidades
 
-| Parâmetro | Valor |
-|------------|------------|
-| Velocidade | 115200 |
-| Bits de Dados | 8 |
-| Paridade | Nenhuma |
-| Stop Bits | 1 |
-| Controlo de Fluxo | Não |
+## RP2040
+
+Responsável por:
+
+- motores;
+- MPU6050;
+- HC-SR04;
+- segurança de movimento.
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- Home Assistant;
+- ESPHome;
+- Assist;
+- áudio;
+- lógica principal;
+- docking;
+- vigilância.
+
+---
+
+# Transporte
+
+## Meio
+
+UART
+
+---
+
+## Ligação
+
+```text
+RP2040 ↔ ESP32-S3
+```
+
+---
+
+## Características
+
+- comunicação bidirecional;
+- texto ASCII;
+- terminador LF.
+
+---
+
+# Estrutura da Mensagem
 
 Formato:
 
 ```text
-8N1
-```
-
----
-
-# Estrutura das Mensagens
-
-Formato geral:
-
-```text
-TIPO:CONTEUDO
+COMANDO:VALOR
 ```
 
 Exemplos:
 
 ```text
-CMD:MOVE_FORWARD
-```
+MOVE:FORWARD
 
-```text
-TEL:BATTERY=85
-```
+MOVE:STOP
 
-```text
-ERR:SONAR_TIMEOUT
+STATUS:BATTERY
+
+SENSOR:HC_SR04
 ```
 
 ---
 
-# Tipos de Mensagem
-
-| Prefixo | Descrição |
-|----------|----------|
-| CMD | Comandos |
-| TEL | Telemetria |
-| ACK | Confirmação |
-| ERR | Erro |
-| DBG | Diagnóstico |
-
----
-
-# Comandos de Movimento
+# Comandos Movimento
 
 ## Frente
 
 ```text
-CMD:MOVE_FORWARD
+MOVE:FORWARD
 ```
 
 ---
@@ -122,7 +123,7 @@ CMD:MOVE_FORWARD
 ## Trás
 
 ```text
-CMD:MOVE_BACKWARD
+MOVE:BACKWARD
 ```
 
 ---
@@ -130,7 +131,7 @@ CMD:MOVE_BACKWARD
 ## Esquerda
 
 ```text
-CMD:TURN_LEFT
+MOVE:LEFT
 ```
 
 ---
@@ -138,7 +139,7 @@ CMD:TURN_LEFT
 ## Direita
 
 ```text
-CMD:TURN_RIGHT
+MOVE:RIGHT
 ```
 
 ---
@@ -146,69 +147,81 @@ CMD:TURN_RIGHT
 ## Parar
 
 ```text
-CMD:STOP
+MOVE:STOP
 ```
 
 ---
 
-# Comandos de Navegação
+# Comandos de Velocidade
 
-## Patrulha
+## Definir velocidade
+
+Formato:
 
 ```text
-CMD:PATROL
+SPEED:0
+
+SPEED:50
+
+SPEED:100
+```
+
+Escala:
+
+```text
+0 a 100
 ```
 
 ---
 
-## Docking
+# Comandos de Patrulha
+
+## Iniciar
 
 ```text
-CMD:DOCK
+PATROL:START
 ```
 
 ---
 
-## Regresso à Base
+## Parar
 
 ```text
-CMD:RETURN_HOME
+PATROL:STOP
 ```
 
 ---
 
-# Comandos de Sistema
+# Comandos Docking
 
-## Ativar Motores
+## Iniciar
 
 ```text
-CMD:ENABLE_MOTORS
+DOCK:START
 ```
 
 ---
 
-## Desativar Motores
+## Parar
 
 ```text
-CMD:DISABLE_MOTORS
+DOCK:STOP
 ```
 
 ---
 
-## Reinício
+# Sensores
+
+## Pedido de distância
 
 ```text
-CMD:RESET
+SENSOR:HC_SR04
 ```
 
----
-
-# Telemetria
-
-## Distância
+Resposta:
 
 ```text
-TEL:DISTANCE=124
+DISTANCE:123
 ```
 
 Unidade:
@@ -219,124 +232,134 @@ cm
 
 ---
 
-## Ângulo
+## Pedido de orientação
 
 ```text
-TEL:ANGLE=45
+SENSOR:MPU6050
 ```
 
-Unidade:
+Resposta:
 
 ```text
-graus
+HEADING:270
 ```
 
 ---
 
-## Bateria
+# Telemetria
+
+## Movimento
+
+Exemplo:
 
 ```text
-TEL:BATTERY=83
+MOTION:FORWARD
+
+MOTION:STOPPED
 ```
 
-Unidade:
+---
+
+## Sensores
+
+Exemplo:
 
 ```text
-%
+DISTANCE:125
+
+HEADING:180
 ```
 
 ---
 
 ## Estado
 
+Exemplo:
+
 ```text
-TEL:STATE=PATROL
+STATE:IDLE
+
+STATE:PATROL
+
+STATE:DOCKING
+
+STATE:CHARGING
 ```
 
 ---
 
-## Obstáculo
+# Heartbeat
+
+## Objetivo
+
+Confirmar que a comunicação continua ativa.
+
+---
+
+## ESP32-S3 → RP2040
 
 ```text
-TEL:OBSTACLE=TRUE
+PING
 ```
 
 ---
 
-## Carregamento
+## RP2040 → ESP32-S3
 
 ```text
-TEL:CHARGING=TRUE
+PONG
 ```
 
 ---
 
-# Respostas ACK
+## Timeout
 
-## Sucesso
+Se não forem recebidos comandos válidos durante um período prolongado:
 
 ```text
-ACK:MOVE_FORWARD
+STOP
 ```
 
 ---
 
-## Falha
+# Segurança
+
+## Falha UART
+
+Em caso de perda de comunicação:
 
 ```text
-ERR:MOVE_FORWARD
+RP2040
+↓
+Paragem Segura
 ```
 
 ---
 
-# Tipos de Erro
+## Falha de Comando
 
-## Sensor
-
-```text
-ERR:SONAR_TIMEOUT
-```
+Comando inválido:
 
 ```text
-ERR:IMU_FAILURE
+ERROR:INVALID_COMMAND
 ```
 
 ---
 
-## Comunicação
+## Falha de Sensor
 
 ```text
-ERR:UART_TIMEOUT
-```
-
-```text
-ERR:INVALID_COMMAND
+ERROR:SENSOR
 ```
 
 ---
 
-## Energia
+# Estados do Sistema
+
+## Idle
 
 ```text
-ERR:LOW_BATTERY
-```
-
----
-
-# Mensagens de Debug
-
-## Informação
-
-```text
-DBG:STARTUP_COMPLETE
-```
-
----
-
-## Modo Docking
-
-```text
-DBG:DOCKING_STARTED
+STATE:IDLE
 ```
 
 ---
@@ -344,168 +367,106 @@ DBG:DOCKING_STARTED
 ## Patrulha
 
 ```text
-DBG:PATROL_STARTED
+STATE:PATROL
 ```
 
 ---
 
-# Máquina de Estados
-
-```mermaid
-stateDiagram-v2
-
-    [*] --> IDLE
-
-*   IDLE --> MANUAL
-
-    IDLE --> P*TROL
-
-    PATROL --> DOCKING
-
-    *OCKING --> CHARGING
-
-    CHARGING *-> IDLE
-
-   *MAN*AL --> IDLE
-```
-
----
-
-# Heartbeat
-*## Objetivo
-
-Confirmar que ambos o* controladores continuam ativos.
-
-*--
-
-## Mensagem
+## Docking
 
 ```text
-TEL:HEART*EAT
+STATE:DOCKING
 ```
 
 ---
 
-## Frequência
+## Carregamento
 
-```te*t
-1 segundo
+```text
+STATE:CHARGING
 ```
 
 ---
 
-# Timeout
+## Erro
 
-#* RP2040
-
-Se não receber comandos v*lidos num intervalo definido:
-
-```*ext
-Parar movimento
-```
-
----
-
-## E*P32-S3
-
-Se não receber heartbeat:
-*```text
-Assinalar comunicação perd*da
+```text
+STATE:ERROR
 ```
 
 ---
 
 # Evolução Futura
 
-##*Estrutura JSON
+A versão inicial utiliza mensagens ASCII para facilitar:
 
-Versão futura poss*vel:
+- testes;
+- monitorização;
+- depuração.
 
-```json
-{
-  "type": "telemet*y",
-  "sensor": "battery",
-  "valu*": 84
-}
-```
-
----
-
-## Vantagens
-
-- *ais flexível;
-- mais extensível;
--*compatível com MQTT;
-- fácil integ*ação com Home Assistant.
-
----
-
-# C*mpatibilidade
-
-A versão inicial do*protocolo deverá permanecer suport*da mesmo após introdução de format*s mais avançados.
-
----
-
-# Regras
-
-*# Regra 1
-
-Todas as mensagens term*nam com:
+Versões futuras poderão introduzir:
 
 ```text
-\\n
+JSON
 ```
 
----
-
-##*Regra 2
-
-Todas as mensagens utiliz*m ASCII.
-
----
-
-## Regra 3
-
-Nenhuma*mensagem pode exceder:
+ou
 
 ```text
-12* caracteres
+frames binárias
 ```
+
+caso a complexidade do sistema aumente.
 
 ---
 
-##*Regra 4
+# Requisitos
 
-Comandos desconhe*idos devem gerar:
+## Simplicidade
 
-```text
-ERR:INV*LID_COMMAND
-```
-
-*--
-
-# Critérios de Validação
-
-O pr*tocolo será*considerado validado quando:
-
-- [*] Comandos são recebidos corretame*te.
--*[ * Telemetria é recebida corretament*.
-- [ ] ACK funciona corretamente.*- [ ] Heartbeat funciona corretame*te.
-- [ ] Timeout é tratado corret*mente.
-- [ * O sistema recupera após rein*cio de qualquer*controlador.
+Prioridade máxima na V1.
 
 ---
 
-# Princípio Fun*amental
+## Legibilidade
 
-A comunicação deve*permanecer simples.
+Toda a comunicação deverá ser facilmente observável através de um monitor série.
 
-*empre que houver dúvida entre:
+---
 
-- *implicidade;
-- sofisticação;
+## Robustez
 
-**simplicidade deve prevalecer.
+A perda de comunicação nunca deverá causar movimento não controlado.
 
-Um *rotocolo fácil de diagnosticar é m*is valioso do que um protocolo com*lexo com mais funcionalidades.
-```*
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ UART dedicada RP2040 ↔ ESP32-S3
+
+✅ Protocolo textual
+
+✅ Heartbeat PING/PONG
+
+✅ Paragem segura em falha
+
+---
+
+## Em Evolução
+
+- Mensagens de telemetria avançadas
+- Gestão de bateria
+- Estados de docking
+- Eventos Home Assistant
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- communication-system.md
+- gpio-allocation.md
+- power-system.md
+- project-decisions.md
