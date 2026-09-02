@@ -423,3 +423,244 @@ Toda a decisão que altere:
 deve ser registada neste documento.
 
 Este ficheiro é considerado a memória histórica oficial do projeto AEGIS.
+
+# 2026
+
+## 2026-09-01
+
+### Mecânica
+
+#### Dimensões oficiais confirmadas
+
+Confirmadas as seguintes dimensões:
+
+- Chassis base: 260 × 155 × 65 mm
+- Rodas: Ø70 mm
+- Piso 2: Ø300 mm
+- Piso 3: Ø300 mm
+
+Impacto:
+
+Criação do documento dimensional-reference.md.
+
+Referência:
+
+- PD-003
+
+---
+
+#### Altura do Piso 2
+
+Identificada necessidade de validação física dos separadores.
+
+Opções em estudo:
+
+- 45 mm
+- 50 mm
+
+Estado:
+
+Em validação.
+
+Impacto:
+
+Afeta a altura final da estrutura e o espaço interno disponível.
+
+Referência:
+
+- PD-013
+
+---
+
+#### Powerbank
+
+Definida localização preferencial.
+
+Posição:
+
+Face inferior do Piso 2.
+
+Objetivos:
+
+- reduzir centro de gravidade;
+- libertar área útil;
+- simplificar cablagem.
+
+Referência:
+
+- PD-006
+
+---
+
+### Hardware
+
+#### Expansion Board Grove
+
+Validação técnica concluída.
+
+Funcionalidades confirmadas:
+
+- I²C
+- UART
+- Grove Digital
+- Gestão de bateria integrada
+- Indicadores de carga
+- Modo destacável (25 × 39 mm após separação)
+
+Impacto:
+
+Atualização futura do gpio-allocation.md.
+
+---
+
+#### ESP32-S3
+
+Dimensões físicas confirmadas.
+
+Dimensões:
+
+- 62.74 × 25.40 mm
+
+Impacto:
+
+Validação da integração física no Piso 2.
+
+---
+
+### Áudio
+
+#### Aquisição de hardware
+
+Confirmado hardware áudio disponível:
+
+- 3 × INMP441
+- 3 × MAX98357A
+- 2 × Altifalantes
+
+Impacto:
+
+Subsistema áudio considerado praticamente completo ao nível de hardware.
+
+Referência:
+
+- PD-012
+
+---
+
+### Iluminação
+
+#### Aquisição de hardware
+
+Confirmada disponibilidade de:
+
+- 5 × KY-009 RGB
+
+Impacto:
+
+Hardware necessário para implementação da iluminação ambiental disponível.
+
+Referência:
+
+- PD-011
+
+---
+
+### Energia
+
+#### Arquitetura energética
+
+Definido o powerbank como fonte energética principal.
+
+Impacto:
+
+Simplificação da arquitetura de alimentação.
+
+Referência:
+
+- PD-004
+
+---
+
+#### Pass-through Charging
+
+Definido como requisito obrigatório.
+
+Todos os powerbanks considerados para utilização no AEGIS deverão suportar:
+
+- carregamento durante utilização;
+- alimentação contínua.
+
+Impacto:
+
+Fundamental para docking e carregamento autónomo.
+
+Referência:
+
+- PD-005
+
+---
+
+### Integração
+
+#### Home Assistant
+
+Confirmada estratégia de integração nativa com Home Assistant.
+
+Observações:
+
+- existência de repositório dedicado Home-Assistant;
+- existência de dois Roomba i1 integrados;
+- possibilidade futura de reutilização de informação de mapas e telemetria.
+
+Estado:
+
+Investigação futura.
+
+Referência:
+
+- PD-008
+
+---
+
+### I²C
+
+#### Estratégia de expansão
+
+Identificadas duas abordagens possíveis:
+
+Opção A:
+
+- Grove I²C Hub
+
+Opção B:
+
+- Bloco de terminais
+- Cabos Grove-Pigtail
+
+Estado:
+
+Em avaliação.
+
+Referência:
+
+- PD-015
+
+---
+
+### Montagem
+
+#### Estratégia de prototipagem
+
+A fase inicial utilizará:
+
+- fita dupla-face;
+- abraçadeiras;
+- fixações temporárias.
+
+Objetivo:
+
+Validar layout e posicionamento antes da criação de suportes definitivos.
+
+Referência:
+
+- PD-007
