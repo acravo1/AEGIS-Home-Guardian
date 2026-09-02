@@ -176,7 +176,7 @@ Adquirido
 
 ```text
 3 × INMP441
-1 × MAX98357A
+3 × MAX98357A
 2 × Altifalantes
 ```
 

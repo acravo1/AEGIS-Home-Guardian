@@ -406,13 +406,13 @@ A UART RP2040 ↔ ESP32-S3 é dedicada e não deverá ser reutilizada.
 
 ✅ Grove como interface preferencial
 
+✅ Grove I²C Hub (Confirmado)
+
 ---
 
 ## Em Avaliação
 
 🔲 Grove Motor Driver I²C
-
-🔲 Grove I²C Hub
 
 🔲 Utilização futura da PCA9685
 

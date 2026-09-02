@@ -75,6 +75,26 @@ Consequências.
 
 ---
 
+## 2026-09-02
+
+### Tipo
+
+Documentação
+
+### Alteração
+
+Sincronização de documentação: unificação da versão (v0.1), atualização do estado de hardware, padronização de nomenclatura de pisos, correção do amplificador de áudio para MAX98357A, especificação do Grove Shield for XIAO, e aceite das decisões PD-014 (TB6612FNG) e PD-015 (Grove I2C Hub).
+
+### Motivo
+
+Corrigir inconsistências identificadas na documentação e preparar o projeto para assembling do Block 01.
+
+### Impacto
+
+Melhor rastreabilidade das decisões e preparação para fase de prototipagem física.
+
+---
+
 ## 2026-08-31
 
 ### Tipo
