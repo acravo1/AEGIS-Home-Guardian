@@ -2,40 +2,58 @@
 
 > AEGIS - Communication Architecture
 
-Versão: 1.0
-Estado: Arquitetura Definida
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-O sistema de comunicações do AEGIS é responsável pela troca de informação entre:
+Definir o sistema de comunicações do AEGIS.
 
-- RP2040
-- ESP32-S3
-- Home Assistant
-- Utilizador
+O sistema deve permitir:
 
-A arquitetura foi concebida para:
+- comunicação entre controladores;
+- integração com Home Assistant;
+- telemetria;
+- comandos remotos;
+- atualizações OTA;
+- expansão futura.
 
-- separar movimento e lógica;
-- facilitar manutenção;
-- reduzir carga computacional;
-- permitir evolução futura.
+---
+
+# Arquitetura Geral
+
+```text
+
+          Home Assistant
+                 ▲
+                 │
+            Wi-Fi / ESPHome
+                 │
+                 ▼
+
+             ESP32-S3
+                 ▲
+                 │ UART
+                 ▼
+
+              RP2040
+
+```
 
 ---
 
 # Filosofia
 
-Cada controlador executa apenas as funções para as quais foi selecionado.
-
 ## RP2040
 
 Responsável por:
 
-- movimento
-- sensores locais
-- controlo em tempo real
+- movimento;
+- sensores locais;
+- controlo de motores;
+- funções críticas em tempo real.
 
 ---
 
@@ -43,255 +61,379 @@ Responsável por:
 
 Responsável por:
 
-- coordenação
-- multimédia
-- Wi-Fi
-- ESPHome
+- Wi-Fi;
+- ESPHome;
+- Home Assistant;
+- Assist;
+- áudio;
+- vídeo;
+- lógica principal.
 
 ---
 
-## Home Assistant
+# Comunicação Interna
 
-Responsável por:
+## RP2040 ↔ ESP32-S3
 
-- automações
-- supervisão
-- histórico
-- voz
-- dashboards
+Método:
 
----
-
-# Arquitetura Global
-
-```mermaid
-flowchart TD
-
-    USER["Utilizador"]
-
-    HA["Home Assistant"]
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    USER --> HA
-
-    HA <-->|Wi-Fi| ESP
-
-    ESP <-->|UART| RP
-```
-
----
-
-# Fluxo de Informação
-
-```mermaid
-flowchart LR
-
-    USER["Utilizador"]
-
-    HA["Home Assistant"]
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    USER --> HA
-
-    HA --> ESP
-
-    ESP --> RP
-
-    RP --> ESP
-
-    ESP --> HA
-```
-
----
-
-# Comunicação RP2040 ↔ ESP32-S3
-
-## Tecnologia
-
+```text
 UART
+```
+
+Estado:
+
+Definido.
 
 ---
 
 ## Objetivo
 
-Permitir comunicação bidirecional entre:
-
-- camada motora
-- camada lógica
-
----
-
-## Arquitetura
-
-```mermaid
-flowchart LR
-
-    RP["RP2040"]
-
-    UART["UART"]
-
-    ESP["ESP32-S3"]
-
-    RP <-->|TX/RX| UART
-
-    UART <-->|TX/RX| ESP
-```
-
----
-
-# Comandos
-
-## ESP32-S3 → RP2040
-
-### Movimento
+Separar:
 
 ```text
-MOVE_FORWARD
-MOVE_BACKWARD
-TURN_LEFT
-TURN_RIGHT
-STOP
+Movimento
 ```
 
----
-
-### Navegação
+de
 
 ```text
-PATROL
-DOCK
-RETURN_HOME
+Lógica Principal
 ```
 
 ---
 
-### Sistemas
+## Funções
+
+### RP2040 → ESP32-S3
+
+Telemetria.
+
+Exemplos:
 
 ```text
-ENABLE_MOTORS
-DISABLE_MOTORS
-RESET_MOTION
+Velocidade
+
+Orientação
+
+Estado Motores
+
+Distância HC-SR04
+
+Estado Segurança
 ```
 
 ---
 
-# Telemetria
+### ESP32-S3 → RP2040
 
-## RP2040 → ESP32-S3
+Comandos.
 
-### Movimento
+Exemplos:
 
 ```text
-SPEED
-DIRECTION
-STATUS
+Frente
+
+Trás
+
+Esquerda
+
+Direita
+
+Parar
+
+Patrulha
+
+Docking
 ```
 
 ---
 
-### Sensores
+# Protocolo
 
-```text
-DISTANCE
-ANGLE
-OBSTACLE
-```
+## Transporte
+
+UART série.
 
 ---
 
-### Energia
-
-```text
-BATTERY
-CHARGING
-```
-
----
-
-# Formato de Mensagens
-
-## Proposta Inicial
+## Estrutura
 
 Formato textual simples.
 
 Exemplo:
 
 ```text
-CMD:MOVE_FORWARD
-```
+MOVE:FORWARD
 
-```text
-CMD:TURN_LEFT
-```
+MOVE:STOP
 
-```text
-CMD:STOP
-```
+STATUS:BATTERY
 
----
-
-## Telemetria
-
-```text
-TEL:DISTANCE=120
-```
-
-```text
-TEL:ANGLE=45
-```
-
-```text
-TEL:BATTERY=82
+STATUS:SENSORS
 ```
 
 ---
 
-# Integração ESPHome
+## Evolução Futura
 
-O ESP32-S3 expõe os dados ao Home Assistant.
+Poderá evoluir para:
 
-```mermaid
-flowchart LR
+```text
+JSON
 
-    RP["RP2040"]
+ou
 
-    ESP["ESP32-S3"]
+frames binárias
+```
 
-    ESPHOME["ESPHome"]
+caso necessário.
 
-    HA["Home Assistant"]
+---
 
-    RP --> ESP
+# Comunicação Externa
 
-    ESP --> ESPHOME
+## Wi-Fi
 
-    ESPHOME --> HA
+Controlador:
+
+```text
+ESP32-S3
 ```
 
 ---
 
-# Entidades Previstas
+## Utilização
 
-## Sensores
+- Home Assistant
+- ESPHome
+- OTA
+- Serviços de voz
+- Telemetria
 
-```yaml
-sensor:
-  - battery
-  - distance
-  - heading
+---
+
+# Integração Home Assistant
+
+## Objetivos
+
+Permitir:
+
+- controlo remoto;
+- monitorização;
+- automações;
+- integração Assist;
+- ações baseadas em presença.
+
+---
+
+## Papel do Home Assistant
+
+O Home Assistant constitui o nível estratégico do sistema.
+
+Exemplos:
+
+```text
+Patrulha Programada
+
+Alertas
+
+Presença
+
+Rotinas
+
+Docking
 ```
 
 ---
 
-## Binários
+# ESPHome
 
-```yaml
-binary_sensor:
-  - obstacle
-  - charging
+## Estado
+
+Planeado.
+
+---
+
+## Funções
+
+Publicação de:
+
+```text
+Sensores
+
+Estado
+
+Bateria
+
+Áudio
+
+Vídeo
+```
+
+---
+
+## Controlo
+
+Receção de:
+
+```text
+Comandos
+
+Automações
+
+Pedidos Assist
+```
+
+---
+
+# Telemetria
+
+## Dados de Movimento
+
+Origem:
+
+RP2040
+
+Exemplos:
+
+- velocidade;
+- orientação;
+- aceleração.
+
+---
+
+## Dados de Energia
+
+Origem:
+
+ESP32-S3
+
+Exemplos:
+
+- estado de carga;
+- docking;
+- alimentação.
+
+---
+
+## Dados de Sensores
+
+Origem:
+
+RP2040
+
+Exemplos:
+
+- MPU6050;
+- HC-SR04.
+
+---
+
+# Resiliência
+
+## Falha de Wi-Fi
+
+A perda de Wi-Fi não deverá impedir:
+
+- movimento;
+- paragem;
+- segurança;
+- navegação básica.
+
+Responsável:
+
+```text
+RP2040
+```
+
+---
+
+## Falha do ESP32-S3
+
+O RP2040 deverá continuar capaz de:
+
+- parar motores;
+- responder a condições críticas;
+- manter a segurança.
+
+---
+
+## Falha UART
+
+Em caso de perda de comunicação:
+
+```text
+RP2040
+↓
+Paragem Segura
+```
+
+---
+
+# Integrações Futuras
+
+## Home Assistant
+
+Planeado:
+
+- Assist
+- Dashboard
+- Telemetria avançada
+- Estado energético
+
+---
+
+## Robôs Existentes
+
+Investigação futura.
+
+Possível integração com:
+
+```text
+Roomba i1
+```
+
+Objetivos:
+
+- comparação de telemetria;
+- reutilização de informação;
+- integração no ecossistema doméstico.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ RP2040
+
+✅ ESP32-S3
+
+✅ UART dedicada
+
+✅ Wi-Fi via ESP32-S3
+
+✅ Integração Home Assistant
+
+✅ Integração ESPHome
+
+---
+
+## Em Evolução
+
+- protocolo definitivo UART;
+- telemetria avançada;
+- docking autónomo;
+- integração de mapas e dados externos.
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- gpio-allocation.md
+- power-system.md
+- home-assistant-integration.md
+- firmware-protocol.md
+- project-decisions.md
