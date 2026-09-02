@@ -1,1768 +1,524 @@
-# Security and Failsafe System
+# Security and Failsafe
 
-> AEGIS - Safety, Reliability and Failure Management
+> AEGIS - Safety, Security and Failsafe Architecture
 
-Versão: 1.0
-Estado: Arquitetura Definida
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-Garantir que o AEGIS permanece seguro e previsível perante:
+Definir os mecanismos de segurança do AEGIS.
 
-- falhas de hardware;
-- falhas de software;
-- falhas de comunicação;
-- falhas energéticas;
-- falhas de sensores;
-- comportamentos inesperados.
+A segurança tem prioridade absoluta sobre:
 
-A segurança tem prioridade sobre qualquer funcionalidade.
+- patrulha;
+- navegação;
+- docking;
+- áudio;
+- vigilância.
+
+Sempre que existir conflito entre uma função operacional e uma função de segurança:
+
+```text
+Segurança vence.
+```
 
 ---
 
-# Princípio Fundamental
+# Filosofia
 
-Em caso de dúvida:
+O AEGIS deve falhar de forma segura.
 
-```text
-PARAR É MELHOR DO QUE CONTINUAR
-```
+Objetivos:
 
-O robô nunca deve continuar uma operação quando não tem informação suficiente para a executar em segurança.
+- evitar colisões;
+- evitar movimentos descontrolados;
+- evitar danos materiais;
+- proteger pessoas;
+- proteger animais domésticos;
+- proteger a própria plataforma.
 
 ---
 
 # Arquitetura de Segurança
 
-```mermaid
-flowchart TD
+```text
 
-    SENSOR["Sensores"]
-    RP["RP2040"]
-    ESP["ESP32-S3"]
-    HA["Home Assistant"]
+Home Assistant
+       │
 
-    FAILSAFE["Failsafe Manager"]
+ESP32-S3
+       │
 
-    SENSOR --> RP
-    RP --> FAILSAFE
+UART
 
-    ESP --> FAILSAFE
+       │
 
-    HA --> FAILSAFE
+RP2040
+       │
 
-    FAILSAFE --> STOP["Paragem Segura"]
+Motores
+
 ```
 
 ---
 
-# Níveis de Severidade
-
-## Nível 1 - Aviso
-
-O robô mantém operação normal.
-
-Exemplos:
-
-- perda momentânea de Wi-Fi;
-- perda de telemetria;
-- falha de entidade Home Assistant.
-
-Ações:
-
-- registar evento;
-- notificar utilizador.
-
----
-
-## Nível 2 - Degradação
-
-O robô continua operacional com limitações.
-
-Exemplos:
-
-- falha de um microfone;
-- falha da câmara;
-- falha de um LED.
-
-Ações:
-
-- desativar funcionalidade afetada;
-- continuar operação.
-
----
-
-## Nível 3 - Segurança
-
-Operação autónoma suspensa.
-
-Exemplos:
-
-- sensor crítico indisponível;
-- navegação instável;
-- colisões repetidas.
-
-Ações:
-
-- parar movimento;
-- solicitar intervenção.
-
----
-
-## Nível 4 - Crítico
-
-Paragem imediata.
-
-Exemplos:
-
-- watchdog disparado;
-- falha de controlador;
-- problema energético grave.
-
-Ações:
-
-- corte de movimento;
-- estado seguro.
-
----
-
-# Watchdogs
+# Responsabilidades
 
 ## RP2040
 
-Responsável:
+Responsável por:
 
-- movimento;
-- sensores.
-
----
-
-## Objetivo
-
-Detetar:
-
-- firmware bloqueado;
-- loops infinitos;
-- perda de controlo.
-
----
-
-## Estratégia
-
-```mermaid
-flowchart TD
-
-    RUN["Firmware"]
-
-    WDT["Watchdog"]
-
-    RESET["Reinício"]
-
-    RUN --> WDT
-
-    WDT --> RESET
-```
+- paragem de emergência;
+- controlo dos motores;
+- deteção de obstáculos;
+- ações de segurança imediatas.
 
 ---
 
 ## ESP32-S3
 
-Objetivo:
+Responsável por:
 
-- supervisão de comunicações;
-- supervisão de multimédia;
-- supervisão ESPHome.
-
----
-
-# Falha de Comunicação UART
-
-## Cenário
-
-Perda de comunicação RP2040 ↔ ESP32-S3.
+- supervisão;
+- telemetria;
+- integração Home Assistant;
+- lógica de alto nível.
 
 ---
 
-## Comportamento
+## Home Assistant
 
-```mermaid
-flowchart TD
-
-    UART["UART Perdida"]
-
-    TIMER["Timeout"]
-
-    STOP["Parar Movimento"]
-
-    UART --> TIMER
-
-    TIMER --> STOP
-```
-
----
-
-## Regra
-
-O RP2040 nunca deve executar comandos antigos indefinidamente.
-
-Após timeout:
-
-- motores param;
-- modo seguro ativado.
-
----
-
-# Falha de Wi-Fi
-
-## Cenário
-
-ESP32-S3 perde ligação de rede.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    WIFI["Wi-Fi Perdido"]
-
-    LOCAL["Modo Local"]
-
-    WIFI --> LOCAL
-```
-
----
-
-## Ações
-
-Permitir:
-
-- movimento local;
-- docking;
-- carregamento.
-
-Desativar:
-
-- streaming;
-- comunicação remota;
-- Assist.
-
----
-
-# Falha do Home Assistant
-
-## Cenário
-
-Home Assistant indisponível.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart LR
-
-    HA["Home Assistant"]
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    HA -.-> OFF["Indisponível"]
-
-    ESP --> RP
-```
-
----
-
-## Ações
-
-O AEGIS continua operacional.
-
-Manter:
-
-- movimento;
-- docking;
-- carregamento.
-
-Suspender:
+Responsável por:
 
 - automações;
-- dashboards;
-- Assist.
-
----
-
-# Falha do ESP32-S3
-
-## Cenário
-
-ESP32-S3 reinicia ou bloqueia.
-
----
-
-## Ações
-
-RP2040 assume modo seguro.
-
-```mermaid
-flowchart TD
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    SAFE["Modo Seguro"]
-
-    ESP --> SAFE
-
-    RP --> SAFE
-```
-
----
-
-## Comportamento
-
-- motores param;
-- eliminar movimentos pendentes;
-- aguardar recuperação.
-
----
-
-# Falha do RP2040
-
-## Cenário
-
-Controlador de movimento falha.
-
----
-
-## Consequência
-
-Perda de capacidade de navegar.
-
----
-
-## Ações
-
-- desativar motores;
-- gerar alerta;
-- impedir novas missões.
-
----
-
-# Falha do HC-SR04
-
-## Comportamento
-
-O robô entra em modo degradado.
-
-Restrições:
-
-- reduzir velocidade;
-- desativar docking automático.
-
----
-
-# Falha do MPU-6050
-
-## Comportamento
-
-Perda da referência inercial.
-
----
-
-## Ações
-
-```mermaid
-flowchart TD
-
-    MPU["IMU Falhou"]
-
-    STOP["Parar"]
-
-    ALERT["Gerar Alerta"]
-
-    MPU --> STOP
-
-    STOP --> ALERT
-```
-
----
-
-# Falha dos Microfones
-
-## Ações
-
-- manter navegação;
-- manter docking;
-- manter vídeo.
-
-Impacto:
-
-- áudio degradado.
-
----
-
-# Falha da Câmara
-
-## Ações
-
-- continuar navegação;
-- continuar docking;
-- continuar carregamento.
-
-Impacto:
-
-- vídeo indisponível.
-
----
-
-# Gestão de Energia
-
-## Bateria Baixa
-
-```mermaid
-flowchart TD
-
-    LOW["Bateria Baixa"]
-
-    HOME["Regresso à Base"]
-
-    CHARGE["Carga"]
-
-    LOW --> HOME
-    HOME --> CHARGE
-```
-
-
----
-
-## Bateria Crítica
-
-```mermaid
-flowchart TD
-
-    LOW["Nivel Crítico"]
-
-    STOP["Parar Missão"]
-
-    LOW --> STOP
-```
-
----
-
-## Falha de Carregamento
-
-### Cenário
-
-Docking bem sucedido mas sem carga.
-
----
-
-### Ações
-
-- nova tentativa de alinhamento;
-- segunda tentativa;
-- alerta ao utilizador.
-
----
-
-# Colisões
-
-## Deteção
-
-Fontes:
-
-- MPU-6050
-- HC-SR04
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    COLLISION["Colisão"]
-
-    STOP["Parar"]
-
-    BACK["Recuar"]
-
-    RECHECK["Reavaliar"]
-
-    COLLISION --> STOP
-
-    STOP --> BACK
-
-    BACK --> RECHECK
-```
-
----
-
-# Botão de Emergência
-
-## Futuro
-
-Possibilidade de adicionar:
-
-- botão físico;
-- comando remoto;
-- entidade Home Assistant.
-
----
-
-## Efeito
-
-Paragem imediata.
-
----
-
-# Modos Seguros
-
-## Safe Mode
-
-Permite:
-
-- diagnóstico;
-- telemetria;
-- recuperação.
-
-Impede:
-
-- movimento.
-
----
-
-## Recovery Mode
-
-Permite:
-
-- reiniciar módulos;
-- efetuar testes;
-- recuperar configurações.
-
----
-
-# Requisitos de Segurança
-
-O AEGIS não deverá:
-
-- mover-se sem sensores críticos;
-- executar docking sem referências válidas;
-- continuar missão com bateria crítica;
-- ignorar eventos de watchdog;
-- executar comandos sem validação.
-
----
-
-# Critérios de Validação
-
-A arquitetura de segurança será considerada concluída quando:
-
-- [ ] Watchdogs funcionam.
-- [ ] Falhas UART são tratadas.
-- [ ] Perda de Wi-Fi é tratada.
-- [ ] Falha Home Assistant é tratada.
-- [ ] Falha de sensores críticos é tratada.
-- [ ] Colisões são tratadas.
-- [ ] Bateria crítica força estado seguro.
-
----
-
-# Regra de Ouro
-
-A estabilidade e a segurança têm prioridade sobre:
-
-- velocidade;
-- funcionalidades;
-- multimédia;
-- automações.
-
-Sempre que existir conflito entre funcionalidade e segurança:
-
-```text
-SEGURANÇA VENCE
-```# Security and Failsafe System
-
-> AEGIS - Safety, Reliability and Failure Management
-
-Versão: 1.0
-Estado: Arquitetura Definida
-
----
-
-# Objetivo
-
-Garantir que o AEGIS permanece seguro e previsível perante:
-
-- falhas de hardware;
-- falhas de software;
-- falhas de comunicação;
-- falhas energéticas;
-- falhas de sensores;
-- comportamentos inesperados.
-
-A segurança tem prioridade sobre qualquer funcionalidade.
+- alertas;
+- monitorização;
+- supervisão remota.
 
 ---
 
 # Princípio Fundamental
 
-Em caso de dúvida:
+A capacidade de parar o robô nunca depende de:
+
+- Wi-Fi;
+- Home Assistant;
+- Internet;
+- cloud;
+- ESP32-S3.
+
+A capacidade de parar o robô deve existir sempre no:
 
 ```text
-PARAR É MELHOR DO QUE CONTINUAR
-```
-
-O robô nunca deve continuar uma operação quando não tem informação suficiente para a executar em segurança.
-
----
-
-# Arquitetura de Segurança
-
-```mermaid
-flowchart TD
-
-    SENSOR["Sensores"]
-    RP["RP2040"]
-    ESP["ESP32-S3"]
-    HA["Home Assistant"]
-
-    FAILSAFE["Failsafe Manager"]
-
-    SENSOR --> RP
-    RP --> FAILSAFE
-
-    ESP --> FAILSAFE
-
-    HA --> FAILSAFE
-
-    FAILSAFE --> STOP["Paragem Segura"]
+RP2040
 ```
 
 ---
 
-# Níveis de Severidade
+# Obstáculos
 
-## Nível 1 - Aviso
+## Sensor
 
-O robô mantém operação normal.
-
-Exemplos:
-
-- perda momentânea de Wi-Fi;
-- perda de telemetria;
-- falha de entidade Home Assistant.
-
-Ações:
-
-- registar evento;
-- notificar utilizador.
+HC-SR04
 
 ---
 
-## Nível 2 - Degradação
+## Reação
 
-O robô continua operacional com limitações.
+Quando um obstáculo for detetado abaixo do limite configurado:
 
-Exemplos:
-
-- falha de um microfone;
-- falha da câmara;
-- falha de um LED.
-
-Ações:
-
-- desativar funcionalidade afetada;
-- continuar operação.
-
----
-
-## Nível 3 - Segurança
-
-Operação autónoma suspensa.
-
-Exemplos:
-
-- sensor crítico indisponível;
-- navegação instável;
-- colisões repetidas.
-
-Ações:
-
-- parar movimento;
-- solicitar intervenção.
-
----
-
-## Nível 4 - Crítico
-
-Paragem imediata.
-
-Exemplos:
-
-- watchdog disparado;
-- falha de controlador;
-- problema energético grave.
-
-Ações:
-
-- corte de movimento;
-- estado seguro.
-
----
-
-# Watchdogs
-
-## RP2040
-
-Responsável:
-
-- movimento;
-- sensores.
-
----
-
-## Objetivo
-
-Detetar:
-
-- firmware bloqueado;
-- loops infinitos;
-- perda de controlo.
-
----
-
-## Estratégia
-
-```mermaid
-flowchart TD
-
-    RUN["Firmware"]
-
-    WDT["Watchdog"]
-
-    RESET["Reinício"]
-
-    RUN --> WDT
-
-    WDT --> RESET
+```text
+Parar
 ```
 
 ---
 
-## ESP32-S3
+## Ações Possíveis
 
-Objetivo:
+```text
+Stop
 
-- supervisão de comunicações;
-- supervisão de multimédia;
-- supervisão ESPHome.
+Recuar
+
+Rodar
+```
 
 ---
 
 # Falha de Comunicação UART
 
-## Cenário
+## Situação
 
-Perda de comunicação RP2040 ↔ ESP32-S3.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    UART["UART Perdida"]
-
-    TIMER["Timeout"]
-
-    STOP["Parar Movimento"]
-
-    UART --> TIMER
-
-    TIMER --> STOP
-```
-
----
-
-## Regra
-
-O RP2040 nunca deve executar comandos antigos indefinidamente.
-
-Após timeout:
-
-- motores param;
-- modo seguro ativado.
-
----
-
-# Falha de Wi-Fi
-
-## Cenário
-
-ESP32-S3 perde ligação de rede.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    WIFI["Wi-Fi Perdido"]
-
-    LOCAL["Modo Local"]
-
-    WIFI --> LOCAL
-```
-
----
-
-## Ações
-
-Permitir:
-
-- movimento local;
-- docking;
-- carregamento.
-
-Desativar:
-
-- streaming;
-- comunicação remota;
-- Assist.
-
----
-
-# Falha do Home Assistant
-
-## Cenário
-
-Home Assistant indisponível.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart LR
-
-    HA["Home Assistant"]
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    HA -.-> OFF["Indisponível"]
-
-    ESP --> RP
-```
-
----
-
-## Ações
-
-O AEGIS continua operacional.
-
-Manter:
-
-- movimento;
-- docking;
-- carregamento.
-
-Suspender:
-
-- automações;
-- dashboards;
-- Assist.
-
----
-
-# Falha do ESP32-S3
-
-## Cenário
-
-ESP32-S3 reinicia ou bloqueia.
-
----
-
-## Ações
-
-RP2040 assume modo seguro.
-
-```mermaid
-flowchart TD
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    SAFE["Modo Seguro"]
-
-    ESP --> SAFE
-
-    RP --> SAFE
-```
-
----
-
-## Comportamento
-
-- motores param;
-- eliminar movimentos pendentes;
-- aguardar recuperação.
-
----
-
-# Falha do RP2040
-
-## Cenário
-
-Controlador de movimento falha.
-
----
-
-## Consequência
-
-Perda de capacidade de navegar.
-
----
-
-## Ações
-
-- desativar motores;
-- gerar alerta;
-- impedir novas missões.
-
----
-
-# Falha do HC-SR04
-
-## Comportamento
-
-O robô entra em modo degradado.
-
-Restrições:
-
-- reduzir velocidade;
-- desativar docking automático.
-
----
-
-# Falha do MPU-6050
-
-## Comportamento
-
-Perda da referência inercial.
-
----
-
-## Ações
-
-```mermaid
-flowchart TD
-
-    MPU["IMU Falhou"]
-
-    STOP["Parar"]
-
-    ALERT["Gerar Alerta"]
-
-    MPU --> STOP
-
-    STOP --> ALERT
-```
-
----
-
-# Falha dos Microfones
-
-## Ações
-
-- manter navegação;
-- manter docking;
-- manter vídeo.
-
-Impacto:
-
-- áudio degradado.
-
----
-
-# Falha da Câmara
-
-## Ações
-
-- continuar navegação;
-- continuar docking;
-- continuar carregamento.
-
-Impacto:
-
-- vídeo indisponível.
-
----
-
-# Gestão de Energia
-
-## Bateria Baixa
-
-```mermaid
-flowchart TD
-
-    LOW["Bateria Baixa"]
-
-    HOME["Regresso à Base"]
-
-    CHARGE["Carga"]
-
-    LOW --> HOME
-
-    HOME --> CHARGE
-```
-
----
-
-## Bateria Crítica
-
-```mermaid
-flowchart TD
-
-    LOW["Nivel Crítico"]
-
-    STOP["Parar Missão"]
-
-    LOW --> STOP
-```
-
----
-
-## Falha de Carregamento
-
-### Cenário
-
-Docking bem sucedido mas sem carga.
-
----
-
-### Ações
-
-- nova tentativa de alinhamento;
-- segunda tentativa;
-- alerta ao utilizador.
-
----
-
-# Colisões
-
-## Deteção
-
-Fontes:
-
-- MPU-6050
-- HC-SR04
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    COLLISION["Colisão"]
-
-    STOP["Parar"]
-
-    BACK["Recuar"]
-
-    RECHECK["Reavaliar"]
-
-    COLLISION --> STOP
-
-    STOP --> BACK
-
-    BACK --> RECHECK
-```
-
----
-
-# Botão de Emergência
-
-## Futuro
-
-Possibilidade de adicionar:
-
-- botão físico;
-- comando remoto;
-- entidade Home Assistant.
-
----
-
-## Efeito
-
-Paragem imediata.
-
----
-
-# Modos Seguros
-
-## Safe Mode
-
-Permite:
-
-- diagnóstico;
-- telemetria;
-- recuperação.
-
-Impede:
-
-- movimento.
-
----
-
-## Recovery Mode
-
-Permite:
-
-- reiniciar módulos;
-- efetuar testes;
-- recuperar configurações.
-
----
-
-# Requisitos de Segurança
-
-O AEGIS não deverá:
-
-- mover-se sem sensores críticos;
-- executar docking sem referências válidas;
-- continuar missão com bateria crítica;
-- ignorar eventos de watchdog;
-- executar comandos sem validação.
-
----
-
-# Critérios de Validação
-
-A arquitetura de segurança será considerada concluída quando:
-
-- [ ] Watchdogs funcionam.
-- [ ] Falhas UART são tratadas.
-- [ ] Perda de Wi-Fi é tratada.
-- [ ] Falha Home Assistant é tratada.
-- [ ] Falha de sensores críticos é tratada.
-- [ ] Colisões são tratadas.
-- [ ] Bateria crítica força estado seguro.
-
----
-
-# Regra de Ouro
-
-A estabilidade e a segurança têm prioridade sobre:
-
-- velocidade;
-- funcionalidades;
-- multimédia;
-- automações.
-
-Sempre que existir conflito entre funcionalidade e segurança:
+Perda de comunicação entre:
 
 ```text
-SEGURANÇA VENCE
-```# Security and Failsafe System
-
-> AEGIS - Safety, Reliability and Failure Management
-
-Versão: 1.0
-Estado: Arquitetura Definida
+ESP32-S3
+↔
+RP2040
+```
 
 ---
 
-# Objetivo
-
-Garantir que o AEGIS permanece seguro e previsível perante:
-
-- falhas de hardware;
-- falhas de software;
-- falhas de comunicação;
-- falhas energéticas;
-- falhas de sensores;
-- comportamentos inesperados.
-
-A segurança tem prioridade sobre qualquer funcionalidade.
-
----
-
-# Princípio Fundamental
-
-Em caso de dúvida:
+## Resposta
 
 ```text
-PARAR É MELHOR DO QUE CONTINUAR
+STOP
 ```
-
-O robô nunca deve continuar uma operação quando não tem informação suficiente para a executar em segurança.
-
----
-
-# Arquitetura de Segurança
-
-```mermaid
-flowchart TD
-
-    SENSOR["Sensores"]
-    RP["RP2040"]
-    ESP["ESP32-S3"]
-    HA["Home Assistant"]
-
-    FAILSAFE["Failsafe Manager"]
-
-    SENSOR --> RP
-    RP --> FAILSAFE
-
-    ESP --> FAILSAFE
-
-    HA --> FAILSAFE
-
-    FAILSAFE --> STOP["Paragem Segura"]
-```
-
----
-
-# Níveis de Severidade
-
-## Nível 1 - Aviso
-
-O robô mantém operação normal.
-
-Exemplos:
-
-- perda momentânea de Wi-Fi;
-- perda de telemetria;
-- falha de entidade Home Assistant.
-
-Ações:
-
-- registar evento;
-- notificar utilizador.
-
----
-
-## Nível 2 - Degradação
-
-O robô continua operacional com limitações.
-
-Exemplos:
-
-- falha de um microfone;
-- falha da câmara;
-- falha de um LED.
-
-Ações:
-
-- desativar funcionalidade afetada;
-- continuar operação.
-
----
-
-## Nível 3 - Segurança
-
-Operação autónoma suspensa.
-
-Exemplos:
-
-- sensor crítico indisponível;
-- navegação instável;
-- colisões repetidas.
-
-Ações:
-
-- parar movimento;
-- solicitar intervenção.
-
----
-
-## Nível 4 - Crítico
-
-Paragem imediata.
-
-Exemplos:
-
-- watchdog disparado;
-- falha de controlador;
-- problema energético grave.
-
-Ações:
-
-- corte de movimento;
-- estado seguro.
-
----
-
-# Watchdogs
-
-## RP2040
-
-Responsável:
-
-- movimento;
-- sensores.
 
 ---
 
 ## Objetivo
 
-Detetar:
-
-- firmware bloqueado;
-- loops infinitos;
-- perda de controlo.
-
----
-
-## Estratégia
-
-```mermaid
-flowchart TD
-
-    RUN["Firmware"]
-
-    WDT["Watchdog"]
-
-    RESET["Reinício"]
-
-    RUN --> WDT
-
-    WDT --> RESET
-```
-
----
-
-## ESP32-S3
-
-Objetivo:
-
-- supervisão de comunicações;
-- supervisão de multimédia;
-- supervisão ESPHome.
-
----
-
-# Falha de Comunicação UART
-
-## Cenário
-
-Perda de comunicação RP2040 ↔ ESP32-S3.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    UART["UART Perdida"]
-
-    TIMER["Timeout"]
-
-    STOP["Parar Movimento"]
-
-    UART --> TIMER
-
-    TIMER --> STOP
-```
-
----
-
-## Regra
-
-O RP2040 nunca deve executar comandos antigos indefinidamente.
-
-Após timeout:
-
-- motores param;
-- modo seguro ativado.
+Garantir que a perda do controlador principal não provoca movimento descontrolado.
 
 ---
 
 # Falha de Wi-Fi
 
-## Cenário
+## Situação
 
-ESP32-S3 perde ligação de rede.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    WIFI["Wi-Fi Perdido"]
-
-    LOCAL["Modo Local"]
-
-    WIFI --> LOCAL
-```
-
----
-
-## Ações
-
-Permitir:
-
-- movimento local;
-- docking;
-- carregamento.
-
-Desativar:
-
-- streaming;
-- comunicação remota;
-- Assist.
-
----
-
-# Falha do Home Assistant
-
-## Cenário
-
-Home Assistant indisponível.
-
----
-
-## Comportamento
-
-```mermaid
-flowchart LR
-
-    HA["Home Assistant"]
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    HA -.-> OFF["Indisponível"]
-
-    ESP --> RP
-```
-
----
-
-## Ações
-
-O AEGIS continua operacional.
-
-Manter:
-
-- movimento;
-- docking;
-- carregamento.
-
-Suspender:
-
-- automações;
-- dashboards;
-- Assist.
-
----
-
-# Falha do ESP32-S3
-
-## Cenário
-
-ESP32-S3 reinicia ou bloqueia.
-
----
-
-## Ações
-
-RP2040 assume modo seguro.
-
-```mermaid
-flowchart TD
-
-    ESP["ESP32-S3"]
-
-    RP["RP2040"]
-
-    SAFE["Modo Seguro"]
-
-    ESP --> SAFE
-
-    RP --> SAFE
-```
-
----
-
-## Comportamento
-
-- motores param;
-- eliminar movimentos pendentes;
-- aguardar recuperação.
-
----
-
-# Falha do RP2040
-
-## Cenário
-
-Controlador de movimento falha.
+Perda de rede sem fios.
 
 ---
 
 ## Consequência
 
-Perda de capacidade de navegar.
+Não deverá impedir:
+
+- navegação básica;
+- paragem;
+- proteção local.
 
 ---
 
-## Ações
-
-- desativar motores;
-- gerar alerta;
-- impedir novas missões.
-
----
-
-# Falha do HC-SR04
-
-## Comportamento
-
-O robô entra em modo degradado.
-
-Restrições:
-
-- reduzir velocidade;
-- desativar docking automático.
-
----
-
-# Falha do MPU-6050
-
-## Comportamento
-
-Perda da referência inercial.
-
----
-
-## Ações
-
-```mermaid
-flowchart TD
-
-    MPU["IMU Falhou"]
-
-    STOP["Parar"]
-
-    ALERT["Gerar Alerta"]
-
-    MPU --> STOP
-
-    STOP --> ALERT
-```
-
----
-
-# Falha dos Microfones
-
-## Ações
-
-- manter navegação;
-- manter docking;
-- manter vídeo.
-
-Impacto:
-
-- áudio degradado.
-
----
-
-# Falha da Câmara
-
-## Ações
-
-- continuar navegação;
-- continuar docking;
-- continuar carregamento.
-
-Impacto:
-
-- vídeo indisponível.
-
----
-
-# Gestão de Energia
-
-## Bateria Baixa
-
-```mermaid
-flowchart TD
-
-    LOW["Bateria Baixa"]
-
-    HOME["Regresso à Base"]
-
-    CHARGE["Carga"]
-
-    LOW --> HOME
-
-    HOME --> CHARGE
-```
-
----
-
-## Bateria Crítica
-
-```mermaid
-flowchart TD
-
-    LOW["Nivel Crítico"]
-
-    STOP["Parar Missão"]
-
-    LOW --> STOP
-```
-
----
-
-## Falha de Carregamento
-
-### Cenário
-
-Docking bem sucedido mas sem carga.
-
----
-
-### Ações
-
-- nova tentativa de alinhamento;
-- segunda tentativa;
-- alerta ao utilizador.
-
----
-
-# Colisões
-
-## Deteção
-
-Fontes:
-
-- MPU-6050
-- HC-SR04
-
----
-
-## Comportamento
-
-```mermaid
-flowchart TD
-
-    COLLISION["Colisão"]
-
-    STOP["Parar"]
-
-    BACK["Recuar"]
-
-    RECHECK["Reavaliar"]
-
-    COLLISION --> STOP
-
-    STOP --> BACK
-
-    BACK --> RECHECK
-```
-
----
-
-# Botão de Emergência
-
-## Futuro
-
-Possibilidade de adicionar:
-
-- botão físico;
-- comando remoto;
-- entidade Home Assistant.
-
----
-
-## Efeito
-
-Paragem imediata.
-
----
-
-# Modos Seguros
-
-## Safe Mode
-
-Permite:
-
-- diagnóstico;
-- telemetria;
-- recuperação.
-
-Impede:
-
-- movimento.
-
----
-
-## Recovery Mode
-
-Permite:
-
-- reiniciar módulos;
-- efetuar testes;
-- recuperar configurações.
-
----
-
-# Requisitos de Segurança
-
-O AEGIS não deverá:
-
-- mover-se sem sensores críticos;
-- executar docking sem referências válidas;
-- continuar missão com bateria crítica;
-- ignorar eventos de watchdog;
-- executar comandos sem validação.
-
----
-
-# Critérios de Validação
-
-A arquitetura de segurança será considerada concluída quando:
-
-- [ ] Watchdogs funcionam.
-- [ ] Falhas UART são tratadas.
-- [ ] Perda de Wi-Fi é tratada.
-- [ ] Falha Home Assistant é tratada.
-- [ ] Falha de sensores críticos é tratada.
-- [ ] Colisões são tratadas.
-- [ ] Bateria crítica força estado seguro.
-
----
-
-# Regra de Ouro
-
-A estabilidade e a segurança têm prioridade sobre:
-
-- velocidade;
-- funcionalidades;
-- multimédia;
-- automações.
-
-Sempre que existir conflito entre funcionalidade e segurança:
+## Responsável
 
 ```text
-SEGURANÇA VENCE
+RP2040
 ```
+
+---
+
+# Falha do ESP32-S3
+
+## Situação
+
+ESP32-S3 bloqueado ou reiniciado.
+
+---
+
+## Consequência
+
+O RP2040 continua responsável por:
+
+- motores;
+- sensores;
+- segurança.
+
+---
+
+## Comportamento
+
+```text
+STOP
+```
+
+seguido de:
+
+```text
+Estado Seguro
+```
+
+---
+
+# Falha do RP2040
+
+## Situação
+
+Falha do controlador de movimento.
+
+---
+
+## Consequência
+
+Perda do movimento.
+
+---
+
+## Resultado Esperado
+
+O robô deve permanecer parado.
+
+---
+
+# Energia Crítica
+
+## Situação
+
+Bateria abaixo do limite mínimo.
+
+---
+
+## Ações
+
+```text
+Terminar patrulha
+
+Procurar docking
+
+Iniciar carregamento
+```
+
+---
+
+# Perda de Alimentação
+
+## Situação
+
+Falha de energia.
+
+---
+
+## Requisitos
+
+- preservar hardware;
+- permitir reinicialização automática;
+- evitar movimentos inesperados.
+
+---
+
+# Docking
+
+## Durante aproximação
+
+Prioridade:
+
+```text
+Segurança
+```
+
+---
+
+## Comportamentos permitidos
+
+```text
+Aproximação lenta
+
+Paragem imediata
+
+Nova tentativa
+```
+
+---
+
+## Comportamentos proibidos
+
+```text
+Impacto deliberado
+
+Aceleração cega
+```
+
+---
+
+# Sensores de Queda
+
+## Estado
+
+Planeados
+
+---
+
+## Prioridade
+
+Baixa para a instalação atual.
+
+---
+
+## Justificação
+
+O ambiente de referência não possui:
+
+- escadas;
+- desníveis significativos.
+
+---
+
+## Obrigatoriedade
+
+Apesar disso, o projeto considera os sensores de queda como parte integrante da arquitetura de segurança.
+
+---
+
+## Funções Futuras
+
+- deteção de escadas;
+- deteção de varandas;
+- proteção anti-queda.
+
+---
+
+# Watchdog
+
+## RP2040
+
+Recomendado.
+
+Objetivo:
+
+Recuperar de bloqueios inesperados.
+
+---
+
+## ESP32-S3
+
+Recomendado.
+
+Objetivo:
+
+Reinício automático após falhas.
+
+---
+
+# Estados Seguros
+
+## Idle
+
+```text
+Sem movimento
+```
+
+---
+
+## Stop
+
+```text
+Motores parados
+```
+
+---
+
+## Charging
+
+```text
+Robot imobilizado
+```
+
+---
+
+## Error
+
+```text
+Motores desativados
+```
+
+---
+
+# Home Assistant
+
+## Alertas Futuros
+
+Eventos a publicar:
+
+```text
+Obstacle Detected
+
+UART Failure
+
+ESP32 Failure
+
+Low Battery
+
+Docking Failure
+```
+
+---
+
+# Segurança Física
+
+## Estrutura
+
+Objetivos:
+
+- evitar arestas cortantes;
+- proteger componentes;
+- evitar cabos expostos.
+
+---
+
+## Cablagem
+
+Deverá ser:
+
+- organizada;
+- protegida;
+- fixada.
+
+---
+
+# Requisitos de Projeto
+
+## Obrigatórios
+
+✅ Paragem segura
+
+✅ Falha segura
+
+✅ Controlo local no RP2040
+
+✅ Sem dependência da cloud
+
+✅ Sem dependência de Internet
+
+---
+
+## Futuros
+
+🔲 Sensores de queda
+
+🔲 Sensores de docking avançados
+
+🔲 Monitorização energética avançada
+
+🔲 Diagnóstico automático
+
+---
+
+# Estado Atual
+
+## Implementado Arquiteturalmente
+
+✅ HC-SR04
+
+✅ MPU6050
+
+✅ RP2040 dedicado ao movimento
+
+✅ ESP32-S3 dedicado à lógica principal
+
+✅ UART entre controladores
+
+✅ Home Assistant como camada estratégica
+
+---
+
+## Em Evolução
+
+- Docking
+- Energia
+- Gestão de bateria
+- Sensores de queda
+
+---
+
+# Documentos Relacionados
+
+- sensors.md
+- power-system.md
+- communication-system.md
+- firmware-protocol.md
+- home-assistant-integration.md
+- project-decisions.md
