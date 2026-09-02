@@ -2,324 +2,446 @@
 
 > AEGIS - Sensor Architecture
 
-Versão: 1.0
-Estado: Em desenvolvimento
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-Este documento descreve todos os sensores utilizados pelo projeto AEGIS.
+Definir os sensores utilizados pelo AEGIS.
 
-Inclui:
+Os sensores são responsáveis por:
 
-- sensores atuais
-- sensores planeados
-- função de cada sensor
-- integração no sistema
-- evolução futura
+- navegação;
+- deteção de obstáculos;
+- orientação;
+- vigilância;
+- interação;
+- segurança.
 
 ---
 
 # Filosofia
 
-Nenhum sensor é responsável sozinho pela tomada de decisão.
+Os sensores estão distribuídos por camadas funcionais.
 
-O AEGIS utiliza uma abordagem de fusão de sensores.
+```text
 
-```mermaid
-flowchart TD
+Piso 3
+Perceção e Interação
 
-    IMU["MPU-6050"]
-    US["HC-SR04"]
-    ENC["Encoders"]
-    MIC["INMP441"]
-    CAM["Câmara"]
+Piso 2
+Processamento
 
-    FUSION["Motor de Decisão"]
+Piso 1
+Movimento e Segurança
 
-    IMU --> FUSION
-    US --> FUSION
-    ENC --> FUSION
-    MIC --> FUSION
-    CAM --> FUSION
 ```
 
 ---
 
-# Sensores Atuais
+# Sensores Ativos na V1
 
 ## MPU-6050
 
-### Tipo
+### Estado
 
-IMU (Inertial Measurement Unit)
+```text
+Adquirido
+```
+
+---
+
+### Localização
+
+```text
+Piso 1
+```
+
+Preferencialmente próximo do centro geométrico do robô.
+
+---
+
+### Funções
+
+- orientação;
+- aceleração;
+- deteção de inclinação;
+- estabilidade;
+- telemetria.
+
+---
+
+### Controlador
+
+```text
+RP2040
+```
+
+---
 
 ### Interface
 
+```text
 I²C
-
-### Controlador
-
-RP2040
-
-### Funções
-
-- medição de aceleração
-- medição de orientação
-- medição de rotação
-- deteção de impactos
-- estabilização da navegação
-
-### Utilização no Projeto
-
-```mermaid
-flowchart LR
-
-    MPU["MPU-6050"]
-
-    NAV["Navegação"]
-
-    TURN["Controlo de Rotação"]
-
-    MPU --> NAV
-    MPU --> TURN
 ```
 
 ---
 
-## HC-SR04
+# HC-SR04
 
-### Tipo
+### Estado
 
-Sensor ultrassónico
+```text
+Adquirido
+```
+
+---
+
+### Localização
+
+```text
+Frente do robô
+```
+
+---
+
+### Funções
+
+- deteção de obstáculos;
+- prevenção de colisões;
+- apoio à navegação;
+- apoio ao docking.
+
+---
+
+### Controlador
+
+```text
+RP2040
+```
+
+---
 
 ### Interface
 
-Digital
-
-### Controlador
-
-RP2040
-
-### Posição
-
-Frente do robô
-
-### Funções
-
-- deteção de obstáculos
-- aproximação controlada
-- auxílio ao docking
-
-### Utilização
-
-```mermaid
-flowchart LR
-
-    SONAR["HC-SR04"]
-
-    DECISION["Evitar Obstáculo"]
-
-    SONAR --> DECISION
+```text
+Grove Digital
 ```
+
+através de Grove-Pigtail.
 
 ---
 
-# Sensores de Áudio
+# Sistema de Áudio
 
 ## INMP441
 
-### Quantidade
+### Estado
 
-3
+```text
+3 unidades adquiridas
+```
 
-### Tipo
+---
 
-Microfone MEMS I²S
+### Localização
 
-### Interface
+```text
+Piso 3
+```
 
-I²S
+---
+
+### Distribuição Prevista
+
+```text
+
+          Frente
+
+            M1
+
+      M2         M3
+
+Esquerda      Direita
+
+```
+
+---
+
+### Funções
+
+- captura de voz;
+- Home Assistant Assist;
+- monitorização sonora;
+- futura localização aproximada de origem sonora.
+
+---
 
 ### Controlador
 
+```text
 ESP32-S3
-
----
-
-## Disposição Prevista
-
-## Disposição Prevista
-
-```mermaid
-flowchart TB
-
-    M1["INMP441 #1<br/>Frontal"]
-
-    M2["INMP441 #2<br/>Esquerda"]
-    M3["INMP441 #3<br/>Direita"]
-
-    M1 --- M2
-    M1 --- M3
-```
-
-## Funções
-
-### Curto Prazo
-
-- deteção de som
-- voz
-- Assist
-
-### Médio Prazo
-
-- localização aproximada da origem sonora
-
-### Longo Prazo
-
-- seguimento acústico
-- deteção inteligente de eventos
-
----
-
-# Sensores Planeados
-
-## Encoders
-
-### Estado
-
-Planeado
-
-### Funções
-
-- distância percorrida
-- velocidade
-- odometria
-- apoio à navegação
-
----
-
-## Arquitetura
-
-```mermaid
-flowchart LR
-
-    ENC["Encoders"]
-
-    RP["RP2040"]
-
-    NAV["Navegação"]
-
-    ENC --> RP
-    RP --> NAV
 ```
 
 ---
 
-# Sensores de Docking
+### Interface
 
-## Recetores IR
-
-### Estado
-
-Planeado
-
-### Funções
-
-- deteção da base
-- alinhamento
-- aproximação final
-
----
-
-### Arquitetura
-
-```mermaid
-flowchart LR
-
-    BASE["Emissor IR"]
-
-    RX["Recetores IR"]
-
-    CTRL["Controlo de Docking"]
-
-    BASE -.-> RX
-
-    RX --> CTRL
+```text
+I²S
 ```
 
 ---
 
-# Sensores de Visão
+# Sistema de Visão
 
 ## Câmara
 
 ### Estado
 
-Planeado
-
-### Funções
-
-- vigilância
-- streaming remoto
-- reconhecimento da estação de carga
-- navegação visual
+Planeada
 
 ---
 
-## Integração Prevista
+### Localização
 
-```mermaid
-flowchart LR
-
-    CAM["Câmara"]
-
-    ESP["ESP32-S3"]
-
-    HA["Home Assistant"]
-
-    CAM --> ESP
-    ESP --> HA
+```text
+Frente superior
 ```
 
 ---
 
-# Mapa de Sensores por Subsistema
+### Funções
 
-## Movimento
-
-| Sensor | Função |
-|----------|----------|
-| MPU-6050 | Orientação |
-| HC-SR04 | Obstáculos |
-| Encoders | Odometria |
+- vigilância;
+- streaming remoto;
+- snapshots;
+- integração Home Assistant.
 
 ---
 
-## Docking
+### Controlador
 
-| Sensor | Função |
-|----------|----------|
-| IR | Localização da base |
-| HC-SR04 | Distância final |
-| Câmara | Alinhamento futuro |
+```text
+ESP32-S3
+```
 
 ---
 
-## Vigilância
+# Sensores de Queda
 
-| Sensor | Função |
-|----------|----------|
-| Câmara | Vídeo |
-| INMP441 | Áudio |
+## Estado
+
+Planeados
 
 ---
 
-## Interação
+## Prioridade
 
-| Sensor | Função |
-|----------|----------|
-| INMP441 | Voz |
-| Câmara | Presença |
+Baixa
 
+---
+
+## Justificação
+
+A instalação de referência do AEGIS é:
+
+```text
+Interior
+Sem escadas
+Sem desníveis significativos
+```
+
+No entanto o projeto é público e deve prever:
+
+- utilização em habitações com escadas;
+- utilização em ambientes desconhecidos;
+- proteção contra quedas.
+
+---
+
+## Funções Futuras
+
+- deteção de escadas;
+- deteção de varandas;
+- prevenção de quedas;
+- recuo automático.
+
+---
+
+# Sensores de Docking
+
+## Estado
+
+Planeados
+
+---
+
+## Funções
+
+- aproximação à base;
+- alinhamento;
+- confirmação de contacto;
+- monitorização de carregamento.
+
+---
+
+## Tecnologias em Avaliação
+
+```text
+Infravermelhos
+
+Contactos elétricos
+
+Indução
+
+Base Roomba (experimental)
+```
+
+---
+
+# Sensores Virtuais
+
+## Origem
+
+Home Assistant
+
+---
+
+## Funções Futuras
+
+Permitir que o AEGIS utilize informação proveniente de:
+
+- presença;
+- alarmes;
+- sensores ambientais;
+- estados da habitação.
+
+---
+
+## Exemplos
+
+```text
+Casa Ocupada
+
+Casa Vazia
+
+Modo Noite
+
+Alarme Ativo
+```
+
+---
+
+# Integração com Robôs Existentes
+
+## Roomba i1
+
+### Estado
+
+Investigação futura
+
+---
+
+### Objetivos
+
+Possível utilização de:
+
+- informação de mapas;
+- telemetria;
+- zonas;
+- estados de docking.
+
+---
+
+# Distribuição por Controlador
+
+## RP2040
+
+Responsável por:
+
+- MPU-6050
+- HC-SR04
+- sensores de movimento
+- segurança local
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- INMP441
+- Câmara
+- sensores multimédia
+- integração Home Assistant
+
+---
+
+# Prioridades da V1
+
+## Obrigatórios
+
+✅ MPU-6050
+
+✅ HC-SR04
+
+✅ INMP441
+
+---
+
+## Planeados
+
+🔲 Câmara
+
+🔲 Docking
+
+🔲 Sensores de queda
+
+---
+
+# Segurança
+
+Os sensores ligados ao RP2040 têm prioridade máxima.
+
+A perda do ESP32-S3 não deverá impedir:
+
+- deteção de obstáculos;
+- paragem segura;
+- prevenção de colisões.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ MPU-6050 adquirido
+
+✅ HC-SR04 adquirido
+
+✅ 3 × INMP441 adquiridos
+
+✅ Arquitetura RP2040 + ESP32-S3 definida
+
+---
+
+## Em Evolução
+
+- Câmara
+- Sensores de docking
+- Sensores de queda
+- Integração com Home Assistant
+
+---
+
+# Documentos Relacionados
+
+- mechanical-design.md
+- physical-layout.md
+- gpio-allocation.md
+- communication-system.md
+- home-assistant-integration.md
+- security-and-failsafe.md
