@@ -1,473 +1,423 @@
 # Physical Layout
 
-> AEGIS - Physical Architecture and Component Placement
+> AEGIS - Physical Layout Reference
 
-Versão: 1.0
-Estado: Arquitetura Definida
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-Este documento descreve a organização física do AEGIS.
+Definir a organização física oficial do AEGIS.
 
-Define:
+Este documento descreve:
 
-- distribuição dos componentes;
-- estrutura por pisos;
-- posicionamento dos sensores;
-- zonas de manutenção;
-- passagem de cablagem;
-- espaço reservado para expansões futuras.
+- distribuição dos pisos;
+- localização dos componentes;
+- organização da cablagem;
+- ocupação prevista das plataformas.
 
----
-
-# Filosofia
-
-O AEGIS foi concebido segundo uma arquitetura modular.
-
-Cada piso possui uma responsabilidade específica:
-
-| Piso | Função |
-|--------|--------|
-| Piso 1 | Movimento |
-| Piso 2 | Inteligência |
-| Piso 3 | Vigilância e Interação |
-
-Esta abordagem permite:
-
-- montagem faseada;
-- manutenção simplificada;
-- expansão futura;
-- substituição de módulos.
-
----
-
-# Vista Geral
-
-```mermaid
-flowchart TB
-
-    subgraph P3["Piso 3 - Vigilância"]
-        CAM["Câmara"]
-        LIGHT["Foco LED"]
-        EYES["Olhos LED"]
-    end
-
-    subgraph P2["Piso 2 - Inteligência"]
-        ESP["ESP32-S3"]
-        AUDIO["Áudio"]
-        POWER["Gestão Energia"]
-    end
-
-    subgraph P1["Piso 1 - Movimento"]
-        RP["RP2040"]
-        TB["TB6612FNG"]
-        MPU["MPU-6050"]
-        SONAR["HC-SR04"]
-    end
-```
-
----
-
-# Piso 1 - Movimento
-
-## Objetivo
-
-Controlo da locomoção.
-
----
-
-## Componentes
-
-```mermaid
-flowchart TB
-
-    RP["RP2040"]
-
-    TB["TB6612FNG"]
-
-    MPU["MPU-6050"]
-
-    SONAR["HC-SR04"]
-
-    RP --> TB
-
-    MPU --> RP
-
-    SONAR --> RP
-```
-
----
-
-## Posicionamento
-
-### Frente
-
-- HC-SR04
-
-### Centro
-
-- RP2040
-- TB6612FNG
-
-### Centro geométrico
-
-- MPU-6050
-
----
-
-## Justificação
-
-O MPU-6050 deverá ficar o mais próximo possível do centro do robô para reduzir erros causados por vibrações e rotações.
-
----
-
-# Piso 2 - Inteligência
-
-## Objetivo
-
-Executar:
-
-- ESPHome
-- comunicação
-- áudio
-- coordenação geral
-
----
-
-## Componentes
-
-```mermaid
-flowchart LR
-
-    ESP["ESP32-S3"]
-
-    MIC["INMP441"]
-
-    AMP["PAM8302"]
-
-    ESP --> AMP
-
-    MIC --> ESP
-```
-
----
-
-## Posicionamento
-
-### Centro
-
-- ESP32-S3
-
-### Periferia
-
-- Microfones
-
-### Laterais
-
-- Amplificadores
-
----
-
-# Piso 3 - Vigilância
-
-## Objetivo
-
-Sistema visual e interação.
-
----
-
-## Componentes
-
-```mermaid
-flowchart TB
-
-    CAM["Câmara"]
-
-    EYES["Olhos"]
-
-    LIGHT["Foco LED"]
-```
-
----
-
-## Posicionamento
-
-### Frente
-
-- Câmara
-
-### Lados da câmara
-
-- Olhos LED
-
-### Inferior
-
-- Foco LED
-
----
-
-## Representação Conceptual
+As dimensões oficiais encontram-se em:
 
 ```text
-      Olho      Olho
-
-         Câmara
-
-          Foco
+docs/dimensional-reference.md
 ```
 
 ---
 
-# Sistema de Áudio
+# Arquitetura Física
 
-## Disposição dos Microfones
+O AEGIS utiliza uma arquitetura modular organizada por níveis.
 
-```mermaid
-flowchart TB
+```text
 
-    M1["Frontal"]
+Piso 3
+Perceção
 
-    M2["Esquerda"]
-    M3["Direita"]
+Piso 2
+Controlo Superior e Energia
 
-    M1 --- M2
-    M1 --- M3
+Piso 1
+Movimento e Sensores Locais
+
+```
+
+---
+
+# Piso 1
+
+## Estrutura
+
+Componentes instalados no chassis original.
+
+Função principal:
+
+```text
+Movimento
+Navegação local
+Sensores base
+```
+
+---
+
+## Componentes
+
+### RP2040
+
+Função:
+
+Controlo de movimento.
+
+---
+
+### Grove Base para XIAO
+
+Função:
+
+Expansão de interfaces.
+
+Interfaces principais:
+
+- I²C
+- UART
+- Grove Digital
+
+---
+
+### MPU-6050
+
+Posição prevista:
+
+Centro do robô.
+
+Objetivo:
+
+- IMU
+- orientação
+- aceleração
+
+---
+
+### HC-SR04
+
+Posição prevista:
+
+Frente do robô.
+
+Objetivo:
+
+Deteção de obstáculos.
+
+---
+
+### Driver de Motores
+
+Estado:
+
+Em avaliação.
+
+Opções:
+
+- TB6612FNG convencional
+- Grove Motor Driver I²C
+
+---
+
+# Piso 2
+
+## Estrutura
+
+Plataforma circular.
+
+Características:
+
+```text
+Acrílico transparente
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Distância ao Piso 1:
+
+```text
+30 mm
+```
+
+Estado:
+
+Validado fisicamente.
+
+Observações:
+
+- Rodas totalmente livres.
+- Espaço suficiente para integração.
+- Perfil compacto.
+
+---
+
+## Utilização
+
+Função principal:
+
+```text
+Energia
+Processamento principal
+Distribuição
+```
+
+---
+
+## Componentes Planeados
+
+### ESP32-S3
+
+Função:
+
+Controlador principal.
+
+---
+
+### Distribuição de Energia
+
+Função:
+
+Distribuição de:
+
+- 5V
+- GND
+
+---
+
+### Áudio
+
+Componentes previstos:
+
+- MAX98357A
+
+---
+
+# Powerbank
+
+## Localização
+
+Face inferior do Piso 2.
+
+```text
+
+Piso 2
+════════════
+
+Powerbank
+(suspenso)
+
+════════════
+
+Piso 1
+
 ```
 
 ---
 
 ## Objetivos
 
-- cobertura sonora uniforme;
-- localização aproximada da origem do som;
-- redução de zonas mortas.
+- redução do centro de gravidade;
+- libertação da superfície superior;
+- simplificação de cablagem.
 
 ---
 
-# Sistema de Iluminação
+# Piso 3
 
-## RGB Ambiental
+## Estrutura
 
-Os LEDs RGB devem iluminar a estrutura de forma indireta.
+Plataforma circular.
 
----
+Características:
 
-## Posição Prevista
-
-```mermaid
-flowchart LR
-
-    RGB1["RGB"]
-
-    RGB2["RGB"]
-
-    RGB3["RGB"]
-
-    RGB4["RGB"]
-
-    RGB5["RGB"]
-```
-
-Distribuição:
-
-- frente;
-- traseira;
-- laterais.
-
----
-
-# Saia Translúcida
-
-## Objetivo
-
-- ocultar cablagem;
-- proteger componentes;
-- difundir iluminação RGB;
-- melhorar acabamento visual.
-
----
-
-## Cobertura
-
-A saia deverá envolver:
-
-- Piso 1
-- Piso 2
-
-até aproximadamente ao nível dos eixos das rodas.
-
----
-
-## Aberturas Previstas
-
-### Obrigatórias
-
-- HC-SR04
-
----
-
-### Possíveis
-
-- Microfones
-- Altifalantes
-- Sensores IR de docking
-
----
-
-# Sistema de Energia
-
-## Componentes
-
-```mermaid
-flowchart TB
-
-    POWERBANK["Powerbank"]
-
-    INDU["Indução"]
-
-    SOLAR["Painel Solar"]
+```text
+Acrílico transparente
+Ø300 mm
 ```
 
 ---
 
-## Posicionamento
+## Espaçamento
 
-### Centro Inferior
+Distância ao Piso 2:
 
-- Powerbank
-
-### Próximo da base
-
-- Receptor de indução
-
-### Piso superior (futuro)
-
-- Painel solar
-
----
-
-# Sistema de Docking
-
-## Sensores
-
-### Atual
-
-- HC-SR04
-
-### Futuro
-
-- IR
-- Câmara
-
----
-
-## Posição Prevista
-
-```mermaid
-flowchart LR
-
-    IRL["IR Esquerda"]
-
-    SONAR["HC-SR04"]
-
-    IRR["IR Direita"]
+```text
+30 mm
 ```
+
+Estado:
+
+Configuração de referência.
+
+---
+
+## Utilização
+
+Função principal:
+
+```text
+Perceção
+Vigilância
+Interação
+```
+
+---
+
+## Componentes Planeados
+
+### Câmara
+
+Posição:
+
+Frente superior.
+
+---
+
+### INMP441
+
+Quantidade:
+
+3
+
+Distribuição prevista:
+
+- Frente
+- Esquerda
+- Direita
+
+---
+
+### LEDs RGB
+
+Hardware:
+
+```text
+5 × KY-009
+```
+
+Funções:
+
+- feedback visual;
+- iluminação da saia;
+- estados do sistema.
 
 ---
 
 # Cablagem
 
-## Princípios
+## Filosofia
 
-- cabos separados por subsistema;
-- evitar passagem sobre motores;
-- minimizar cruzamentos;
-- facilitar desmontagem.
+Sempre que possível utilizar:
 
----
+```text
+Grove
+```
 
-## Percurso Principal
+em vez de:
 
-```mermaid
-flowchart TD
-
-    P1["Piso 1"]
-
-    P2["Piso 2"]
-
-    P3["Piso 3"]
-
-    P1 --> P2
-
-    P2 --> P3
+```text
+Cablagem individual
 ```
 
 ---
 
-# Zonas de Manutenção
+## I²C
 
-## Acesso Frequente
+Dispositivos previstos:
 
-- Powerbank
-- ESP32-S3
-- RP2040
+- MPU6050
+- Motor Driver I²C (se selecionado)
+- PCA9685 (futuro)
 
----
+Distribuição:
 
-## Acesso Ocasional
-
-- PAM8302
-- Cablagem
-
----
-
-## Acesso Raro
-
-- Motores
-- Sistema de indução
+- Grove I²C Hub
+ou
+- bloco de terminais + pigtail
 
 ---
 
-# Espaço Reservado
+## UART
 
-## Futuras Expansões
+Reserva:
 
-- Encoders
-- Marcadores visuais
-- Sensores ambientais
-- Monitorização energética
-- Módulos adicionais de comunicação
+```text
+RP2040 ↔ ESP32-S3
+```
 
 ---
 
-# Critérios de Validação
+# Montagem Inicial
 
-A arquitetura física será considerada validada quando:
+A fase inicial utilizará:
 
-- [ ] Todos os componentes cabem sem interferências mecânicas.
-- [ ] A manutenção é possível sem desmontagem total.
-- [ ] O centro de gravidade permanece estável.
-- [ ] Não existem conflitos entre sensores.
-- [ ] A cablagem é organizada e acessível.
-- [ ] A saia translúcida pode ser removida facilmente.
+- fita dupla-face;
+- abraçadeiras;
+- fixação temporária.
+
+Objetivo:
+
+Validar:
+
+- posicionamento;
+- cablagem;
+- acessibilidade;
+- manutenção.
+
+Apenas após validação serão criadas fixações definitivas.
 
 ---
 
-# Notas de Projeto
+# Geometria Atual de Referência
 
-A organização física do AEGIS segue o princípio:
+```text
 
-- movimento em baixo;
-- inteligência ao centro;
-- perceção no topo.
+Piso 3
+Ø300 mm
 
-Esta distribuição melhora:
+      ▲
+      │
+      │ 30 mm
+      ▼
 
-- estabilidade;
-- manutenção;
-- modularidade;
-- capacidade de evolução futura.
+Piso 2
+Ø300 mm
 
-Qualquer alteração estrutural deverá atualizar este documento antes de ser implementada no hardware.
+      ▲
+      │
+      │ 30 mm
+      ▼
+
+Piso 1
+260 × 155 × 65 mm
+
+```
+
+---
+
+# Estado
+
+## Validado
+
+- Chassis 260 × 155 × 65 mm
+- Rodas Ø70 mm
+- Piso 2 Ø300 mm
+- Piso 3 Ø300 mm
+- Espaçamento Piso 1 → Piso 2 = 30 mm
+
+---
+
+## Em Evolução
+
+- Espaçamento definitivo Piso 2 → Piso 3
+- Driver de motores final
+- Distribuição elétrica definitiva
+- Sistema de docking
