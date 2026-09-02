@@ -1,129 +1,183 @@
 # LED System
 
-> AEGIS - Visual Status and Lighting Architecture
+> AEGIS - Visual Feedback and Illumination System
 
-Versão: 1.0
-Estado: Arquitetura Definida
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-O sistema de iluminação do AEGIS tem como função:
+Fornecer:
 
-- indicar estados do robô;
-- fornecer feedback visual;
-- melhorar a interação com o utilizador;
-- aumentar a visibilidade;
-- apoiar operações de vigilância.
+- feedback visual do estado do sistema;
+- indicação de modos de funcionamento;
+- iluminação ambiente;
+- identidade visual do AEGIS;
+- integração com Home Assistant.
 
 ---
 
 # Filosofia
 
-Os LEDs não são decoração.
+O sistema LED não é decorativo.
 
-Cada padrão luminoso deve transmitir informação útil.
+Os LEDs são considerados uma interface de comunicação visual entre:
+
+- o robô;
+- os utilizadores;
+- o Home Assistant.
+
+---
+
+# Hardware
+
+## Módulos RGB
+
+### KY-009
+
+Quantidade:
+
+```text
+5
+```
+
+Estado:
+
+```text
+Adquirido
+```
+
+Tipo:
+
+```text
+RGB LED
+```
+
+Função:
+
+- estados do sistema;
+- iluminação ambiente;
+- feedback visual.
+
+---
+
+# Distribuição Física
+
+## Localizações Previstas
+
+### LED 1
+
+Posição:
+
+Frente
+
+Função:
+
+Estado principal.
+
+---
+
+### LED 2
+
+Posição:
+
+Lateral esquerda
+
+Função:
+
+Iluminação ambiental.
+
+---
+
+### LED 3
+
+Posição:
+
+Lateral direita
+
+Função:
+
+Iluminação ambiental.
+
+---
+
+### LED 4
+
+Posição:
+
+Traseira
+
+Função:
+
+Estado secundário.
+
+---
+
+### LED 5
+
+Posição:
+
+Piso superior
+
+Função:
+
+Indicador global de estado.
+
+---
+
+# Integração Física
+
+## Piso 3
+
+Localização principal prevista:
+
+```text
+Piso Superior
+```
 
 Objetivos:
 
-- diagnóstico rápido;
-- identificação de estados;
-- apoio a operação autónoma;
-- experiência de utilização.
+- melhor difusão da luz;
+- maior visibilidade;
+- proximidade dos restantes sistemas de interação.
 
 ---
 
-# Arquitetura Geral
+## Saia Translúcida
 
-```mermaid
-flowchart TD
+Objetivo futuro:
 
-    ESP["ESP32-S3"]
+Difundir a iluminação dos LEDs RGB.
 
-    RGB["KY-009 RGB"]
+A saia deverá ser instalada:
 
-    EYES["Olhos LED"]
-
-    FLOOD["Foco LED"]
-
-    ESP --> RGB
-
-    ESP --> EYES
-
-    ESP --> FLOOD
+```text
+Entre Piso 2 e Piso 3
 ```
 
----
-
-# Subsistemas
-
-## Iluminação Ambiental
-
-Componentes:
-
-- KY-009 RGB ×5
-
-Funções:
-
-- indicação de estado;
-- iluminação da saia translúcida;
-- efeitos visuais.
+descendo aproximadamente até ao eixo das rodas.
 
 ---
 
-## Olhos LED
+# Estados Visuais
 
-Componentes:
+## Inicialização
 
-- LEDs frontais
+Cor:
 
-Funções:
-
-- personalidade visual;
-- indicação rápida de estado;
-- reconhecimento visual do robô.
-
----
-
-## Foco LED
-
-Componentes:
-
-- foco frontal
-
-Funções:
-
-- iluminação da câmara;
-- inspeção visual;
-- apoio à vigilância.
-
----
-
-# Arquitetura Física
-
-```mermaid
-flowchart TB
-
-    E1["Olho Esq."]
-    E2["Olho Dir."]
-
-    CAM["Câmara"]
-
-    FLOOD["Foco LED"]
-
-    RGB1["RGB Frontal"]
-    RGB2["RGB Esq."]
-    RGB3["RGB Dir."]
-    RGB4["RGB Traseiro"]
-    RGB5["RGB Superior"]
+```text
+Azul pulsante
 ```
 
+Significado:
+
+Sistema em arranque.
+
 ---
 
-# Estados do Sistema
-
-## Arranque
+## Operação Normal
 
 Cor:
 
@@ -131,35 +185,23 @@ Cor:
 Azul
 ```
 
-Efeito:
+Significado:
 
-```text
-Respiração lenta
-```
-
-Objetivo:
-
-- indicar inicialização.
+Funcionamento normal.
 
 ---
 
-## Pronto
+## Assist Ativo
 
 Cor:
 
 ```text
-Verde
+Ciano
 ```
 
-Efeito:
+Significado:
 
-```text
-Fixo
-```
-
-Objetivo:
-
-- sistema operacional.
+Assistente de voz ativo.
 
 ---
 
@@ -168,42 +210,16 @@ Objetivo:
 Cor:
 
 ```text
-Azul
+Branco suave
 ```
 
-Efeito:
+Significado:
 
-```text
-Suave
-```
-
-Objetivo:
-
-- indicar operação autónoma.
+Patrulha em execução.
 
 ---
 
-## Modo Manual
-
-Cor:
-
-```text
-Roxo
-```
-
-Efeito:
-
-```text
-Fixo
-```
-
-Objetivo:
-
-- utilizador está a controlar o robô.
-
----
-
-## Procura da Base
+## Docking
 
 Cor:
 
@@ -211,15 +227,9 @@ Cor:
 Amarelo
 ```
 
-Efeito:
+Significado:
 
-```text
-Piscar lento
-```
-
-Objetivo:
-
-- indicar docking em curso.
+Procura ou aproximação à base.
 
 ---
 
@@ -228,38 +238,26 @@ Objetivo:
 Cor:
 
 ```text
-Verde
+Verde pulsante
 ```
 
-Efeito:
+Significado:
 
-```text
-Pulsação
-```
-
-Objetivo:
-
-- indicar carga ativa.
+Em carregamento.
 
 ---
 
-## Bateria Baixa
+## Carregamento Completo
 
 Cor:
 
 ```text
-Laranja
+Verde fixo
 ```
 
-Efeito:
+Significado:
 
-```text
-Piscar lento
-```
-
-Objetivo:
-
-- alerta energético.
+Bateria carregada.
 
 ---
 
@@ -271,209 +269,120 @@ Cor:
 Vermelho
 ```
 
-Efeito:
+Significado:
 
-```text
-Piscar rápido
-```
-
-Objetivo:
-
-- evento importante.
+Anomalia ou erro.
 
 ---
 
-## Falha Crítica
+## Emergência
 
 Cor:
 
 ```text
-Vermelho
+Vermelho intermitente
 ```
 
-Efeito:
+Significado:
 
-```text
-Piscar contínuo
-```
-
-Objetivo:
-
-- indicar estado inseguro.
+Falha crítica.
 
 ---
 
-## Safe Mode
+# Integração Home Assistant
 
-Cor:
+Eventos previstos:
 
-```text
-Vermelho + Azul
-```
-
-Efeito:
-
-```text
-Alternado
-```
-
-Objetivo:
-
-- identificar modo de recuperação.
+- alarmes;
+- notificações;
+- estados de presença;
+- modos de patrulha;
+- estado energético.
 
 ---
 
-# Máquina de Estados
+# Integração ESPHome
 
-```mermaid
-stateDiagram-v2
-
-    [*] --> Boot
-
-    Boot*--> Ready*
-    Ready --> Patrol
-
-    Patrol*--> Docking
-
-    Docking --> Charg*ng
-
-   *Charging --> Ready
-
-*   Patrol*--> Alert
-
-    Alert*-->*Patrol
-
-    Ready*--> Manual*
-    Manual*--> Ready
-
-    Patrol --> SafeMode*
-   *Safe*ode --> Ready
-```
-
-*--
-
-# Saia Translúcida
-
-## Objetiv*
-
-Difundir a iluminação RGB.
-
----
-**# Resultado Esperado
-
-```text**EDs*ocultos
-+
-*if*são uniforme
-+
-*sp*to profissional
-```
-
-*--
-
-#*Integração Home Assistant
-
-*# Entidade Principal
-
-```yaml*light:
-  -*platform:*rgb
-```
-
-*--
-
-##*Controlo
-
-Perm*tir*
-
-- ativ*r/desativar;
-* alterar brilho;
-- alterar*cor;
-- executar*efeitos*
-
----
-
-* Modos Autom*ticos
-
-## Patrulha
-
-```text**atrol
-*
-Azul
-```
-
-*--
-
-## Dock*ng
+Objetivos futuros:
 
 ```text
-Docking
-↓
-*m*relo
-```
+light
 
-*--
+effects
 
-## Charging*
-```text
-Charging
-↓
-Verde**``
-
----
-
-## Alert
-
-```text**lert
-↓
-Vermelho
-```
-
-*--
-
-* Olhos LED
-
-## Modo Normal
-
-```tex*
-Azul Suave
-```
-
-*--
-
-## Esc*ta
-
-```text
-Ciano
-```
-
-*--
-
-## Processamento
-
-```text*Br*nco
+status indicators
 ```
 
 ---
 
-## Resposta
+# Possível Evolução
 
-```*ext
-Verde
+## PCA9685
+
+Hardware disponível:
+
+```text
+PCA9685
+16 Channel PWM Driver
 ```
 
-*--
+Estado:
 
-## Erro
+Disponível.
 
-*``text
-Vermelho
-```
+Origem:
 
-*--
+Projeto ferroviário HO/OO.
 
-# Foco LED
+---
 
-## Utilizações
+## Aplicações Futuras
 
-##**Vigilância
+- animações RGB;
+- fading suave;
+- efeitos luminosos;
+- expansão do número de LEDs;
+- controlo de servos.
 
-Ativado*
+---
+
+# Requisitos
+
+O sistema LED deverá:
+
+- funcionar independentemente da presença do Home Assistant;
+- indicar estados críticos;
+- permanecer visível em condições normais de utilização;
+- não interferir com sensores ou áudio.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ 5 × KY-009 adquiridos
+
+✅ Sistema RGB distribuído aprovado
+
+✅ Integração com Home Assistant prevista
+
+✅ Integração com ESPHome prevista
+
+---
+
+## Em Evolução
+
+- localização exata dos módulos;
+- animações definitivas;
+- eventual utilização da PCA9685;
+- implementação da saia translúcida.
+
+---
+
+# Documentos Relacionados
+
+- hardware-inventory.md
+- physical-layout.md
+- project-decisions.md
+- power-system.md
