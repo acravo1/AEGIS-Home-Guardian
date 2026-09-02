@@ -1,215 +1,353 @@
 # Mechanical Design
 
-> AEGIS - Mechanical Architecture and Construction
+> AEGIS - Mechanical Architecture
 
-Versão: 1.0
-Estado: Arquitetura Definida
+Versão: 2.0
+Estado: Ativo
 
 ---
 
 # Objetivo
 
-Este documento descreve a arquitetura mecânica do AEGIS.
+Definir a arquitetura mecânica oficial do AEGIS.
 
-Inclui:
+Este documento descreve:
 
-- estrutura principal;
-- organização por pisos;
-- sistema de rodas;
-- suporte dos sensores;
-- acesso para manutenção;
-- expansões futuras.
+- estrutura;
+- organização física;
+- componentes mecânicos;
+- critérios de construção;
+- expansão futura.
+
+As dimensões oficiais encontram-se em:
+
+```text
+docs/dimensional-reference.md
+```
 
 ---
 
 # Filosofia
 
-O AEGIS foi concebido segundo quatro princípios:
-
-- modularidade;
-- manutenção simples;
-- estabilidade;
-- capacidade de evolução.
-
-A estrutura deve permitir substituir módulos sem reconstruir o robô.
-
----
-
-# Arquitetura Geral
-
-```mermaid
-flowchart TB
-
-    subgraph P3["Piso 3 - Vigilância"]
-        CAM["Câmara"]
-        LIGHT["Foco LED"]
-        EYES["Olhos LED"]
-    end
-
-    subgraph P2["Piso 2 - Inteligência"]
-        ESP["ESP32-S3"]
-        AUDIO["Áudio"]
-        POWER["Gestão Energia"]
-    end
-
-    subgraph P1["Piso 1 - Movimento"]
-        RP["RP2040"]
-        DRV["TB6612FNG"]
-        MPU["MPU-6050"]
-        SONAR["HC-SR04"]
-    end
-```
-
----
-
-# Chassis
-
-## Estrutura Principal
-
-Tipo:
-
-```text
-Circular
-```
-
-Construção:
-
-```text
-Acrílico
-```
+O AEGIS utiliza uma arquitetura modular por níveis.
 
 Objetivos:
 
-- baixo peso;
-- facilidade de corte;
-- facilidade de modificação;
-- custo reduzido.
+- manutenção simples;
+- expansão futura;
+- reutilização de hardware;
+- montagem acessível;
+- modularidade.
 
 ---
 
-# Organização por Pisos
+# Estrutura Geral
 
-## Piso 1
+```text
 
-Responsável por:
+        Piso 3
+      Perceção
+
+          ▲
+          │ 30 mm
+          ▼
+
+        Piso 2
+  Energia e Processamento
+
+          ▲
+          │ 30 mm
+          ▼
+
+        Piso 1
+ Movimento e Sensores
+
+```
+
+---
+
+# Piso 1
+
+## Plataforma Base
+
+Descrição:
+
+Chassis acrílico de quatro rodas.
+
+Características:
+
+- 4 motores DC
+- 4 rodas
+- plataforma motora
+
+Dimensões:
+
+```text
+260 × 155 × 65 mm
+```
+
+---
+
+## Funções
 
 - movimento;
-- sensores de navegação.
-
-Componentes:
-
-- RP2040;
-- TB6612FNG;
-- MPU-6050;
-- HC-SR04.
+- navegação básica;
+- sensores locais;
+- suporte estrutural.
 
 ---
 
-## Piso 2
+## Componentes
 
-Responsável por:
-
-- coordenação;
-- comunicações;
-- áudio;
-- energia.
-
-Componentes:
-
-- ESP32-S3;
-- INMP441;
-- PAM8302;
-- Powerbank.
+- RP2040
+- Grove Base
+- MPU6050
+- HC-SR04
+- Driver de motores
 
 ---
 
-## Piso 3
+# Piso 2
 
-Responsável por:
+## Estrutura
 
-- vídeo;
-- iluminação frontal;
-- interação visual.
+Disco acrílico transparente.
 
-Componentes:
+Dimensões:
 
-- Câmara;
-- Foco LED;
-- Olhos LED.
+```text
+Ø300 mm
+```
 
 ---
 
-# Sistema de Rodas
+## Função
+
+- energia;
+- processamento principal;
+- distribuição elétrica.
+
+---
+
+## Espaçamento
+
+Distância ao Piso 1:
+
+```text
+30 mm
+```
+
+Estado:
+
+Validado fisicamente.
+
+---
+
+## Componentes Planeados
+
+- ESP32-S3
+- MAX98357A
+- distribuição de energia
+
+---
+
+## Powerbank
+
+### Localização
+
+Face inferior do Piso 2.
+
+```text
+
+ Piso 2
+═══════════════
+
+ Powerbank
+
+═══════════════
+
+ Piso 1
+
+```
+
+---
+
+### Vantagens
+
+- centro de gravidade reduzido;
+- maior área útil;
+- cablagem simplificada.
+
+---
+
+# Piso 3
+
+## Estrutura
+
+Disco acrílico transparente.
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Distância ao Piso 2:
+
+```text
+30 mm
+```
+
+Estado:
+
+Configuração de referência.
+
+---
+
+## Função
+
+- vigilância;
+- comunicação;
+- interação.
+
+---
+
+## Componentes Planeados
+
+- câmara;
+- microfones;
+- LEDs;
+- sensores futuros.
+
+---
+
+# Rodas
+
+## Especificações
+
+```text
+Diâmetro : 70 mm
+
+Raio : 35 mm
+
+Largura : 30 mm
+```
+
+---
 
 ## Configuração
 
 ```text
 4 rodas
+
+2 esquerda
+
+2 direita
 ```
 
 ---
 
-## Objetivo
+# Materiais
 
-- estabilidade;
-- distribuição uniforme do peso;
-- futura integração de encoders.
+## Chassis
 
----
-
-## Vista Conceptual
+Material:
 
 ```text
-
-        Frente
-
-      O       O
-
-
-      O       O
-
-       Traseira
+Acrílico
 ```
 
 ---
 
-# Motores
+## Piso 2
 
-## Quantidade
+Material:
 
 ```text
-4
+Acrílico transparente
 ```
 
 ---
 
-## Distribuição
+## Piso 3
 
-```mermaid
-flowchart LR
+Material:
 
-    ML["Motores Esquerda"]
-
-    MR["Motores Direita"]
+```text
+Acrílico transparente
 ```
+
+---
+
+## Estrutura Vertical
+
+Material:
+
+```text
+Espaçadores metálicos
+```
+
+---
+
+# Transparência
+
+A transparência dos materiais faz parte da identidade visual do projeto.
+
+Objetivos:
+
+- exibir eletrónica;
+- facilitar manutenção;
+- melhorar iluminação interna.
+
+---
+
+# Saia Translúcida
+
+## Estado
+
+Planeada.
+
+---
+
+## Localização
+
+Entre:
+
+```text
+Piso 2
++
+Piso 3
+```
+
+---
+
+## Limite Inferior
+
+Aproximadamente:
+
+```text
+Eixo das rodas
+```
+
+---
+
+## Objetivos
+
+- ocultar cablagem;
+- difundir iluminação;
+- melhorar estética.
 
 ---
 
 # Centro de Gravidade
 
-## Objetivo
+## Estratégia
 
-Manter o centro de massa o mais baixo possível.
-
----
-
-## Componentes Pesados
-
-Devem ficar preferencialmente:
-
-- no Piso 1;
-- no Piso 2;
-- próximos do centro.
+Manter os componentes mais pesados o mais baixo possível.
 
 ---
 
@@ -217,284 +355,92 @@ Devem ficar preferencialmente:
 
 ### Powerbank
 
-Posição preferencial:
+Prioridade:
+
+Máxima.
+
+Localização:
 
 ```text
-Centro inferior
+Face inferior do Piso 2
 ```
 
 ---
 
-### MPU-6050
+### Motores
 
-Posição preferencial:
+Localização:
 
 ```text
-Centro geométrico
+Piso 1
 ```
 
 ---
 
-# Sistema de Áudio
+# Estratégia de Montagem
 
-## Microfones
+## Fase Inicial
 
-Distribuição triangular.
+Montagem provisória.
 
-```mermaid
-flowchart TB
+Métodos:
 
-    M1["Frontal"]
-
-    M2["Esquerda"]
-    M3["Direita"]
-
-    M1 --- M2
-    M1 --- M3
-```
-
-Objetivos:
-
-- melhor cobertura;
-- futura localização sonora.
+- fita dupla-face;
+- abraçadeiras;
+- fixação temporária.
 
 ---
 
-# Sistema de Visão
+## Fase Final
 
-## Câmara
-
-Posição:
-
-```text
-Centro frontal superior
-```
+Suportes dedicados poderão ser desenvolvidos após validação física.
 
 ---
 
-## Foco LED
+# Compatibilidade
 
-Posição:
+A arquitetura foi concebida para permitir:
 
-```text
-Abaixo da câmara
-```
-
----
-
-## Olhos LED
-
-Posição:
-
-```text
-Laterais da câmara
-```
+- substituição de sensores;
+- substituição de controladores;
+- integração de módulos adicionais;
+- expansão futura.
 
 ---
 
-# Saia Translúcida
+# Estado Atual
 
-## Objetivos
+## Validado
 
-- esconder cablagem;
-- proteger eletrónica;
-- difundir iluminação RGB.
+✅ Chassis 260 × 155 × 65 mm
 
----
+✅ Rodas Ø70 mm
 
-## Cobertura
+✅ Piso 2 Ø300 mm
 
-Pisos:
+✅ Piso 3 Ø300 mm
 
-```text
-1 + 2
-```
+✅ Espaçamento Piso 1 → Piso 2 = 30 mm
+
+✅ Configuração física montada
 
 ---
 
-## Requisitos
+## Em Evolução
 
-- removível;
-- resistente;
-- manutenção simples.
-
----
-
-# Fixação da Saia
-
-## Soluções Avaliadas
-
-### Magnética
-
-Vantagens:
-
-- montagem rápida;
-- manutenção simples.
+- Espaçamento definitivo Piso 2 → Piso 3
+- Sistema de docking
+- Posicionamento definitivo dos sensores
+- Suportes finais
 
 ---
 
-### Encaixe Mecânico
+# Referências
 
-Vantagens:
+Documentos relacionados:
 
-- maior robustez.
-
----
-
-## Decisão
-
-Estado:
-
-```text
-Em avaliação
-```
-
----
-
-# Sistema de Docking
-
-## Considerações Mecânicas
-
-A frente do robô deverá permitir:
-
-- deteção IR;
-- utilização do HC-SR04;
-- futura navegação visual.
-
----
-
-## Região Frontal
-
-```mermaid
-flowchart TB
-
-    IRL["IR Esq."]
-
-    SONAR["HC-SR04"]
-
-    IRR["IR Dir."]
-```
-
----
-
-# Cablagem
-
-## Filosofia
-
-A cablagem deverá ser organizada por subsistemas:
-
-- movimento;
-- energia;
-- áudio;
-- vídeo.
-
----
-
-## Objetivos
-
-- manutenção simples;
-- diagnóstico rápido;
-- modularidade.
-
----
-
-# Manutenção
-
-## Acesso Frequente
-
-- powerbank;
-- ESP32-S3;
-- RP2040.
-
----
-
-## Acesso Médio
-
-- PAM8302;
-- ligações UART.
-
----
-
-## Acesso Raro
-
-- motores;
-- indução.
-
----
-
-# Expansões Futuras
-
-Espaço reservado para:
-
-- encoders;
-- sensores IR de docking;
-- painel solar;
-- sensores ambientais;
-- módulos adicionais.
-
----
-
-# Roadmap Mecânico
-
-## Versão 1
-
-- Chassis base;
-- Movimento;
-- Navegação.
-
----
-
-## Versão 2
-
-- Docking;
-- Saia translúcida.
-
----
-
-## Versão 3
-
-- Câmara;
-- Áudio.
-
----
-
-## Versão 4
-
-- Energia solar.
-
----
-
-# Critérios de Validação
-
-A estrutura mecânica será considerada validada quando:
-
-- [ ] Todos os componentes estão montados.
-- [ ] O centro de gravidade é estável.
-- [ ] A manutenção é simples.
-- [ ] Não existem interferências mecânicas.
-- [ ] A cablagem encontra-se organizada.
-- [ ] A saia pode ser removida facilmente.
-
----
-
-# Princípios de Projeto
-
-O design mecânico do AEGIS segue uma hierarquia simples:
-
-```text
-Movimento
-↓
-Energia
-↓
-Inteligência
-↓
-Perceção
-```
-
-A estabilidade e a manutenção têm prioridade sobre a estética.
-
-Qualquer alteração estrutural deverá atualizar:
-
-- architecture.md
+- dimensional-reference.md
 - physical-layout.md
-- mechanical-design.md
+- hardware-inventory.md
+- project-decisions.md
+- power-system.md
