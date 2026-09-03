@@ -1,0 +1,11078 @@
+﻿================================================================================
+Repository Export
+================================================================================
+
+Repository : AEGIS-Home-Guardian
+Date       : 2026-09-03 17:18:43
+Root       : C:\Users\silva\OneDrive\GitHub\AEGIS-Home-Guardian
+
+
+================================================================================
+FILE: README.md
+================================================================================
+
+<p align="center"><img src="assets/logo/AEGIS.svg" alt="AEGIS Logo" width="220"></p>
+<H1 align="center">Autonomous Electronic Guardian Integrated System</h1>
+<p align="center">Robô autónomo de vigilância doméstica integrado com Home Assistant e ESPHome.</p>
+
+---
+
+# AEGIS
+
+> Autonomous Electronic Guardian Integrated System
+
+AEGIS é um robô autónomo de vigilância doméstica desenvolvido como projeto open-source e integrado com Home Assistant e ESPHome.
+
+O objetivo é criar uma plataforma robótica modular inspirada em sistemas comerciais como o EBO, mas totalmente personalizável e baseada em hardware acessível e componentes reutilizados.
+
+---
+
+## Objetivos
+
+- Vigilância autónoma da habitação
+- Integração nativa com Home Assistant
+- Controlo e monitorização através de ESPHome
+- Patrulha automática
+- Regresso autónomo à base de carregamento
+- Interação por voz
+- Áudio bidirecional
+- Visão remota por câmara
+- Gestão inteligente de energia
+- Construção modular por blocos funcionais
+
+---
+
+## Filosofia do Projeto
+
+AEGIS foi concebido para ser desenvolvido por etapas.
+
+Cada subsistema é construído e validado individualmente antes da integração no sistema completo.
+
+Esta abordagem permite:
+
+- menor complexidade de desenvolvimento
+- manutenção simplificada
+- evolução gradual do hardware
+- reutilização de componentes
+- expansão futura sem alterações profundas
+
+---
+
+# Arquitetura
+
+## Camada de Movimento
+
+Responsável pela locomoção e navegação de baixo nível.
+
+### Hardware
+
+- Seeed XIAO RP2040
+- TB6612FNG
+- Motores DC
+- MPU-6050
+- HC-SR04
+- Encoders (planeados)
+
+### Funções
+
+- controlo dos motores
+- controlo PID
+- leitura dos sensores de movimento
+- deteção de obstáculos
+-
+
+
+================================================================================
+FILE: assets\diagrams\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\architecture\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\audio\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\camera\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\docking\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\hardware\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\mechanical\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\testing\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\images\wiring\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: assets\logo\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: docs\architecture.md
+================================================================================
+
+## Arquitetura Global
+
+```mermaid
+flowchart TD
+
+    HA["Home Assistant"]
+    ESPHOME["ESPHome"]
+
+    ESP["ESP32-S3<br/>Controlador Principal"]
+
+    RP["XIAO RP2040<br/>Controlador de Movimento"]
+
+    HA <---> ESPHOME
+    ESPHOME <---> ESP
+
+    ESP <-->|UART| RP
+
+    RP --> TB["TB6612FNG"]
+    RP --> MPU["MPU-6050"]
+    RP --> HCSR["HC-SR04"]
+
+    TB --> MOTOR["Motores"]
+```
+## Estrutura Física
+
+```mermaid
+flowchart TB
+
+    subgraph P3["Piso 3 - Vigilância"]
+        CAM["Câmara"]
+        LIGHT["Foco LED"]
+        EYES["Olhos LED"]
+    end
+
+    subgraph P2["Piso 2 - Inteligência"]
+        ESP["ESP32-S3"]
+        MIC["INMP441 x3"]
+        AMP["MAX98357A x3"]
+        SPK["Altifalantes"]
+    end
+
+    subgraph P1["Piso 1 - Movimento"]
+        RP["RP2040"]
+        TB["TB6612FNG"]
+        MPU["MPU-6050"]
+        SONAR["HC-SR04"]
+    end
+```
+
+## Fluxo de Controlo
+
+```mermaid
+sequenceDiagram
+
+    participant HA as Home Assistant
+    participant ESP as ESP32-S3
+    participant RP as RP2040
+
+    HA->>ESP: Ordem de patrulha
+    ESP->>RP: Iniciar movimento
+    RP->>RP: Controlo motores
+    RP->>ESP: Telemetria
+    ESP->>HA: Estado atualizado
+```
+
+## Arquitetura de Energia
+
+```mermaid
+flowchart LR
+
+    SOLAR["Painel Solar"]
+    SCH1["Díodo Schottky"]
+
+    INDU["Carregamento por Indução"]
+    SCH2["Díodo Schottky"]
+
+    Y["Cabo USB em Y"]
+
+    PB["Powerbank"]
+
+    SOLAR --> SCH1
+    SCH1 --> Y
+
+    INDU --> SCH2
+    SCH2 --> Y
+
+    Y --> PB
+```
+
+### Isolamento das Fontes
+
+O sistema utiliza dois díodos Schottky independentes:
+
+- um para o painel solar;
+- um para o carregamento por indução.
+
+Os díodos impedem corrente inversa entre fontes e permitem que ambas alimentem o powerbank através do cabo USB em Y.
+
+Objetivos:
+
+- proteger os módulos de alimentação;
+- impedir circulação de corrente entre fontes;
+- permitir operação simultânea sem conflitos elétricos;
+- preservar a modularidade do sistema energético.
+
+## Arquitetura de Áudio
+
+```mermaid
+flowchart LR
+
+    MIC1["INMP441 #1"]
+    MIC2["INMP441 #2"]
+    MIC3["INMP441 #3"]
+
+    ESP["ESP32-S3"]
+
+    AMP1["MAX98357A #1"]
+    AMP2["MAX98357A #2"]
+    AMP3["MAX98357A #3"]
+
+    SPK1["Altifalante #1"]
+    SPK2["Altifalante #2"]
+
+    MIC1 --> ESP
+    MIC2 --> ESP
+    MIC3 --> ESP
+
+    ESP --> AMP1
+    ESP --> AMP2
+    ESP --> AMP3
+
+    AMP1 --> SPK1
+    AMP2 --> SPK2
+    AMP3 -.->|Futuro| SPK1
+```
+
+## Estratégia de Docking
+
+```mermaid
+flowchart TD
+
+    PAT["Patrulha"]
+
+    LOW["Bateria Baixa"]
+
+    HOME["Regresso Aproximado"]
+
+    IR["Procura de Sinal IR"]
+
+    ALIGN["Alinhamento"]
+
+    DOCK["Acoplamento"]
+
+    CHARGE["Carregamento"]
+
+    PAT --> LOW
+
+    LOW --> HOME
+
+    HOME --> IR
+
+    IR --> ALIGN
+
+    ALIGN --> DOCK
+
+    DOCK --> CHARGE
+
+    CHARGE --> PAT
+```
+
+## Roadmap Técnico
+
+```mermaid
+flowchart LR
+
+    V1["Movimento"]
+
+    V2["Docking"]
+
+    V3["Home Assistant"]
+
+    V4["Áudio"]
+
+    V5["Visão"]
+
+    V6["Solar"]
+
+    V1 --> V2
+    V2 --> V3
+    V3 --> V4
+    V4 --> V5
+    V5 --> V6
+```
+
+## Estados Operacionais
+
+```mermaid
+stateDiagram-v2
+
+    [*] --> Arranque
+
+    Arranque --> Patrulha
+
+    Patrulha --> Alerta
+
+    Patrulha --> RegressoBase
+
+    Alerta --> Patrulha
+
+    RegressoBase --> Docking
+
+    Docking --> Carregamento
+
+    Carregamento --> Patrulha
+```
+
+
+================================================================================
+FILE: docs\audio-system.md
+================================================================================
+
+# Audio System
+
+> AEGIS - Audio Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Fornecer:
+
+- interação por voz;
+- integração com Home Assistant Assist;
+- reprodução de notificações;
+- comunicação bidirecional;
+- monitorização sonora do ambiente.
+
+---
+
+# Arquitetura
+
+O sistema áudio está concentrado no ESP32-S3.
+
+```text
+
+INMP441
+     │
+     ▼
+
+ ESP32-S3
+
+     │
+     ▼
+
+ MAX98357A
+
+     │
+     ▼
+
+ Altifalantes
+
+```
+
+---
+
+# Controlador Principal
+
+## ESP32-S3
+
+Função:
+
+- processamento áudio;
+- captura I²S;
+- reprodução I²S;
+- integração Assist;
+- comunicação com Home Assistant.
+
+---
+
+# Captura Áudio
+
+## Hardware
+
+### INMP441
+
+Quantidade:
+
+```text
+3
+```
+
+Estado:
+
+```text
+Adquirido
+```
+
+Características:
+
+- MEMS
+- Interface I²S
+- Omnidirecional
+- Baixo consumo
+
+---
+
+## Distribuição Prevista
+
+```text
+
+          Frente
+
+            M1
+
+     M2             M3
+
+ Esquerda       Direita
+
+```
+
+---
+
+## Objetivos
+
+- captura de voz;
+- comandos de voz;
+- integração Assist;
+- recolha de áudio ambiente;
+- futura localização aproximada de origem sonora.
+
+---
+
+# Reprodução Áudio
+
+## Hardware
+
+### MAX98357A
+
+Quantidade:
+
+```text
+3
+```
+
+Estado:
+
+```text
+Adquirido
+```
+
+Características:
+
+- DAC I²S integrado;
+- amplificador Classe D;
+- saída direta para altifalante.
+
+---
+
+## Função
+
+Converter o áudio digital produzido pelo ESP32-S3 em áudio reproduzível pelos altifalantes.
+
+---
+
+# Altifalantes
+
+Quantidade:
+
+```text
+2
+```
+
+Estado:
+
+```text
+Adquirido
+```
+
+---
+
+## Funções
+
+- síntese de voz (TTS);
+- Assist;
+- notificações;
+- alarmes;
+- comunicação bidirecional.
+
+---
+
+# Configuração Inicial
+
+## V1
+
+```text
+3 × INMP441
+3 × MAX98357A
+2 × Altifalantes
+```
+
+Objetivo:
+
+Validar:
+
+- captura;
+- reprodução;
+- Assist;
+- integração Home Assistant.
+
+---
+
+## Evolução Futura
+
+Possibilidades:
+
+```text
+Canal esquerdo
+Canal direito
+Canal central
+```
+
+ou
+
+```text
+Áudio principal
+Alertas
+Efeitos
+```
+
+utilizando os três módulos MAX98357A disponíveis.
+
+---
+
+# Integração Home Assistant
+
+## Objetivos
+
+Permitir:
+
+- Home Assistant Assist;
+- notificações por voz;
+- mensagens de sistema;
+- alarmes;
+- interação remota.
+
+---
+
+# Integração ESPHome
+
+Objetivos futuros:
+
+```text
+Voice Assistant
+
+Media Player
+
+Speaker
+
+Microphone
+```
+
+---
+
+# Posicionamento Físico
+
+## INMP441
+
+Localização prevista:
+
+Piso 3.
+
+Justificação:
+
+- maior afastamento dos motores;
+- melhor cobertura espacial;
+- menor interferência mecânica.
+
+---
+
+## MAX98357A
+
+Localização prevista:
+
+Piso 2.
+
+Justificação:
+
+- proximidade ao ESP32-S3;
+- simplificação da cablagem I²S.
+
+---
+
+## Altifalantes
+
+Localização prevista:
+
+Piso 3.
+
+Distribuição:
+
+- lado esquerdo;
+- lado direito.
+
+Objetivo:
+
+Melhor propagação sonora.
+
+---
+
+# Requisitos
+
+## Captura
+
+O sistema deverá permitir:
+
+- deteção clara de voz;
+- operação em ambientes interiores;
+- integração com Assist.
+
+---
+
+## Reprodução
+
+O sistema deverá permitir:
+
+- voz sintetizada;
+- alertas;
+- áudio de sistema;
+- mensagens do Home Assistant.
+
+---
+
+# Estado Atual
+
+## Hardware Adquirido
+
+✅ 3 × INMP441
+
+✅ 3 × MAX98357A
+
+✅ 2 × Altifalantes
+
+✅ ESP32-S3
+
+---
+
+## Hardware em Falta
+
+Nenhum componente crítico identificado.
+
+---
+
+# Documentos Relacionados
+
+- hardware-inventory.md
+- project-decisions.md
+- physical-layout.md
+- power-system.md
+
+
+================================================================================
+FILE: docs\bloc01-build-guide.md
+================================================================================
+
+# Block 01 Build Guide
+
+> AEGIS - Block 01 Assembly Guide
+
+Versão: 1.0
+Estado: Planeamento
+
+---
+
+# Objetivo
+
+O Block 01 representa a primeira etapa funcional do projeto AEGIS.
+
+Nesta fase será criada uma plataforma autónoma capaz de:
+
+- mover-se;
+- evitar obstáculos;
+- medir orientação;
+- comunicar internamente.
+
+O objetivo é validar a camada de movimento antes da integração dos restantes subsistemas.
+
+---
+
+# Âmbito
+
+Incluído:
+
+- XIAO RP2040
+- TB6612FNG
+- MPU-6050
+- HC-SR04
+- Motores
+- Chassis
+
+Não incluído:
+
+- ESP32-S3
+- Câmara
+- Áudio
+- Docking
+- Home Assistant
+
+---
+
+# Arquitetura
+
+```mermaid
+flowchart TD
+
+    RP["RP2040"]
+
+    MPU["MPU-6050"]
+
+    SONAR["HC-SR04"]
+
+    TB["TB6612FNG"]
+
+    MOTOR["Motores"]
+
+    MPU --> RP
+
+    SONAR --> RP
+
+    RP --> TB
+
+    TB --> MOTOR
+```
+
+---
+
+# Objetivos de Validação
+
+A plataforma deverá ser capaz de:
+
+- avançar;
+- recuar;
+- rodar;
+- parar;
+- detetar obstáculos;
+- reportar orientação.
+
+---
+
+# Componentes Necessários
+
+## Controladores
+
+- XIAO RP2040
+- Expansion Board RP2040
+
+---
+
+## Movimento
+
+- TB6612FNG
+- Motores DC
+- Rodas
+
+---
+
+## Sensores
+
+- MPU-6050
+- HC-SR04
+
+---
+
+## Energia
+
+- Powerbank
+
+---
+
+## Estrutura
+
+- Chassis base
+- Espaçadores
+- Elementos de fixação
+
+---
+
+# Sequência de Montagem
+
+```mermaid
+flowchart LR
+
+    A["Chassis"]
+
+    B["Motores"]
+
+    C["TB6612FNG"]
+
+    D["RP2040"]
+
+    E["MPU-6050"]
+
+    F["HC-SR04"]
+
+    G["Testes"]
+
+    A --> B
+
+    B --> C
+
+    C --> D
+
+    D --> E
+
+    E --> F
+
+    F --> G
+```
+
+---
+
+# Passo 1 - Preparar o Chassis
+
+## Objetivos
+
+- verificar alinhamento;
+- verificar rodas;
+- verificar espaço disponível.
+
+---
+
+## Verificações
+
+- rodas livres;
+- sem interferências mecânicas;
+- espaço para cablagem.
+
+---
+
+# Passo 2 - Instalar Motores
+
+## Objetivos
+
+Montar:
+
+- motores;
+- suportes;
+- rodas.
+
+---
+
+## Verificações
+
+- rotação livre;
+- parafusos apertados;
+- alinhamento correto.
+
+---
+
+# Passo 3 - Instalar TB6612FNG
+
+## Objetivos
+
+Montar driver de motores.
+
+---
+
+## Requisitos
+
+- acesso fácil;
+- proximidade ao RP2040;
+- cablagem curta.
+
+---
+
+# Passo 4 - Instalar RP2040
+
+## Objetivos
+
+Montar:
+
+- XIAO RP2040;
+- Expansion Board.
+
+---
+
+## Requisitos
+
+- acessível para programação;
+- acesso USB fácil.
+
+---
+
+# Passo 5 - Instalar MPU-6050
+
+## Posição
+
+Próximo do centro geométrico.
+
+---
+
+## Justificação
+
+Reduz erros provocados por:
+
+- aceleração;
+- vibração;
+- rotação.
+
+---
+
+# Passo 6 - Instalar HC-SR04
+
+## Posição
+
+Frente do robô.
+
+---
+
+## Objetivo
+
+Deteção de obstáculos.
+
+---
+
+## Campo de Visão
+
+```text
+      Frente
+
+         /\
+        /  \
+       /    \
+
+       HC-SR04
+```
+
+---
+
+# Cablagem
+
+## Princípios
+
+- cabos curtos;
+- evitar cruzamentos;
+- separar potência e sinais.
+
+---
+
+## Organização
+
+```mermaid
+flowchart TB
+
+    POWER["Energia"]
+
+    SIGNAL["Sinais"]
+
+    MOTORS["Motores"]
+
+    POWER --> MOTORS
+
+    SIGNAL --> RP2040
+```
+
+---
+
+# Ensaios Mecânicos
+
+## Teste 1
+
+Movimento manual das rodas.
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+## Teste 2
+
+Estabilidade da estrutura.
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+# Ensaios Elétricos
+
+## Teste 1
+
+Alimentação do RP2040.
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+## Teste 2
+
+Comunicação I²C com MPU-6050.
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+## Teste 3
+
+Leitura HC-SR04.
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+# Ensaios Funcionais
+
+## Movimento
+
+- [ ] Frente
+- [ ] Trás
+- [ ] Esquerda
+- [ ] Direita
+- [ ] Stop
+
+---
+
+## Sensores
+
+- [ ] MPU-6050 funcional
+- [ ] HC-SR04 funcional
+
+---
+
+# Critérios de Conclusão
+
+O Block 01 será considerado concluído quando:
+
+- [ ] Movimento básico funcional.
+- [ ] Sensores funcionais.
+- [ ] Estrutura estável.
+- [ ] Cablagem organizada.
+- [ ] Alimentação estável.
+- [ ] Testes concluídos.
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- motor-platform.md
+- gpio-allocation.md
+- sensors.md
+- power-system.md
+- physical-layout.md
+
+---
+
+# Próximo Bloco
+
+Após conclusão do Block 01:
+
+```text
+Block 02
+Docking e Navegação
+```
+
+O objetivo é adicionar capacidades de localização da base e preparação para carregamento autónomo.
+
+
+================================================================================
+FILE: docs\bloc01-layout.md
+================================================================================
+
+# Block 01 Layout
+
+> AEGIS - Phase 1 Physical Layout
+
+Versão: 1.0
+Estado: Planeamento
+
+---
+
+# Objetivo
+
+Definir a organização física da primeira fase do AEGIS.
+
+Esta fase tem como objetivo validar:
+
+- plataforma motora;
+- distribuição energética;
+- estabilidade mecânica;
+- organização da cablagem.
+
+---
+
+# Componentes Instalados
+
+## Chassis Original (Piso 1)
+
+- XIAO RP2040
+- TB6612FNG
+- MPU-6050
+- HC-SR04
+- Motores DC
+
+---
+
+## Placa Circular Intermédia (Piso 2)
+
+- Powerbank
+
+---
+
+## Placa Circular Superior (Piso 3)
+
+Reservada para expansão futura.
+
+Ainda sem componentes instalados.
+
+---
+
+# Dimensões Reais
+
+## Chassis Original
+
+| Parâmetro | Valor |
+|------------|------------|
+| Comprimento | 260 mm |
+| Largura | 155 mm |
+| Altura | 65 mm |
+
+---
+
+## Piso 2
+
+| Parâmetro | Valor |
+|------------|------------|
+| Diâmetro | 300 mm |
+| Altura acima do chassis | 45 mm |
+
+---
+
+## Piso 3
+
+| Parâmetro | Valor |
+|------------|------------|
+| Diâmetro | 300 mm |
+| Altura acima do Piso 2 | 30 mm |
+
+---
+
+# Arquitetura Vertical
+
+```text
+
+               Piso 3
+        Ø300 mm - Reservado
+
+        ──────────────────
+
+                 ▲
+                 │
+                 │ 30 mm
+                 ▼
+
+             Piso 2
+          Ø300 mm
+
+          [Powerbank]
+
+        ──────────────────
+
+                 ▲
+                 │
+                 │ 45 mm
+                 ▼
+
+      Chassis Original
+
+RP2040
+TB6612FNG
+MPU-6050
+HC-SR04
+
+Motores
+
+```
+
+---
+
+# Vista Frontal
+
+```text
+
+           Piso 3
+     ┌───────────────┐
+     │   Reservado   │
+     └───────────────┘
+
+     ┌───────────────┐
+     │   Powerbank   │
+     └───────────────┘
+
+══════════════════════════
+     Chassis Original
+══════════════════════════
+
+        HC-SR04
+
+      O         O
+
+      O         O
+```
+
+---
+
+# Vista Superior Piso 1
+
+```text
+
+                 Frente
+
+      ┌─────────────────────┐
+      │                     │
+      │       HC-SR04       │
+      │                     │
+      │      MPU-6050       │
+      │                     │
+      │ RP2040  TB6612FNG   │
+      │                     │
+      └─────────────────────┘
+
+                Traseira
+```
+
+---
+
+# Vista Superior Piso 2
+
+```text
+
+           Ø300 mm
+
+      ╭─────────────────╮
+    ╭─╯                 ╰─╮
+   │                       │
+   │                       │
+   │      POWERBANK        │
+   │                       │
+   │                       │
+    ╰─╮                 ╭─╯
+      ╰─────────────────╯
+```
+
+---
+
+# Distribuição de Peso
+
+## Componentes Principais
+
+### Piso 1
+
+- Motores
+- TB6612FNG
+- RP2040
+
+---
+
+### Piso 2
+
+- Powerbank
+
+---
+
+## Centro de Gravidade
+
+Objetivo:
+
+```text
+Powerbank
+      │
+      ▼
+
+ MPU-6050
+
+      ▼
+
+ Centro do Robô
+```
+
+A colocação do powerbank deverá ficar o mais próxima possível do centro 
+
+
+================================================================================
+FILE: docs\bloc01-wiring.md
+================================================================================
+
+# Block 01 Wiring
+
+> AEGIS - Block 01 Wiring Architecture
+
+Versão: 1.0
+Estado: Pré-Implementação
+
+---
+
+# Objetivo
+
+Documentar as ligações elétricas do Block 01.
+
+O Block 01 é composto por:
+
+- XIAO RP2040
+- Expansion Board RP2040
+- TB6612FNG
+- MPU-6050
+- HC-SR04
+- Motores
+- Powerbank
+
+---
+
+
+
+================================================================================
+FILE: docs\bom.md
+================================================================================
+
+# Bill of Materials (BOM)
+
+> AEGIS - Hardware Reference List
+
+Versão: 2.0
+Estado: Documento de Referência
+
+---
+
+# Objetivo
+
+Este documento lista os componentes utilizados ou previstos para o projeto AEGIS.
+
+Não representa o estado de aquisição nem de montagem.
+
+O seu objetivo é servir como:
+
+- referência de hardware
+- lista de compras
+- documentação técnica
+- apoio à replicação do projeto
+
+---
+
+# Filosofia
+
+Sempre que possível:
+
+- utilizar componentes de baixo custo;
+- privilegiar módulos populares;
+- permitir substituições equivalentes;
+- evitar dependências de fornecedores específicos.
+
+---
+
+# Controladores
+
+
+================================================================================
+FILE: docs\camera-system.md
+================================================================================
+
+# Camera System
+
+> AEGIS - Vision and Video Architecture
+
+Versão: 1.0
+Estado: Arquitetura Definida
+
+---
+
+# Objetivo
+
+O sistema de visão do AEGIS tem como objetivo fornecer:
+
+- vigilância remota;
+- streaming de vídeo em tempo real;
+- monitorização da habitação;
+- apoio ao docking autónomo;
+- futuras capacidades de visão computacional.
+
+---
+
+# Filosofia
+
+A câmara é considerada um sensor avançado.
+
+Ao contrário dos sensores de navegação de baixo nível, o processamento de imagem não deve interferir com:
+
+- movimento;
+- docking;
+- segurança do sistema.
+
+Por esse motivo, todo o sistema visual encontra-se associado ao ESP32-S3.
+
+```mermaid
+flowchart TD
+
+    RP["RP2040"]
+
+    ESP["ESP32-S3"]
+
+    CAM["Câmara"]
+
+    HA["Home Assistant"]
+
+    CAM --> ESP
+
+    ESP --> HA
+
+    RP <-->|UART| ESP
+```
+
+---
+
+# Arquitetura Geral
+
+```mermaid
+flowchart LR
+
+    CAM["Câmara"]
+
+    ESP["ESP32-S3"]
+
+    HA["Home Assistant"]
+
+    USER["Utilizador"]
+
+    CAM --> ESP
+
+    ESP --> HA
+
+    HA --> USER
+```
+
+---
+
+# Componentes
+
+## Câmara
+
+Quantidade:
+
+- 1
+
+Estado:
+
+- Modelo definitivo por selecionar
+
+Responsabilidades:
+
+- captura de vídeo
+- apoio à navegação visual
+- vigilância
+
+---
+
+## Processamento
+
+Responsável:
+
+- ESP32-S3
+
+Funções:
+
+- aquisição de imagem
+- streaming
+- controlo da câmara
+- interface Home Assistant
+
+---
+
+## Iluminação
+
+Componentes:
+
+- Foco LED frontal
+
+Funções:
+
+- iluminação em condições de baixa luminosidade
+- auxílio à vigilância
+
+---
+
+# Estrutura Física
+
+## Posição Prevista
+
+A câmara deverá ser colocada na zona superior do robô.
+
+```mermaid
+flowchart TB
+
+    CAM["Câmara"]
+
+    LIGHT["Foco LED"]
+
+    EYES["Olhos LED"]
+
+    CAM --> LIGHT
+
+    CAM --> EYES
+```
+
+Representação conceptual:
+
+```text
+      Olho      Olho
+
+         Câmara
+
+          Foco
+```
+
+---
+
+# Modos de Funcionamento
+
+## Modo Vigilância
+
+Objetivo:
+
+- observar ambiente;
+- transmitir vídeo para Home Assistant.
+
+---
+
+## Modo Inspeção
+
+Objetivo:
+
+- controlo remoto;
+- deslocação manual.
+
+---
+
+## Modo Docking
+
+Objetivo:
+
+- validação visual da estação;
+- alinhamento futuro.
+
+---
+
+# Integração Home Assistant
+
+## Fluxo
+
+```mermaid
+flowchart LR
+
+    CAMERA["Câmara"]
+
+    ESP["ESP32-S3"]
+
+    HA["Home Assistant"]
+
+    DASH["Dashboard"]
+
+    CAMERA --> ESP
+
+    ESP --> HA
+
+    HA --> DASH
+```
+
+---
+
+## Funcionalidades Previstas
+
+- visualização em direto;
+- gravação;
+- snapshots;
+- integração com dashboards;
+- automações relacionadas com imagem.
+
+---
+
+# Integração com Patrulha
+
+```mermaid
+flowchart LR
+
+    PATROL["Patrulha"]
+
+    CAMERA["Captura"]
+
+    STORAGE["Registo"]
+
+    PATROL --> CAMERA
+
+    CAMERA --> STORAGE
+```
+
+---
+
+# Integração com Docking
+
+## Situação Atual
+
+A estratégia principal utiliza:
+
+- IMU;
+- IR;
+- HC-SR04.
+
+---
+
+## Evolução Futura
+
+A câmara poderá validar a posição da estação.
+
+```mermaid
+flowchart LR
+
+    CAM["Câmara"]
+
+    MARKER["Marcador Visual"]
+
+    DOCK["Alinhamento"]
+
+    CAM --> MARKER
+
+    MARKER --> DOCK
+```
+
+---
+
+# Marcadores Visuais
+
+Tecnologias candidatas:
+
+- ArUco Marker
+- QR Code
+- Marcador personalizado
+
+---
+
+# Capacidades Futuras
+
+## Reconhecimento Visual
+
+Possibilidades:
+
+- estação de carregamento;
+- portas;
+- zonas da habitação;
+- obstáculos.
+
+---
+
+## Navegação Assistida por Visão
+
+```mermaid
+flowchart TD
+
+    CAMERA["Imagem"]
+
+    PROCESS["Processamento"]
+
+    DECISION["Decisão"]
+
+    CAMERA --> PROCESS
+
+    PROCESS --> DECISION
+```
+
+---
+
+## Visão Computacional
+
+Possíveis evoluções:
+
+- deteção de movimento;
+- identificação de objetos;
+- deteção de eventos.
+
+---
+
+# Roadmap
+
+## Fase 1
+
+- instalação física da câmara
+- streaming básico
+
+---
+
+## Fase 2
+
+- integração Home Assistant
+- snapshots
+
+---
+
+## Fase 3
+
+- gravação
+- eventos
+
+---
+
+## Fase 4
+
+- apoio ao docking
+
+---
+
+## Fase 5
+
+- marcadores visuais
+
+---
+
+## Fase 6
+
+- visão computacional
+
+---
+
+# Critérios de Sucesso
+
+O sistema será considerado concluído quando:
+
+- [ ] Existe vídeo em tempo real.
+- [ ] Home Assistant apresenta a imagem.
+- [ ] O foco LED funciona corretamente.
+- [ ] O sistema opera de forma estável.
+- [ ] A câmara pode apoiar o docking.
+- [ ] A arquitetura suporta futuras evoluções.
+
+---
+
+# Notas de Projeto
+
+A câmara não é considerada um componente crítico para:
+
+- movimento;
+- docking inicial;
+- segurança básica.
+
+O AEGIS deverá continuar perfeitamente operacional sem a câmara.
+
+A visão computacional será tratada como uma camada adicional de capacidades e não como uma dependência estrutural do robô.
+
+A arquitetura foi concebida para permitir evolução gradual desde simples streaming até funcionalidades avançadas de visão assistida.
+
+
+================================================================================
+FILE: docs\communication-system.md
+================================================================================
+
+# Communication System
+
+> AEGIS - Communication Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir o sistema de comunicações do AEGIS.
+
+O sistema deve permitir:
+
+- comunicação entre controladores;
+- integração com Home Assistant;
+- telemetria;
+- comandos remotos;
+- atualizações OTA;
+- expansão futura.
+
+---
+
+# Arquitetura Geral
+
+```text
+
+          Home Assistant
+                 ▲
+                 │
+            Wi-Fi / ESPHome
+                 │
+                 ▼
+
+             ESP32-S3
+                 ▲
+                 │ UART
+                 ▼
+
+              RP2040
+
+```
+
+---
+
+# Filosofia
+
+## RP2040
+
+Responsável por:
+
+- movimento;
+- sensores locais;
+- controlo de motores;
+- funções críticas em tempo real.
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- Wi-Fi;
+- ESPHome;
+- Home Assistant;
+- Assist;
+- áudio;
+- vídeo;
+- lógica principal.
+
+---
+
+# Comunicação Interna
+
+## RP2040 ↔ ESP32-S3
+
+Método:
+
+```text
+UART
+```
+
+Estado:
+
+Definido.
+
+---
+
+## Objetivo
+
+Separar:
+
+```text
+Movimento
+```
+
+de
+
+```text
+Lógica Principal
+```
+
+---
+
+## Funções
+
+### RP2040 → ESP32-S3
+
+Telemetria.
+
+Exemplos:
+
+```text
+Velocidade
+
+Orientação
+
+Estado Motores
+
+Distância HC-SR04
+
+Estado Segurança
+```
+
+---
+
+### ESP32-S3 → RP2040
+
+Comandos.
+
+Exemplos:
+
+```text
+Frente
+
+Trás
+
+Esquerda
+
+Direita
+
+Parar
+
+Patrulha
+
+Docking
+```
+
+---
+
+# Protocolo
+
+## Transporte
+
+UART série.
+
+---
+
+## Estrutura
+
+Formato textual simples.
+
+Exemplo:
+
+```text
+MOVE:FORWARD
+
+MOVE:STOP
+
+STATUS:BATTERY
+
+STATUS:SENSORS
+```
+
+---
+
+## Evolução Futura
+
+Poderá evoluir para:
+
+```text
+JSON
+
+ou
+
+frames binárias
+```
+
+caso necessário.
+
+---
+
+# Comunicação Externa
+
+## Wi-Fi
+
+Controlador:
+
+```text
+ESP32-S3
+```
+
+---
+
+## Utilização
+
+- Home Assistant
+- ESPHome
+- OTA
+- Serviços de voz
+- Telemetria
+
+---
+
+# Integração Home Assistant
+
+## Objetivos
+
+Permitir:
+
+- controlo remoto;
+- monitorização;
+- automações;
+- integração Assist;
+- ações baseadas em presença.
+
+---
+
+## Papel do Home Assistant
+
+O Home Assistant constitui o nível estratégico do sistema.
+
+Exemplos:
+
+```text
+Patrulha Programada
+
+Alertas
+
+Presença
+
+Rotinas
+
+Docking
+```
+
+---
+
+# ESPHome
+
+## Estado
+
+Planeado.
+
+---
+
+## Funções
+
+Publicação de:
+
+```text
+Sensores
+
+Estado
+
+Bateria
+
+Áudio
+
+Vídeo
+```
+
+---
+
+## Controlo
+
+Receção de:
+
+```text
+Comandos
+
+Automações
+
+Pedidos Assist
+```
+
+---
+
+# Telemetria
+
+## Dados de Movimento
+
+Origem:
+
+RP2040
+
+Exemplos:
+
+- velocidade;
+- orientação;
+- aceleração.
+
+---
+
+## Dados de Energia
+
+Origem:
+
+ESP32-S3
+
+Exemplos:
+
+- estado de carga;
+- docking;
+- alimentação.
+
+---
+
+## Dados de Sensores
+
+Origem:
+
+RP2040
+
+Exemplos:
+
+- MPU6050;
+- HC-SR04.
+
+---
+
+# Resiliência
+
+## Falha de Wi-Fi
+
+A perda de Wi-Fi não deverá impedir:
+
+- movimento;
+- paragem;
+- segurança;
+- navegação básica.
+
+Responsável:
+
+```text
+RP2040
+```
+
+---
+
+## Falha do ESP32-S3
+
+O RP2040 deverá continuar capaz de:
+
+- parar motores;
+- responder a condições críticas;
+- manter a segurança.
+
+---
+
+## Falha UART
+
+Em caso de perda de comunicação:
+
+```text
+RP2040
+↓
+Paragem Segura
+```
+
+---
+
+# Integrações Futuras
+
+## Home Assistant
+
+Planeado:
+
+- Assist
+- Dashboard
+- Telemetria avançada
+- Estado energético
+
+---
+
+## Robôs Existentes
+
+Investigação futura.
+
+Possível integração com:
+
+```text
+Roomba i1
+```
+
+Objetivos:
+
+- comparação de telemetria;
+- reutilização de informação;
+- integração no ecossistema doméstico.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ RP2040
+
+✅ ESP32-S3
+
+✅ UART dedicada
+
+✅ Wi-Fi via ESP32-S3
+
+✅ Integração Home Assistant
+
+✅ Integração ESPHome
+
+---
+
+## Em Evolução
+
+- protocolo definitivo UART;
+- telemetria avançada;
+- docking autónomo;
+- integração de mapas e dados externos.
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- gpio-allocation.md
+- power-system.md
+- home-assistant-integration.md
+- firmware-protocol.md
+- project-decisions.md
+
+
+================================================================================
+FILE: docs\development-log.md
+================================================================================
+
+# Development Log
+
+> AEGIS - Development History and Engineering Decisions
+
+Versão: 1.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Este documento serve como diário oficial do projeto AEGIS.
+
+Devem ser registados:
+
+- decisões técnicas;
+- revisões de arquitetura;
+- testes realizados;
+- alterações mecânicas;
+- alterações de firmware;
+- problemas encontrados;
+- ideias aprovadas ou rejeitadas.
+
+---
+
+# Filosofia
+
+O objetivo deste documento é preservar contexto.
+
+Uma decisão tomada hoje poderá ser importante meses ou anos mais tarde.
+
+Sempre que uma decisão relevante for tomada:
+
+1. Registar neste documento.
+2. Atualizar a documentação correspondente.
+3. Atualizar o project_state.md se necessário.
+
+---
+
+# Formato
+
+Cada entrada deve seguir o formato:
+
+```markdown
+## DATA
+
+### Tipo
+
+Arquitetura
+Hardware
+Software
+Mecânica
+Energia
+Docking
+Áudio
+Vídeo
+Segurança
+
+### Alteração
+
+Descrição.
+
+### Motivo
+
+Justificação.
+
+### Impacto
+
+Consequências.
+```
+
+---
+
+# Histórico
+
+---
+
+## 2026-09-02
+
+### Tipo
+
+Documentação
+
+### Alteração
+
+Sincronização de documentação: unificação da versão (v0.1), atualização do estado de hardware, padronização de nomenclatura de pisos, correção do amplificador de áudio para MAX98357A, especificação do Grove Shield for XIAO, e aceite das decisões PD-014 (TB6612FNG) e PD-015 (Grove I2C Hub).
+
+### Motivo
+
+Corrigir inconsistências identificadas na documentação e preparar o projeto para assembling do Block 01.
+
+### Impacto
+
+Melhor rastreabilidade das decisões e preparação para fase de prototipagem física.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Arquitetura
+
+### Alteração
+
+Definida arquitetura de dois controladores:
+
+- XIAO RP2040
+- ESP32-S3
+
+### Motivo
+
+Separar movimento de processamento avançado.
+
+### Impacto
+
+Arquitetura principal aprovada.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Arquitetura
+
+### Alteração
+
+Definida organização do robô por pisos.
+
+### Estrutura
+
+- Piso 1 → Movimento
+- Piso 2 → Inteligência
+- Piso 3 → Vigilância
+
+### Impacto
+
+Base para toda a arquitetura mecânica.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Hardware
+
+### Alteração
+
+Selecionado TB6612FNG como driver principal.
+
+### Substitui
+
+L298N
+
+### Motivo
+
+- maior eficiência
+- menor aquecimento
+- menor queda de tensão
+
+### Impacto
+
+Atualização da documentação de movimento.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Sensores
+
+### Alteração
+
+Confirmada utilização de:
+
+- MPU-6050
+- HC-SR04
+
+### Impacto
+
+Definida primeira fase da plataforma motora.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Áudio
+
+### Alteração
+
+Definida utilização de:
+
+- 3 × INMP441
+- 2 × PAM8302
+- 2 × Altifalantes 3W
+
+### Impacto
+
+Arquitetura áudio aprovada.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Iluminação
+
+### Alteração
+
+Definida utilização de:
+
+- 5 × KY-009 RGB
+
+### Objetivo
+
+- iluminação ambiente
+- indicadores de estado
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Mecânica
+
+### Alteração
+
+Aprovada utilização de saia translúcida.
+
+### Objetivos
+
+- ocultar cablagem
+- proteger componentes
+- difundir iluminação RGB
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Energia
+
+### Alteração
+
+Integração do painel solar adiada.
+
+### Motivo
+
+Necessidade de validar primeiro:
+
+- movimento
+- docking
+- carregamento
+
+### Impacto
+
+Painel solar movido para fase avançada.
+
+---
+
+## 2026-08-31
+
+### Tipo
+
+Energia
+
+### Alteração
+
+Definida arquitetura com:
+
+- carregamento por indução
+- painel solar
+- cabo USB em Y
+- isolamento por díodos Schottky
+
+### Impacto
+
+Base da arquitetura energética futura.
+
+---
+
+## 2026-09-01
+
+### Tipo
+
+Projeto
+
+### Alteração
+
+Criado repositório GitHub.
+
+### Nome
+
+AEGIS-Home-Guardian
+
+### Impacto
+
+Início da documentação pública do projeto.
+
+---
+
+## 2026-09-01
+
+### Tipo
+
+Documentação
+
+### Alteração
+
+Criados documentos base:
+
+- README.md
+- architecture.md
+- project_state.md
+
+### Impacto
+
+Definida documentação fundamental.
+
+---
+
+## 2026-09-01
+
+### Tipo
+
+Documentação
+
+### Alteração
+
+Iniciada migração dos diagramas ASCII para Mermaid.
+
+### Motivo
+
+Melhor integração GitHub.
+
+### Impacto
+
+Arquitetura gráfica modernizada.
+
+---
+
+## 2026-09-01
+
+### Tipo
+
+Energia
+
+### Alteração
+
+Correção da documentação.
+
+### Situação Anterior
+
+Referência incorreta a díodos Zener.
+
+### Situação Atual
+
+Díodos Schottky.
+
+### Motivo
+
+Os Schottky serão utilizados para impedir retorno de corrente entre:
+
+- indução
+- painel solar
+
+### Impacto
+
+Atualização da documentação energética.
+
+---
+
+# Próximas Entradas
+
+As próximas alterações deverão ser registadas nesta secção.
+
+---
+
+## Template
+
+```markdown
+## AAAA-MM-DD
+
+### Tipo
+
+### Alteração
+
+### Motivo
+
+### Impacto
+```
+
+---
+
+# Estatísticas do Projeto
+
+## Documentação
+
+Documentos criados:
+
+- README.md
+- architecture.md
+- project_state.md
+- bom.md
+- gpio-allocation.md
+- motor-platform.md
+- power-system.md
+- sensors.md
+- docking-system.md
+- audio-system.md
+- camera-system.md
+- communication-system.md
+- software-roadmap.md
+- firmware-protocol.md
+- security-and-failsafe.md
+- physical-layout.md
+- mechanical-design.md
+- development-log.md
+
+---
+
+# Regra de Ouro
+
+Nenhuma decisão relevante deve existir apenas em conversas.
+
+Toda a decisão que altere:
+
+- hardware;
+- firmware;
+- arquitetura;
+- energia;
+- docking;
+- segurança;
+
+deve ser registada neste documento.
+
+Este ficheiro é considerado a memória histórica oficial do projeto AEGIS.
+
+# 2026
+
+## 2026-09-01
+
+### Mecânica
+
+#### Dimensões oficiais confirmadas
+
+Confirmadas as seguintes dimensões:
+
+- Chassis base: 260 × 155 × 65 mm
+- Rodas: Ø70 mm
+- Piso 2: Ø300 mm
+- Piso 3: Ø300 mm
+
+Impacto:
+
+Criação do documento dimensional-reference.md.
+
+Referência:
+
+- PD-003
+
+---
+
+#### Altura do Piso 2
+
+Identificada necessidade de validação física dos separadores.
+
+Opções em estudo:
+
+- 45 mm
+- 50 mm
+
+Estado:
+
+Em validação.
+
+Impacto:
+
+Afeta a altura final da estrutura e o espaço interno disponível.
+
+Referência:
+
+- PD-013
+
+---
+
+#### Powerbank
+
+Definida localização preferencial.
+
+Posição:
+
+Face inferior do Piso 2.
+
+Objetivos:
+
+- reduzir centro de gravidade;
+- libertar área útil;
+- simplificar cablagem.
+
+Referência:
+
+- PD-006
+
+---
+
+### Hardware
+
+#### Expansion Board Grove
+
+Validação técnica concluída.
+
+Funcionalidades confirmadas:
+
+- I²C
+- UART
+- Grove Digital
+- Gestão de bateria integrada
+- Indicadores de carga
+- Modo destacável (25 × 39 mm após separação)
+
+Impacto:
+
+Atualização futura do gpio-allocation.md.
+
+---
+
+#### ESP32-S3
+
+Dimensões físicas confirmadas.
+
+Dimensões:
+
+- 62.74 × 25.40 mm
+
+Impacto:
+
+Validação da integração física no Piso 2.
+
+---
+
+### Áudio
+
+#### Aquisição de hardware
+
+Confirmado hardware áudio disponível:
+
+- 3 × INMP441
+- 3 × MAX98357A
+- 2 × Altifalantes
+
+Impacto:
+
+Subsistema áudio considerado praticamente completo ao nível de hardware.
+
+Referência:
+
+- PD-012
+
+---
+
+### Iluminação
+
+#### Aquisição de hardware
+
+Confirmada disponibilidade de:
+
+- 5 × KY-009 RGB
+
+Impacto:
+
+Hardware necessário para implementação da iluminação ambiental disponível.
+
+Referência:
+
+- PD-011
+
+---
+
+### Energia
+
+#### Arquitetura energética
+
+Definido o powerbank como fonte energética principal.
+
+Impacto:
+
+Simplificação da arquitetura de alimentação.
+
+Referência:
+
+- PD-004
+
+---
+
+#### Pass-through Charging
+
+Definido como requisito obrigatório.
+
+Todos os powerbanks considerados para utilização no AEGIS deverão suportar:
+
+- carregamento durante utilização;
+- alimentação contínua.
+
+Impacto:
+
+Fundamental para docking e carregamento autónomo.
+
+Referência:
+
+- PD-005
+
+---
+
+### Integração
+
+#### Home Assistant
+
+Confirmada estratégia de integração nativa com Home Assistant.
+
+Observações:
+
+- existência de repositório dedicado Home-Assistant;
+- existência de dois Roomba i1 integrados;
+- possibilidade futura de reutilização de informação de mapas e telemetria.
+
+Estado:
+
+Investigação futura.
+
+Referência:
+
+- PD-008
+
+---
+
+### I²C
+
+#### Estratégia de expansão
+
+Identificadas duas abordagens possíveis:
+
+Opção A:
+
+- Grove I²C Hub
+
+Opção B:
+
+- Bloco de terminais
+- Cabos Grove-Pigtail
+
+Estado:
+
+Em avaliação.
+
+Referência:
+
+- PD-015
+
+---
+
+### Montagem
+
+#### Estratégia de prototipagem
+
+A fase inicial utilizará:
+
+- fita dupla-face;
+- abraçadeiras;
+- fixações temporárias.
+
+Objetivo:
+
+Validar layout e posicionamento antes da criação de suportes definitivos.
+
+Referência:
+
+- PD-007
+
+
+================================================================================
+FILE: docs\dimensional-reference.md
+================================================================================
+
+# Dimensional Reference
+
+> AEGIS - Official Mechanical Dimensions
+
+Versão: 1.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Este documento contém as dimensões oficiais utilizadas no projeto AEGIS.
+
+Sempre que existam conflitos entre desenhos conceptuais e documentação, este documento tem prioridade.
+
+---
+
+# Chassis Base
+
+Descrição:
+
+Chassis 4WD em acrílico utilizado como plataforma principal.
+
+Dimensões:
+
+| Parâmetro | Valor |
+|------------|------------|
+| Comprimento | 260 mm |
+| Largura | 155 mm |
+| Altura | 65 mm |
+
+---
+
+# Rodas
+
+| Parâmetro | Valor |
+|------------|------------|
+| Diâmetro | 70 mm |
+| Raio | 35 mm |
+| Largura | 30 mm |
+
+---
+
+# Piso 2
+
+Descrição:
+
+Primeira plataforma circular superior.
+
+Material:
+
+Acrílico transparente.
+
+Dimensões:
+
+| Parâmetro | Valor |
+|------------|------------|
+| Diâmetro | 300 mm |
+
+---
+
+# Piso 3
+
+Descrição:
+
+Segunda plataforma circular superior.
+
+Material:
+
+Acrílico transparente.
+
+Dimensões:
+
+| Parâmetro | Valor |
+|------------|------------|
+| Diâmetro | 300 mm |
+
+---
+
+# Separadores
+
+## Chassis → Piso 2
+
+Estado:
+
+Em validação.
+
+Opções:
+
+| Valor |
+|----------|
+| 45 mm |
+| 50 mm |
+
+Decisão final pendente de montagem física.
+
+---
+
+## Piso 2 → Piso 3
+
+Dimensão:
+
+```text
+30 mm
+```
+
+---
+
+# Estrutura Vertical
+
+```text
+
+Piso 3
+Ø300 mm
+
+      ▲
+      │
+      │ 30 mm
+      ▼
+
+Piso 2
+Ø300 mm
+
+      ▲
+      │
+      │ 45/50 mm
+      ▼
+
+Chassis
+260 × 155 × 65 mm
+
+```
+
+---
+
+# Powerbank
+
+Posição prevista:
+
+```text
+Face inferior do Piso 2
+```
+
+Objetivos:
+
+- baixar o centro de gravidade;
+- libertar área útil do Piso 2;
+- simplificar cablagem.
+
+---
+
+# Componentes Mecânicos em Validação
+
+## Separadores
+
+Estado:
+
+Por validar.
+
+Objetivo:
+
+Comparar:
+
+- 45 mm
+- 50 mm
+
+Critérios:
+
+- estabilidade;
+- acessibilidade;
+- espaço para cablagem.
+
+---
+
+# Regras
+
+Não utilizar dimensões provenientes de:
+
+- imagens conceptuais;
+- renderizações;
+- estimativas.
+
+Apenas dimensões confirmadas devem ser registadas neste documento.
+
+---
+
+# Histórico
+
+## 2026-09-01
+
+Dimensões confirmadas:
+
+- Chassis 260 × 155 × 65 mm
+- Rodas Ø70 mm
+- Piso 2 Ø300 mm
+- Piso 3 Ø300 mm
+- Separador Piso 3 = 30 mm
+
+
+================================================================================
+FILE: docs\docking-system.md
+================================================================================
+
+# Docking System
+
+> AEGIS - Autonomous Docking and Charging System
+
+Versão: 2.0
+Estado: Arquitetura Definida
+
+---
+
+# Objetivo
+
+Permitir que o AEGIS:
+
+- monitorize o estado da bateria;
+- determine autonomamente quando regressar à base;
+- localize a estação de carregamento;
+- execute aproximação controlada;
+- alinhe corretamente o sistema de carregamento;
+- confirme o início da carga.
+
+O sistema deverá funcionar sem intervenção humana.
+
+---
+
+# Filosofia
+
+A estratégia de docking deverá utilizar múltiplas tecnologias complementares.
+
+Nenhum sensor é responsável sozinho pela operação completa.
+
+```mermaid
+flowchart LR
+
+    BAT["Bateria"]
+    NAV["Navegação"]
+    IR["Docking IR"]
+    SONAR["HC-SR04"]
+    CAM["Câmara (Futuro)"]
+    CHARGE["Carregamento"]
+
+    BAT --> NAV
+    NAV --> IR
+    IR --> SONAR
+    SONAR --> CAM
+    CAM --> CHARGE
+```
+
+---
+
+# Arquitetura Geral
+
+```mermaid
+flowchart TD
+
+    ROBOT["AEGIS"]
+
+    BASE["Docking Station"]
+
+    IRTX["Emissor IR"]
+    IRRX["Recetor IR"]
+
+    SONAR["HC-SR04"]
+
+    INDU["Carregamento por Indução"]
+
+    BASE --> IRTX
+
+    IRTX -.-> IRRX
+
+    IRRX --> ROBOT
+
+    SONAR --> ROBOT
+
+    ROBOT --> INDU
+```
+
+---
+
+# Processo de Docking
+
+O processo completo encontra-se dividido em várias fases.
+
+```mermaid
+flowchart LR
+
+    A["Patrulha"]
+    B["Bateria Baixa"]
+    C["Regresso Aproximado"]
+    D["Procura da Base"]
+    E["Aproximação"]
+    F["Alinhamento"]
+    G["Carga"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+```
+
+---
+
+# Fase 1 - Deteção de Bateria Baixa
+
+## Objetivo
+
+Determinar quando interromper missões e iniciar o regresso.
+
+---
+
+## Critérios
+
+Possíveis limiares:
+
+| Estado | Valor |
+|----------|----------|
+| Aviso | < 30% |
+| Retorno | < 25% |
+| Crítico | < 15% |
+
+Valores serão ajustados após testes.
+
+---
+
+# Fase 2 - Regresso Aproximado
+
+## Sensores
+
+### Atual
+
+- MPU-6050
+
+### Futuro
+
+- Encoders
+
+---
+
+## Objetivo
+
+Levar o robô para a área onde a base se encontra.
+
+```mermaid
+flowchart LR
+
+    IMU["MPU-6050"]
+
+    NAV["Navegação"]
+
+    HOME["Zona da Base"]
+
+    IMU --> NAV
+
+    NAV --> HOME
+```
+
+---
+
+# Fase 3 - Procura da Base
+
+## Tecnologia
+
+Sinal infravermelho.
+
+A estação de carga atua como farol.
+
+---
+
+## Componentes da Base
+
+| Componente | Função |
+|------------|------------|
+| Emissor IR | Guiar o robô |
+| Indicador LED | Diagnóstico |
+| Módulo de alimentação | Alimentação da base |
+
+---
+
+## Estratégia
+
+```mermaid
+flowchart TD
+
+    SEARCH["Procura"]
+
+    LEFT["Varredura Esquerda"]
+
+    RIGHT["Varredura Direita"]
+
+    FOUND["Base Encontrada"]
+
+    SEARCH --> LEFT
+    SEARCH --> RIGHT
+
+    LEFT --> FOUND
+    RIGHT --> FOUND
+```
+
+---
+
+# Fase 4 - Aproximação
+
+## Objetivo
+
+Atingir a zona de acoplamento.
+
+---
+
+## Sensores
+
+- Recetores IR
+
+---
+
+## Estratégia
+
+```mermaid
+flowchart LR
+
+    IRL["IR Esquerda"]
+
+    IRR["IR Direita"]
+
+    CTRL["Correção de Direção"]
+
+    IRL --> CTRL
+    IRR --> CTRL
+```
+
+---
+
+## Comportamento
+
+| Situação | Ação |
+|-----------|-----------|
+| Sinais equilibrados | Avançar |
+| Esquerda dominante | Corrigir esquerda |
+| Direita dominante | Corrigir direita |
+
+---
+
+# Fase 5 - Alinhamento Final
+
+## Objetivo
+
+Posicionar o robô corretamente sobre a estação.
+
+---
+
+## Sensores
+
+### Atual
+
+- HC-SR04
+
+### Futuro
+
+- Câmara
+
+---
+
+## Fluxo
+
+```mermaid
+flowchart LR
+
+    IR["Posição Aproximada"]
+
+    SONAR["Distância"]
+
+    ALIGN["Alinhamento"]
+
+    IR --> ALIGN
+
+    SONAR --> ALIGN
+```
+
+---
+
+# Fase 6 - Início de Carga
+
+## Objetivo
+
+Confirmar que o carregamento começou com sucesso.
+
+---
+
+## Fluxo
+
+```mermaid
+flowchart TD
+
+    DOCK["Posicionado"]
+
+    POWER["Receber Energia"]
+
+    VERIFY["Confirmar Carga"]
+
+    DOCK --> POWER
+
+    POWER --> VERIFY
+```
+
+---
+
+# Estação de Carga
+
+## Arquitetura
+
+```mermaid
+flowchart TB
+
+    PSU["Alimentação"]
+
+    IR["Emissor IR"]
+
+    COIL["Bobina de Indução"]
+
+    PSU --> IR
+
+    PSU --> COIL
+```
+
+---
+
+# Evolução Futura
+
+## Encoders
+
+Objetivo:
+
+- melhorar odometria;
+- melhorar regresso aproximado.
+
+---
+
+## Câmara
+
+Objetivo:
+
+- alinhamento visual;
+- validação da posição da estação.
+
+---
+
+## Marcadores Visuais
+
+Tecnologias possíveis:
+
+- ArUco Marker
+- QR Code
+- Marcador personalizado
+
+---
+
+## Visão Computacional
+
+```mermaid
+flowchart LR
+
+    CAM["Câmara"]
+
+    MARKER["Marcador"]
+
+    ALIGN["Alinhamento"]
+
+    CAM --> MARKER
+
+    MARKER --> ALIGN
+```
+
+---
+
+# Cenário Final
+
+```mermaid
+flowchart TD
+
+    BAT["Bateria Baixa"]
+
+    HOME["Regresso"]
+
+    IR["Deteção IR"]
+
+    SONAR["Alinhamento HC-SR04"]
+
+    CAM["Validação Visual"]
+
+    CHARGE["Carregamento"]
+
+    BAT --> HOME
+    HOME --> IR
+    IR --> SONAR
+    SONAR --> CAM
+    CAM --> CHARGE
+```
+
+---
+
+# Critérios de Sucesso
+
+O sistema será considerado concluído quando:
+
+- [ ] O robô identifica bateria baixa.
+- [ ] O robô regressa autonomamente.
+- [ ] A base é encontrada sem intervenção humana.
+- [ ] O alinhamento é consistente.
+- [ ] O carregamento inicia corretamente.
+- [ ] O sistema funciona repetidamente e de forma fiável.
+
+---
+
+# Notas de Projeto
+
+O sistema de docking do AEGIS inspira-se em soluções utilizadas por robôs domésticos autónomos, mas foi concebido para:
+
+- utilizar sensores acessíveis;
+- integrar-se com Home Assistant;
+- evoluir modularmente;
+- permitir melhorias futuras sem alterações estruturais profundas.
+
+A arquitetura prevê desde o início a coexistência de:
+
+- navegação inercial;
+- navegação por IR;
+- ultrassom;
+- visão computacional.
+
+Esta combinação deverá proporcionar elevada fiabilidade na localização da estação de carregamento.
+``
+
+
+================================================================================
+FILE: docs\esphome-design.md
+================================================================================
+
+# ESPHome Design
+
+> AEGIS - ESPHome Integration Architecture
+
+Versão: 1.0
+Estado: Arquitetura Definida
+
+---
+
+# Objetivo
+
+Definir a integração do AEGIS com:
+
+- ESPHome
+- Home Assistant
+- Assist
+
+Este documento especifica:
+
+- entidades;
+- sensores;
+- comandos;
+- telemetria;
+- serviços;
+- automações futuras.
+
+---
+
+# Filosofia
+
+O Home Assistant deve ver o AEGIS como uma entidade única.
+
+A complexidade interna do robô permanece oculta.
+
+```mermaid
+flowchart LR
+
+    RP["RP2040"]
+
+    ESP["ESP32-S3"]
+
+    ESPHOME["ESPHome"]
+
+    HA["Home Assistant"]
+
+    RP --> ESP
+
+    ESP --> ESPHOME
+
+    ESPHOME --> HA
+```
+
+---
+
+# Entidade Principal
+
+Nome:
+
+```text
+AEGIS
+```
+
+Identificador:
+
+```text
+aegis_home_guardian
+```
+
+Dispositivo:
+
+```text
+AEGIS Home Guardian
+```
+
+---
+
+# Arquitetura de Entidades
+
+```mermaid
+flowchart TD
+
+    A["AEGIS"]
+
+    SENSOR["Sensores"]
+    CONTROL["Controlos"]
+    STATUS["Estado"]
+    AUDIO["Áudio"]
+    VIDEO["Vídeo"]
+
+    A --> SENSOR
+    A --> CONTROL
+    A --> STATUS
+    A --> AUDIO
+    A --> VIDEO
+```
+
+---
+
+# Sensores
+
+## Bateria
+
+```yaml
+sensor:
+  - platform: template
+    name: "AEGIS Battery"
+```
+
+---
+
+### Utilização
+
+- dashboards
+- automações
+- docking
+
+---
+
+## Distância Frontal
+
+```yaml
+sensor:
+  - platform: template
+    name: "AEGIS Front Distance"
+```
+
+Fonte:
+
+- HC-SR04
+
+---
+
+## Ângulo
+
+```yaml
+sensor:
+  - platform: template
+    name: "AEGIS Heading"
+```
+
+Fonte:
+
+- MPU-6050
+
+---
+
+## Intensidade Sonora
+
+```yaml
+sensor:
+  - platform: template
+    name: "AEGIS Sound Level"
+```
+
+Fonte:
+
+- INMP441
+
+---
+
+# Binary Sensors
+
+## Obstáculo
+
+```yaml
+binary_sensor:
+  - platform: template
+    name: "AEGIS Obstacle"
+```
+
+---
+
+## Carregamento
+
+```yaml
+binary_sensor:
+  - platform: template
+    name: "AEGIS Charging"
+```
+
+---
+
+## Docked
+
+```yaml
+binary_sensor:
+  - platform: template
+    name: "AEGIS Docked"
+```
+
+---
+
+## Ligação UART
+
+```yaml
+binary_sensor:
+  - platform: template
+    name: "AEGIS RP2040 Online"
+```
+
+---
+
+# Text Sensors
+
+## Estado Atual
+
+```yaml
+text_sensor:
+  - platform: template
+    name: "AEGIS State"
+```
+
+Valores previstos:
+
+```text
+IDLE
+PATROL
+MANUAL
+DOCKING
+CHARGING
+ALERT
+SAFE_MODE
+```
+
+---
+
+## Último Evento
+
+```yaml
+text_sensor:
+  - platform: template
+    name: "AEGIS Last Event"
+```
+
+---
+
+# Botões
+
+## Patrulha
+
+```yaml
+button:
+  - platform: template
+    name: "Start Patrol"
+```
+
+---
+
+## Parar
+
+```yaml
+button:
+  - platform: template
+    name: "Stop Patrol"
+```
+
+---
+
+## Regressar à Base
+
+```yaml
+button:
+  - platform: template
+    name: "Return To Base"
+```
+
+---
+
+## Reiniciar ESP32
+
+```yaml
+button:
+  - platform: restart
+```
+
+---
+
+# Switches
+
+## Modo Patrulha
+
+```yaml
+switch:
+  - platform: template
+```
+
+---
+
+## Áudio
+
+```yaml
+switch:
+  - platform: template
+```
+
+---
+
+## Luz Ambiente
+
+```yaml
+switch:
+  - platform: template
+```
+
+---
+
+# Seletores
+
+## Perfil de Operação
+
+```yaml
+select:
+```
+
+Opções:
+
+```text
+Patrulha
+Manual
+Noturno
+Economia
+Teste
+```
+
+---
+
+# LEDs
+
+## Estado da Iluminação
+
+```yaml
+light:
+```
+
+---
+
+## Modos
+
+```text
+Patrol
+Charging
+Docking
+Alert
+Manual
+```
+
+---
+
+# Câmara
+
+## Entidade
+
+```yaml
+camera:
+```
+
+---
+
+## Funcionalidades
+
+- stream ao vivo;
+- snapshot;
+- gravação futura.
+
+---
+
+# Áudio
+
+## Reprodução
+
+```yaml
+media_player:
+```
+
+---
+
+Funções:
+
+- alertas;
+- TTS;
+- anúncios.
+
+---
+
+# Assist
+
+## Fluxo
+
+```mermaid
+flowchart LR
+
+    USER["Utilizador"]
+
+    MIC["INMP441"]
+
+    ESP["ESP32-S3"]
+
+    ASSIST["Assist"]
+
+    SPK["Altifalantes"]
+
+    USER --> MIC
+
+    MIC --> ESP
+
+    ESP --> ASSIST
+
+    ASSIST --> ESP
+
+    ESP --> SPK
+```
+
+---
+
+# Diagnóstico
+
+## Wi-Fi
+
+```yaml
+sensor:
+```
+
+Dados:
+
+- RSSI
+- uptime
+
+---
+
+## Firmware
+
+```yaml
+text_sensor:
+```
+
+Dados:
+
+- versão
+- build
+
+---
+
+## Telemetria
+
+Dados:
+
+- heartbeat RP2040
+- watchdog
+- estado UART
+
+---
+
+# Dashboard Principal
+
+Objetivo:
+
+Visualização rápida do estado do robô.
+
+---
+
+## Cartões
+
+### Estado
+
+- estado atual
+- bateria
+- carregamento
+
+---
+
+### Movimento
+
+- velocidade
+- direção
+- distância frontal
+
+---
+
+### Sensores
+
+- obstáculos
+- orientação
+- som
+
+---
+
+### Controlos
+
+- iniciar patrulha
+- parar
+- regressar à base
+
+---
+
+### Vídeo
+
+- imagem da câmara
+
+---
+
+# Automações Futuras
+
+## Bateria Baixa
+
+```text
+Bateria Baixa
+↓
+Regressar à Base
+```
+
+---
+
+## Modo Ausência
+
+```text
+Casa em Ausência
+↓
+Iniciar Patrulha
+```
+
+---
+
+## Obstáculo Persistente
+
+```text
+Obstáculo
+↓
+Notificar
+```
+
+---
+
+## Falha Crítica
+
+```text
+Failsafe
+↓
+Alerta
+```
+
+---
+
+# Serviços Futuros
+
+## Navegação
+
+```text
+patrol_start()
+patrol_stop()
+return_home()
+dock()
+```
+
+---
+
+## Diagnóstico
+
+```text
+self_test()
+sensor_check()
+```
+
+---
+
+# Critérios de Validação
+
+A integração ESPHome será considerada concluída quando:
+
+- [ ] O Home Assistant reconhece o AEGIS.
+- [ ] A telemetria é recebida corretamente.
+- [ ] Os comandos são executados.
+- [ ] A câmara é apresentada.
+- [ ] O áudio funciona.
+- [ ] O Assist funciona.
+- [ ] O docking pode ser iniciado remotamente.
+
+---
+
+# Princípio Fundamental
+
+O Home Assistant deve ver o AEGIS como um único dispositivo inteligente.
+
+Toda a complexidade interna:
+
+- RP2040
+- UART
+- sensores
+- firmware
+
+deve permanecer transparente para o utilizador final.
+
+
+================================================================================
+FILE: docs\firmware-protocol.md
+================================================================================
+
+# Firmware Protocol
+
+> AEGIS - Intercontroller Communication Protocol
+
+Versão: 1.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir o protocolo de comunicação entre:
+
+- Seeed XIAO RP2040
+- ESP32-S3
+
+O protocolo foi concebido para:
+
+- simplicidade;
+- legibilidade;
+- facilidade de depuração;
+- baixa utilização de recursos.
+
+---
+
+# Arquitetura
+
+```text
+
+ESP32-S3
+     ▲
+     │ UART
+     ▼
+RP2040
+
+```
+
+---
+
+# Responsabilidades
+
+## RP2040
+
+Responsável por:
+
+- motores;
+- MPU6050;
+- HC-SR04;
+- segurança de movimento.
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- Home Assistant;
+- ESPHome;
+- Assist;
+- áudio;
+- lógica principal;
+- docking;
+- vigilância.
+
+---
+
+# Transporte
+
+## Meio
+
+UART
+
+---
+
+## Ligação
+
+```text
+RP2040 ↔ ESP32-S3
+```
+
+---
+
+## Características
+
+- comunicação bidirecional;
+- texto ASCII;
+- terminador LF.
+
+---
+
+# Estrutura da Mensagem
+
+Formato:
+
+```text
+COMANDO:VALOR
+```
+
+Exemplos:
+
+```text
+MOVE:FORWARD
+
+MOVE:STOP
+
+STATUS:BATTERY
+
+SENSOR:HC_SR04
+```
+
+---
+
+# Comandos Movimento
+
+## Frente
+
+```text
+MOVE:FORWARD
+```
+
+---
+
+## Trás
+
+```text
+MOVE:BACKWARD
+```
+
+---
+
+## Esquerda
+
+```text
+MOVE:LEFT
+```
+
+---
+
+## Direita
+
+```text
+MOVE:RIGHT
+```
+
+---
+
+## Parar
+
+```text
+MOVE:STOP
+```
+
+---
+
+# Comandos de Velocidade
+
+## Definir velocidade
+
+Formato:
+
+```text
+SPEED:0
+
+SPEED:50
+
+SPEED:100
+```
+
+Escala:
+
+```text
+0 a 100
+```
+
+---
+
+# Comandos de Patrulha
+
+## Iniciar
+
+```text
+PATROL:START
+```
+
+---
+
+## Parar
+
+```text
+PATROL:STOP
+```
+
+---
+
+# Comandos Docking
+
+## Iniciar
+
+```text
+DOCK:START
+```
+
+---
+
+## Parar
+
+```text
+DOCK:STOP
+```
+
+---
+
+# Sensores
+
+## Pedido de distância
+
+```text
+SENSOR:HC_SR04
+```
+
+Resposta:
+
+```text
+DISTANCE:123
+```
+
+Unidade:
+
+```text
+cm
+```
+
+---
+
+## Pedido de orientação
+
+```text
+SENSOR:MPU6050
+```
+
+Resposta:
+
+```text
+HEADING:270
+```
+
+---
+
+# Telemetria
+
+## Movimento
+
+Exemplo:
+
+```text
+MOTION:FORWARD
+
+MOTION:STOPPED
+```
+
+---
+
+## Sensores
+
+Exemplo:
+
+```text
+DISTANCE:125
+
+HEADING:180
+```
+
+---
+
+## Estado
+
+Exemplo:
+
+```text
+STATE:IDLE
+
+STATE:PATROL
+
+STATE:DOCKING
+
+STATE:CHARGING
+```
+
+---
+
+# Heartbeat
+
+## Objetivo
+
+Confirmar que a comunicação continua ativa.
+
+---
+
+## ESP32-S3 → RP2040
+
+```text
+PING
+```
+
+---
+
+## RP2040 → ESP32-S3
+
+```text
+PONG
+```
+
+---
+
+## Timeout
+
+Se não forem recebidos comandos válidos durante um período prolongado:
+
+```text
+STOP
+```
+
+---
+
+# Segurança
+
+## Falha UART
+
+Em caso de perda de comunicação:
+
+```text
+RP2040
+↓
+Paragem Segura
+```
+
+---
+
+## Falha de Comando
+
+Comando inválido:
+
+```text
+ERROR:INVALID_COMMAND
+```
+
+---
+
+## Falha de Sensor
+
+```text
+ERROR:SENSOR
+```
+
+---
+
+# Estados do Sistema
+
+## Idle
+
+```text
+STATE:IDLE
+```
+
+---
+
+## Patrulha
+
+```text
+STATE:PATROL
+```
+
+---
+
+## Docking
+
+```text
+STATE:DOCKING
+```
+
+---
+
+## Carregamento
+
+```text
+STATE:CHARGING
+```
+
+---
+
+## Erro
+
+```text
+STATE:ERROR
+```
+
+---
+
+# Evolução Futura
+
+A versão inicial utiliza mensagens ASCII para facilitar:
+
+- testes;
+- monitorização;
+- depuração.
+
+Versões futuras poderão introduzir:
+
+```text
+JSON
+```
+
+ou
+
+```text
+frames binárias
+```
+
+caso a complexidade do sistema aumente.
+
+---
+
+# Requisitos
+
+## Simplicidade
+
+Prioridade máxima na V1.
+
+---
+
+## Legibilidade
+
+Toda a comunicação deverá ser facilmente observável através de um monitor série.
+
+---
+
+## Robustez
+
+A perda de comunicação nunca deverá causar movimento não controlado.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ UART dedicada RP2040 ↔ ESP32-S3
+
+✅ Protocolo textual
+
+✅ Heartbeat PING/PONG
+
+✅ Paragem segura em falha
+
+---
+
+## Em Evolução
+
+- Mensagens de telemetria avançadas
+- Gestão de bateria
+- Estados de docking
+- Eventos Home Assistant
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- communication-system.md
+- gpio-allocation.md
+- power-system.md
+- project-decisions.md
+
+
+================================================================================
+FILE: docs\gpio-allocation.md
+================================================================================
+
+# GPIO Allocation
+
+> AEGIS - Controller Interface Allocation
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir a utilização oficial das interfaces do RP2040 e do ESP32-S3.
+
+Este documento privilegia a utilização de interfaces funcionais:
+
+- I²C
+- UART
+- Grove Digital
+
+em vez da gestão direta de GPIOs individuais.
+
+---
+
+# Arquitetura
+
+```text
+
+ESP32-S3
+     ▲
+     │ UART
+     ▼
+
+RP2040
+
+```
+
+---
+
+# RP2040
+
+## Função
+
+Responsável por:
+
+- movimento;
+- sensores locais;
+- segurança de movimento;
+- controlo dos motores.
+
+---
+
+## Hardware
+
+### Seeed XIAO RP2040
+
+Controlador principal do subsistema de movimento.
+
+---
+
+### Grove Shield for XIAO
+
+Modelo:
+```text
+Seeed Grove Shield for XIAO
+```
+
+Compatibilidade:
+```text
+Seeed XIAO RP2040 ✓
+Seeed XIAO ESP32-C3 ✓
+Seeed XIAO nRF52840 ✓
+```
+
+Interfaces disponíveis:
+
+```text
+I²C: 2 portas (SDA/SCL)
+UART: 1 porta (RX/TX)
+Grove Digital: 4 portas (GPIO)
+SPI: 1 porta (não usado)
+```
+
+Referência:
+```text
+Part Number: 103020270
+```
+
+---
+
+# Interface I²C
+
+## Função
+
+Barramento principal de sensores e expansões.
+
+---
+
+## Dispositivos Atuais
+
+### MPU-6050
+
+Estado:
+
+Confirmado.
+
+Função:
+
+- aceleração;
+- orientação;
+- movimento.
+
+---
+
+## Dispositivos Planeados
+
+### Grove Motor Driver
+
+Estado:
+
+Em avaliação.
+
+Função:
+
+Controlo dos motores.
+
+---
+
+### PCA9685
+
+Estado:
+
+Disponível.
+
+Função futura:
+
+- LEDs;
+- servos;
+- expansão PWM.
+
+---
+
+## Expansão
+
+Opções atualmente previstas:
+
+### Opção A
+
+```text
+Grove I²C Hub
+```
+
+---
+
+### Opção B
+
+```text
+Bloco de terminais
+
++
+Cabos Grove-Pigtail
+```
+
+---
+
+# Interface UART
+
+## Função
+
+Comunicação entre controladores.
+
+```text
+
+RP2040
+   ↕
+ESP32-S3
+
+```
+
+---
+
+## Utilização
+
+### Telemetria
+
+Exemplos:
+
+```text
+Velocidade
+Orientação
+Estado sensores
+```
+
+---
+
+### Comandos
+
+Exemplos:
+
+```text
+Frente
+Trás
+Rotação
+Paragem
+```
+
+---
+
+## Reserva
+
+A interface UART fica dedicada exclusivamente à comunicação:
+
+```text
+RP2040 ↔ ESP32-S3
+```
+
+---
+
+# Grove Digital 1
+
+## Função
+
+HC-SR04
+
+---
+
+## Utilização
+
+```text
+Trigger
+Echo
+```
+
+através de cabo Grove-Pigtail.
+
+---
+
+# Grove Digital 2
+
+## Estado
+
+Reservado.
+
+---
+
+## Utilizações Possíveis
+
+```text
+Docking
+Sensor adicional
+Encoder
+```
+
+---
+
+# Grove Digital 3
+
+## Estado
+
+Reservado.
+
+---
+
+## Utilizações Possíveis
+
+```text
+Docking
+Failsafe
+Sensor futuro
+```
+
+---
+
+# Grove Digital 4
+
+## Estado
+
+Reservado.
+
+---
+
+## Utilizações Possíveis
+
+```text
+Expansão futura
+```
+
+---
+
+# ESP32-S3
+
+## Função
+
+Controlador principal.
+
+Responsável por:
+
+- Home Assistant;
+- ESPHome;
+- Assist;
+- áudio;
+- vídeo;
+- comunicações.
+
+---
+
+# Interfaces ESP32-S3
+
+## I²S
+
+Utilização:
+
+```text
+INMP441
+MAX98357A
+```
+
+---
+
+## Wi-Fi
+
+Utilização:
+
+```text
+Home Assistant
+ESPHome
+OTA
+```
+
+---
+
+## UART
+
+Utilização:
+
+```text
+Comunicação com RP2040
+```
+
+---
+
+# Reservas
+
+## RP2040
+
+Prioridade:
+
+```text
+Movimento
+Segurança
+Sensores locais
+```
+
+---
+
+## ESP32-S3
+
+Prioridade:
+
+```text
+Áudio
+Vídeo
+Integração HA
+```
+
+---
+
+# Regras
+
+## Regra 1
+
+Sempre que possível utilizar interfaces Grove.
+
+---
+
+## Regra 2
+
+Evitar ligações diretas a GPIOs quando existir uma interface Grove equivalente.
+
+---
+
+## Regra 3
+
+O barramento I²C deverá concentrar:
+
+- sensores;
+- expansões;
+- módulos auxiliares.
+
+---
+
+## Regra 4
+
+A UART RP2040 ↔ ESP32-S3 é dedicada e não deverá ser reutilizada.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ MPU-6050 em I²C
+
+✅ HC-SR04 em Grove Digital
+
+✅ UART dedicada RP2040 ↔ ESP32-S3
+
+✅ Grove como interface preferencial
+
+✅ Grove I²C Hub (Confirmado)
+
+---
+
+## Em Avaliação
+
+🔲 Grove Motor Driver I²C
+
+🔲 Utilização futura da PCA9685
+
+---
+
+# Documentos Relacionados
+
+- hardware-inventory.md
+- project-decisions.md
+- physical-layout.md
+- communication-system.md
+
+
+================================================================================
+FILE: docs\hardware-inventory.md
+================================================================================
+
+# Hardware Inventory
+
+> AEGIS - Hardware Inventory and Procurement Status
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Inventário oficial de hardware do projeto AEGIS.
+
+Este documento representa a fonte oficial de verdade para:
+
+- componentes adquiridos;
+- componentes disponíveis;
+- componentes em avaliação;
+- componentes planeados;
+- componentes em falta.
+
+---
+
+# Adquirido
+
+## Estrutura
+
+### Chassis Base
+
+Estado:
+
+Adquirido
+
+Descrição:
+
+- Chassis 4WD em acrílico
+- 4 motores DC
+- 4 rodas
+
+Dimensões:
+
+```text
+260 × 155 × 65 mm
+```
+
+Função:
+
+Plataforma mecânica principal.
+
+---
+
+### Piso 2
+
+Estado:
+
+Adquirido
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+### Piso 3
+
+Estado:
+
+Adquirido
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+### Espaçadores
+
+Estado:
+
+Disponíveis
+
+Configuração atualmente validada:
+
+```text
+30 mm
+```
+
+Observações:
+
+Utilizados entre:
+
+- Piso 1 ↔ Piso 2
+
+A mesma configuração é candidata para:
+
+- Piso 2 ↔ Piso 3
+
+---
+
+## Movimento
+
+### Motores DC
+
+Quantidade:
+
+```text
+4
+```
+
+Estado:
+
+Adquirido
+
+Incluídos no chassis.
+
+---
+
+### Rodas
+
+Quantidade:
+
+```text
+4
+```
+
+Estado:
+
+Adquiridas
+
+Características:
+
+```text
+Ø70 mm
+
+Largura 30 mm
+```
+
+---
+
+## Controladores
+
+### Seeed XIAO RP2040
+
+Estado:
+
+Adquirido
+
+Função:
+
+Controlador de movimento.
+
+---
+
+### Grove Base for XIAO
+
+Estado:
+
+Adquirida
+
+Características:
+
+- I²C
+- UART
+- Grove Digital
+- Gestão de bateria
+- Indicadores de carga
+
+Função:
+
+Expansão do RP2040.
+
+---
+
+### ESP32-S3
+
+Estado:
+
+Adquirido
+
+Dimensões:
+
+```text
+62.74 × 25.40 mm
+```
+
+Função:
+
+Controlador principal.
+
+---
+
+## Sensores
+
+### MPU-6050
+
+Estado:
+
+Adquirido
+
+Função:
+
+IMU.
+
+---
+
+### HC-SR04
+
+Estado:
+
+Adquirido
+
+Função:
+
+Deteção de obstáculos.
+
+---
+
+### INMP441
+
+Quantidade:
+
+```text
+3
+```
+
+Estado:
+
+Adquirido
+
+Função:
+
+Microfones I²S.
+
+---
+
+## Áudio
+
+### MAX98357A
+
+Quantidade:
+
+```text
+3
+```
+
+Estado:
+
+Adquirido
+
+Função:
+
+DAC I²S e amplificação áudio.
+
+---
+
+### Altifalantes
+
+Quantidade:
+
+```text
+2
+```
+
+Estado:
+
+Adquiridos
+
+Função:
+
+Reprodução áudio.
+
+---
+
+## Iluminação
+
+### KY-009 RGB
+
+Quantidade:
+
+```text
+5
+```
+
+Estado:
+
+Adquiridos
+
+Função:
+
+Sistema de iluminação RGB.
+
+---
+
+## Cablagem
+
+### Grove → Grove
+
+Estado:
+
+Disponível
+
+---
+
+### Grove → Pigtail
+
+Estado:
+
+Disponível
+
+---
+
+## Distribuição
+
+### Blocos de Terminais
+
+Estado:
+
+Disponíveis
+
+Função prevista:
+
+- distribuição elétrica;
+- distribuição I²C;
+- prototipagem.
+
+---
+
+## Expansão
+
+### PCA9685
+
+Quantidade:
+
+```text
+1
+```
+
+Estado:
+
+Disponível
+
+Características:
+
+```text
+16 canais PWM
+12 bits
+I²C
+```
+
+Origem:
+
+Projeto ferroviário HO/OO.
+
+Possíveis utilizações futuras:
+
+- LEDs;
+- servos;
+- animações;
+- expansão PWM.
+
+---
+
+# Em Avaliação
+
+## Driver de Motores
+
+### Opção A
+
+TB6612FNG convencional
+
+Estado:
+
+Em avaliação.
+
+---
+
+### Opção B
+
+Seeed Grove I²C Motor Driver (TB6612FNG)
+
+Estado:
+
+Em avaliação.
+
+Vantagens:
+
+- Grove nativo;
+- conectores de parafuso;
+- menor cablagem.
+
+---
+
+## Expansão I²C
+
+### Opção A
+
+Grove I²C Hub
+
+Estado:
+
+Em avaliação.
+
+---
+
+### Opção B
+
+Bloco de terminais
+
++
+Cabos Grove-Pigtail
+
+Estado:
+
+Em avaliação.
+
+Atualmente considerada a solução mais provável.
+
+---
+
+# Planeado
+
+## Câmara
+
+Estado:
+
+Planeada
+
+Função:
+
+- vigilância;
+- streaming;
+- snapshots.
+
+---
+
+## Sensores de Docking
+
+Estado:
+
+Planeados
+
+Função:
+
+- aproximar da base;
+- alinhamento;
+- carregamento.
+
+---
+
+## Sensores de Queda
+
+Estado:
+
+Planeados
+
+Função:
+
+- deteção de escadas;
+- proteção anti-queda.
+
+---
+
+## Saia Translúcida
+
+Estado:
+
+Planeada
+
+Função:
+
+- difusão RGB;
+- ocultação de cablagem;
+- melhoria estética.
+
+---
+
+# Em Falta
+
+## Powerbank
+
+Estado:
+
+Por selecionar
+
+Requisitos obrigatórios:
+
+```text
+Pass-through charging
+
+Operação durante carregamento
+
+5V estável
+```
+
+Função:
+
+Fonte energética principal do AEGIS.
+
+---
+
+## Sistema de Docking
+
+Estado:
+
+Em desenvolvimento
+
+Alternativas em estudo:
+
+- indução;
+- contactos elétricos;
+- compatibilidade experimental com docking Roomba.
+
+---
+
+# Hardware de Referência
+
+## Chassis
+
+Referência utilizada no protótipo:
+
+```text
+Amazon B0CH4G35X8
+```
+
+Estado:
+
+Referência mecânica.
+
+---
+
+## LEDs
+
+Referência:
+
+```text
+KY-009 RGB
+```
+
+---
+
+## Áudio
+
+Referências:
+
+```text
+INMP441
+
+MAX98357A
+
+Altifalantes 3W
+```
+
+---
+
+# Home Assistant
+
+## Equipamento Externo Relevante
+
+### Roomba i1
+
+Quantidade:
+
+```text
+2
+```
+
+Estado:
+
+Integrados no Home Assistant.
+
+Função futura:
+
+Possível reutilização de:
+
+- telemetria;
+- zonas;
+- mapas;
+- docking.
+
+---
+
+# Estado Geral
+
+## Adquirido
+
+✅ Estrutura principal
+
+✅ Controladores
+
+✅ Sensores V1
+
+✅ Sistema áudio
+
+✅ Sistema LED
+
+✅ Cablagem Grove
+
+---
+
+## Principal Componente em Falta
+
+🔲 Powerbank compatível com pass-through charging
+
+---
+
+# Regras
+
+Sempre que um componente for:
+
+- adquirido;
+- removido;
+- substituído;
+- descartado;
+
+este documento deverá ser atualizado.
+
+Este documento tem prioridade sobre qualquer informação presente em conversas.
+
+---
+
+# Documentos Relacionados
+
+- dimensional-reference.md
+- project-decisions.md
+- physical-layout.md
+- mechanical-design.md
+- power-system.md
+
+
+================================================================================
+FILE: docs\home-assistant-integration.md
+================================================================================
+
+# Home Assistant Integration
+
+> AEGIS - Home Assistant Integration
+
+Versão: 1.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir a integração do AEGIS com o ecossistema Home Assistant.
+
+O AEGIS foi concebido para funcionar como uma extensão física do ambiente Home Assistant existente.
+
+---
+
+# Filosofia
+
+O AEGIS não é o sistema central.
+
+O Home Assistant assume o papel de:
+
+- cérebro estratégico;
+- agregador de informação;
+- motor de automação;
+- interface principal com o utilizador.
+
+O AEGIS assume o papel de:
+
+- agente físico móvel;
+- plataforma de vigilância;
+- plataforma de interação;
+- plataforma de recolha de informação.
+
+---
+
+# Arquitetura Geral
+
+```text
+
+            Home Assistant
+                   ▲
+                   │
+                   │
+                   ▼
+
+               ESP32-S3
+                   ▲
+                   │ UART
+                   ▼
+
+                RP2040
+
+```
+
+---
+
+# Responsabilidades
+
+## Home Assistant
+
+Responsável por:
+
+- automações;
+- presença;
+- calendarização;
+- notificações;
+- dashboards;
+- gestão estratégica.
+
+---
+
+## AEGIS
+
+Responsável por:
+
+- movimento;
+- patrulha;
+- vigilância;
+- áudio;
+- interação local;
+- execução física das ações.
+
+---
+
+# Comunicação
+
+## Método Principal
+
+```text
+Wi-Fi
+```
+
+através de:
+
+```text
+ESPHome
+```
+
+---
+
+## Controlador
+
+```text
+ESP32-S3
+```
+
+---
+
+# Integração ESPHome
+
+## Objetivos
+
+Permitir publicação de:
+
+- sensores;
+- estados;
+- telemetria;
+- energia;
+- áudio.
+
+---
+
+## Objetivos Futuros
+
+```text
+Assist Pipeline
+
+Media Player
+
+Microphone
+
+Speaker
+
+Camera
+```
+
+---
+
+# Entidades Previstas
+
+## Estado
+
+### Robot State
+
+Exemplos:
+
+```text
+Idle
+
+Patrol
+
+Docking
+
+Charging
+
+Error
+```
+
+---
+
+## Movimento
+
+### Atributos
+
+```text
+Velocidade
+
+Orientação
+
+Direção
+```
+
+---
+
+## Energia
+
+### Atributos
+
+```text
+Battery
+
+Charging
+
+Charged
+
+Docked
+```
+
+---
+
+## Sensores
+
+### HC-SR04
+
+Distância frontal.
+
+---
+
+### MPU6050
+
+Orientação e aceleração.
+
+---
+
+## Áudio
+
+### Microfones
+
+```text
+3 × INMP441
+```
+
+---
+
+### Altifalantes
+
+```text
+2 × Altifalantes
+```
+
+---
+
+# Assist
+
+## Objetivo
+
+Utilizar o Home Assistant Assist como interface de voz principal.
+
+---
+
+## Fluxo
+
+```text
+
+Utilizador
+      │
+      ▼
+
+ INMP441
+      │
+      ▼
+
+ ESP32-S3
+      │
+      ▼
+
+ Home Assistant Assist
+      │
+      ▼
+
+ MAX98357A
+      │
+      ▼
+
+ Altifalantes
+
+```
+
+---
+
+# Notificações
+
+## Objetivos
+
+Permitir que o Home Assistant utilize o AEGIS para:
+
+- anúncios;
+- avisos;
+- alarmes;
+- interações.
+
+---
+
+## Exemplos
+
+```text
+Porta aberta
+
+Alerta de movimento
+
+Chegada de pessoa
+
+Lembretes
+```
+
+---
+
+# Patrulha
+
+## Objetivo
+
+Permitir ao Home Assistant iniciar e interromper patrulhas.
+
+---
+
+## Futuras Ações
+
+```text
+Start Patrol
+
+Stop Patrol
+
+Return Home
+
+Start Docking
+```
+
+---
+
+# Docking
+
+## Objetivo
+
+Permitir ao Home Assistant:
+
+- monitorizar;
+- iniciar;
+- acompanhar carregamentos.
+
+---
+
+## Estados
+
+```text
+Docked
+
+Undocked
+
+Charging
+
+Charged
+```
+
+---
+
+# HomeLab
+
+## Integração
+
+O AEGIS deverá ser tratado como mais um serviço do ecossistema HomeLab.
+
+---
+
+## Dependências Previstas
+
+- Docker
+- Home Assistant
+- ESPHome
+
+---
+
+# Integração com Robôs Existentes
+
+## Roomba i1
+
+Estado:
+
+Investigação futura.
+
+---
+
+## Objetivos
+
+Possível reaproveitamento de:
+
+- informação de mapas;
+- telemetria;
+- zonas;
+- localização da docking.
+
+---
+
+## Instalação de Referência
+
+Atualmente existem:
+
+```text
+2 × Roomba i1
+```
+
+integrados no Home Assistant.
+
+---
+
+# Segurança
+
+## Falha de Comunicação
+
+A perda de ligação ao Home Assistant não deverá impedir:
+
+- paragem segura;
+- navegação local;
+- respostas de segurança.
+
+---
+
+## Responsável
+
+```text
+RP2040
+```
+
+---
+
+# Evolução Futura
+
+## Integração de Mapas
+
+Objetivo:
+
+Utilização de informação espacial disponível no Home Assistant.
+
+---
+
+## Presença
+
+Objetivo:
+
+Patrulhas e comportamentos baseados em ocupação da habitação.
+
+---
+
+## Segurança
+
+Objetivo:
+
+Integração com alarmes e sensores existentes.
+
+---
+
+## Vídeo
+
+Objetivo:
+
+Streaming remoto.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ Home Assistant como sistema central.
+
+✅ ESPHome como integração principal.
+
+✅ ESP32-S3 responsável pela integração.
+
+✅ AEGIS concebido como nó móvel do ecossistema.
+
+---
+
+## Em Evolução
+
+- Assist.
+- Vídeo.
+- Mapas.
+- Docking.
+- Integração com Roomba.
+
+---
+
+# Documentos Relacionados
+
+- architecture.md
+- communication-system.md
+- power-system.md
+- audio-system.md
+- project-decisions.md
+- firmware-protocol.md
+
+
+================================================================================
+FILE: docs\led-system.md
+================================================================================
+
+# LED System
+
+> AEGIS - Visual Feedback and Illumination System
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Fornecer:
+
+- feedback visual do estado do sistema;
+- indicação de modos de funcionamento;
+- iluminação ambiente;
+- identidade visual do AEGIS;
+- integração com Home Assistant.
+
+---
+
+# Filosofia
+
+O sistema LED não é decorativo.
+
+Os LEDs são considerados uma interface de comunicação visual entre:
+
+- o robô;
+- os utilizadores;
+- o Home Assistant.
+
+---
+
+# Hardware
+
+## Módulos RGB
+
+### KY-009
+
+Quantidade:
+
+```text
+5
+```
+
+Estado:
+
+```text
+Adquirido
+```
+
+Tipo:
+
+```text
+RGB LED
+```
+
+Função:
+
+- estados do sistema;
+- iluminação ambiente;
+- feedback visual.
+
+---
+
+# Distribuição Física
+
+## Localizações Previstas
+
+### LED 1
+
+Posição:
+
+Frente
+
+Função:
+
+Estado principal.
+
+---
+
+### LED 2
+
+Posição:
+
+Lateral esquerda
+
+Função:
+
+Iluminação ambiental.
+
+---
+
+### LED 3
+
+Posição:
+
+Lateral direita
+
+Função:
+
+Iluminação ambiental.
+
+---
+
+### LED 4
+
+Posição:
+
+Traseira
+
+Função:
+
+Estado secundário.
+
+---
+
+### LED 5
+
+Posição:
+
+Piso superior
+
+Função:
+
+Indicador global de estado.
+
+---
+
+# Integração Física
+
+## Piso 3
+
+Localização principal prevista:
+
+```text
+Piso Superior
+```
+
+Objetivos:
+
+- melhor difusão da luz;
+- maior visibilidade;
+- proximidade dos restantes sistemas de interação.
+
+---
+
+## Saia Translúcida
+
+Objetivo futuro:
+
+Difundir a iluminação dos LEDs RGB.
+
+A saia deverá ser instalada:
+
+```text
+Entre Piso 2 e Piso 3
+```
+
+descendo aproximadamente até ao eixo das rodas.
+
+---
+
+# Estados Visuais
+
+## Inicialização
+
+Cor:
+
+```text
+Azul pulsante
+```
+
+Significado:
+
+Sistema em arranque.
+
+---
+
+## Operação Normal
+
+Cor:
+
+```text
+Azul
+```
+
+Significado:
+
+Funcionamento normal.
+
+---
+
+## Assist Ativo
+
+Cor:
+
+```text
+Ciano
+```
+
+Significado:
+
+Assistente de voz ativo.
+
+---
+
+## Patrulha
+
+Cor:
+
+```text
+Branco suave
+```
+
+Significado:
+
+Patrulha em execução.
+
+---
+
+## Docking
+
+Cor:
+
+```text
+Amarelo
+```
+
+Significado:
+
+Procura ou aproximação à base.
+
+---
+
+## Carregamento
+
+Cor:
+
+```text
+Verde pulsante
+```
+
+Significado:
+
+Em carregamento.
+
+---
+
+## Carregamento Completo
+
+Cor:
+
+```text
+Verde fixo
+```
+
+Significado:
+
+Bateria carregada.
+
+---
+
+## Alerta
+
+Cor:
+
+```text
+Vermelho
+```
+
+Significado:
+
+Anomalia ou erro.
+
+---
+
+## Emergência
+
+Cor:
+
+```text
+Vermelho intermitente
+```
+
+Significado:
+
+Falha crítica.
+
+---
+
+# Integração Home Assistant
+
+Eventos previstos:
+
+- alarmes;
+- notificações;
+- estados de presença;
+- modos de patrulha;
+- estado energético.
+
+---
+
+# Integração ESPHome
+
+Objetivos futuros:
+
+```text
+light
+
+effects
+
+status indicators
+```
+
+---
+
+# Possível Evolução
+
+## PCA9685
+
+Hardware disponível:
+
+```text
+PCA9685
+16 Channel PWM Driver
+```
+
+Estado:
+
+Disponível.
+
+Origem:
+
+Projeto ferroviário HO/OO.
+
+---
+
+## Aplicações Futuras
+
+- animações RGB;
+- fading suave;
+- efeitos luminosos;
+- expansão do número de LEDs;
+- controlo de servos.
+
+---
+
+# Requisitos
+
+O sistema LED deverá:
+
+- funcionar independentemente da presença do Home Assistant;
+- indicar estados críticos;
+- permanecer visível em condições normais de utilização;
+- não interferir com sensores ou áudio.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ 5 × KY-009 adquiridos
+
+✅ Sistema RGB distribuído aprovado
+
+✅ Integração com Home Assistant prevista
+
+✅ Integração com ESPHome prevista
+
+---
+
+## Em Evolução
+
+- localização exata dos módulos;
+- animações definitivas;
+- eventual utilização da PCA9685;
+- implementação da saia translúcida.
+
+---
+
+# Documentos Relacionados
+
+- hardware-inventory.md
+- physical-layout.md
+- project-decisions.md
+- power-system.md
+
+
+================================================================================
+FILE: docs\mechanical-design.md
+================================================================================
+
+# Mechanical Design
+
+> AEGIS - Mechanical Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir a arquitetura mecânica oficial do AEGIS.
+
+Este documento descreve:
+
+- estrutura;
+- organização física;
+- componentes mecânicos;
+- critérios de construção;
+- expansão futura.
+
+As dimensões oficiais encontram-se em:
+
+```text
+docs/dimensional-reference.md
+```
+
+---
+
+# Filosofia
+
+O AEGIS utiliza uma arquitetura modular por níveis.
+
+Objetivos:
+
+- manutenção simples;
+- expansão futura;
+- reutilização de hardware;
+- montagem acessível;
+- modularidade.
+
+---
+
+# Estrutura Geral
+
+```text
+
+        Piso 3
+      Perceção
+
+          ▲
+          │ 30 mm
+          ▼
+
+        Piso 2
+  Energia e Processamento
+
+          ▲
+          │ 30 mm
+          ▼
+
+        Piso 1
+ Movimento e Sensores
+
+```
+
+---
+
+# Piso 1
+
+## Plataforma Base
+
+Descrição:
+
+Chassis acrílico de quatro rodas.
+
+Características:
+
+- 4 motores DC
+- 4 rodas
+- plataforma motora
+
+Dimensões:
+
+```text
+260 × 155 × 65 mm
+```
+
+---
+
+## Funções
+
+- movimento;
+- navegação básica;
+- sensores locais;
+- suporte estrutural.
+
+---
+
+## Componentes
+
+- RP2040
+- Grove Base
+- MPU6050
+- HC-SR04
+- Driver de motores
+
+---
+
+# Piso 2
+
+## Estrutura
+
+Disco acrílico transparente.
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+## Função
+
+- energia;
+- processamento principal;
+- distribuição elétrica.
+
+---
+
+## Espaçamento
+
+Distância ao Piso 1:
+
+```text
+30 mm
+```
+
+Estado:
+
+Validado fisicamente.
+
+---
+
+## Componentes Planeados
+
+- ESP32-S3
+- MAX98357A
+- distribuição de energia
+
+---
+
+## Powerbank
+
+### Localização
+
+Face inferior do Piso 2.
+
+```text
+
+ Piso 2
+═══════════════
+
+ Powerbank
+
+═══════════════
+
+ Piso 1
+
+```
+
+---
+
+### Vantagens
+
+- centro de gravidade reduzido;
+- maior área útil;
+- cablagem simplificada.
+
+---
+
+# Piso 3
+
+## Estrutura
+
+Disco acrílico transparente.
+
+Dimensões:
+
+```text
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Distância ao Piso 2:
+
+```text
+30 mm
+```
+
+Estado:
+
+Configuração de referência.
+
+---
+
+## Função
+
+- vigilância;
+- comunicação;
+- interação.
+
+---
+
+## Componentes Planeados
+
+- câmara;
+- microfones;
+- LEDs;
+- sensores futuros.
+
+---
+
+# Rodas
+
+## Especificações
+
+```text
+Diâmetro : 70 mm
+
+Raio : 35 mm
+
+Largura : 30 mm
+```
+
+---
+
+## Configuração
+
+```text
+4 rodas
+
+2 esquerda
+
+2 direita
+```
+
+---
+
+# Materiais
+
+## Chassis
+
+Material:
+
+```text
+Acrílico
+```
+
+---
+
+## Piso 2
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+---
+
+## Piso 3
+
+Material:
+
+```text
+Acrílico transparente
+```
+
+---
+
+## Estrutura Vertical
+
+Material:
+
+```text
+Espaçadores metálicos
+```
+
+---
+
+# Transparência
+
+A transparência dos materiais faz parte da identidade visual do projeto.
+
+Objetivos:
+
+- exibir eletrónica;
+- facilitar manutenção;
+- melhorar iluminação interna.
+
+---
+
+# Saia Translúcida
+
+## Estado
+
+Planeada.
+
+---
+
+## Localização
+
+Entre:
+
+```text
+Piso 2
++
+Piso 3
+```
+
+---
+
+## Limite Inferior
+
+Aproximadamente:
+
+```text
+Eixo das rodas
+```
+
+---
+
+## Objetivos
+
+- ocultar cablagem;
+- difundir iluminação;
+- melhorar estética.
+
+---
+
+# Centro de Gravidade
+
+## Estratégia
+
+Manter os componentes mais pesados o mais baixo possível.
+
+---
+
+## Componentes Críticos
+
+### Powerbank
+
+Prioridade:
+
+Máxima.
+
+Localização:
+
+```text
+Face inferior do Piso 2
+```
+
+---
+
+### Motores
+
+Localização:
+
+```text
+Piso 1
+```
+
+---
+
+# Estratégia de Montagem
+
+## Fase Inicial
+
+Montagem provisória.
+
+Métodos:
+
+- fita dupla-face;
+- abraçadeiras;
+- fixação temporária.
+
+---
+
+## Fase Final
+
+Suportes dedicados poderão ser desenvolvidos após validação física.
+
+---
+
+# Compatibilidade
+
+A arquitetura foi concebida para permitir:
+
+- substituição de sensores;
+- substituição de controladores;
+- integração de módulos adicionais;
+- expansão futura.
+
+---
+
+# Estado Atual
+
+## Validado
+
+✅ Chassis 260 × 155 × 65 mm
+
+✅ Rodas Ø70 mm
+
+✅ Piso 2 Ø300 mm
+
+✅ Piso 3 Ø300 mm
+
+✅ Espaçamento Piso 1 → Piso 2 = 30 mm
+
+✅ Configuração física montada
+
+---
+
+## Em Evolução
+
+- Espaçamento definitivo Piso 2 → Piso 3
+- Sistema de docking
+- Posicionamento definitivo dos sensores
+- Suportes finais
+
+---
+
+# Referências
+
+Documentos relacionados:
+
+- dimensional-reference.md
+- physical-layout.md
+- hardware-inventory.md
+- project-decisions.md
+- power-system.md
+
+
+================================================================================
+FILE: docs\motor-platform.md
+================================================================================
+
+# Motor Platform
+
+> AEGIS - Motion Control Subsystem
+
+Versão: 1.0
+Estado: Em desenvolvimento
+
+---
+
+# Objetivo
+
+Construir e validar a primeira plataforma funcional do AEGIS.
+
+Esta fase deve permitir:
+
+- deslocação para a frente
+- deslocação para trás
+- rotação
+- paragem controlada
+- deteção de obstáculos
+- monitorização da orientação
+
+Esta plataforma deverá funcionar independentemente do ESP32-S3.
+
+---
+
+# Arquitetura
+
+```mermaid
+flowchart TD
+
+    RP["XIAO RP2040"]
+
+    MPU["MPU-6050"]
+    SONAR["HC-SR04"]
+
+    TB["TB6612FNG"]
+
+    LM["Motores Esquerda"]
+    RM["Motores Direita"]
+
+    MPU --> RP
+
+    SONAR --> RP
+
+    RP --> TB
+
+    TB --> LM
+    TB --> RM
+```
+
+---
+
+# Componentes
+
+## Controlador
+
+- Seeed XIAO RP2040
+
+Funções:
+
+- controlo dos motores
+- leitura dos sensores
+- lógica de navegação local
+- comunicação UART
+
+---
+
+## Driver de Motores
+
+- TB6612FNG
+
+Funções:
+
+- controlo PWM
+- controlo de direção
+
+Substitui:
+
+- L298N
+
+Motivação:
+
+- maior eficiência
+- menor aquecimento
+- menor consumo energético
+
+---
+
+## IMU
+
+- MPU-6050
+
+Funções:
+
+- orientação
+- aceleração
+- rotação
+
+Utilização inicial:
+
+- medição de ângulo
+- ajuda na rotação controlada
+
+---
+
+## Sensor Ultrassónico
+
+- HC-SR04
+
+Posição:
+
+- Frente do robô
+
+Funções:
+
+- evitar obstáculos
+- reduzir velocidade
+- auxiliar docking futuro
+
+---
+
+# Ligações Lógicas
+
+## Barramento I²C
+
+```mermaid
+flowchart LR
+
+    RP["RP2040"]
+
+    MPU["MPU-6050"]
+
+    RP <-->|SDA/SCL| MPU
+```
+
+---
+
+## Ultrassónico
+
+```mermaid
+flowchart LR
+
+    HCSR["HC-SR04"]
+
+    RP["RP2040"]
+
+    HCSR -->|TRIG/ECHO| RP
+```
+
+---
+
+## Driver de Motores
+
+```mermaid
+flowchart LR
+
+    RP["RP2040"]
+
+    TB["TB6612FNG"]
+
+    M1["Motores Esquerda"]
+    M2["Motores Direita"]
+
+    RP --> TB
+
+    TB --> M1
+    TB --> M2
+```
+
+---
+
+# Firmware Inicial
+
+## Funções Obrigatórias
+
+- Inicializar TB6612FNG
+- Inicializar MPU-6050
+- Inicializar HC-SR04
+- Controlo básico dos motores
+- Rotação controlada
+- Leitura de distância
+
+---
+
+## Comandos de Teste
+
+```text
+F
+Frente
+
+B
+Trás
+
+L
+Esquerda
+
+R
+Direita
+
+S
+Stop
+```
+
+---
+
+# Critérios de Sucesso
+
+A plataforma motora será considerada concluída quando:
+
+- [ ] O robô se desloca para a frente
+- [ ] O robô se desloca para trás
+- [ ] O robô roda à esquerda
+- [ ] O robô roda à direita
+- [ ] O robô pára corretamente
+- [ ] O HC-SR04 mede distância
+- [ ] O MPU-6050 produz dados estáveis
+
+---
+
+# Evoluções Futuras
+
+## Encoders
+
+Objetivo:
+
+- odometria
+- medição de distância percorrida
+
+---
+
+## PID
+
+Objetivo:
+
+- manter trajetória reta
+- melhorar precisão das curvas
+
+---
+
+## UART
+
+Objetivo:
+
+Comunicação com o ESP32-S3.
+
+```mermaid
+flowchart LR
+
+    ESP["ESP32-S3"]
+
+    RP["RP2040"]
+
+    ESP <-->|UART| RP
+```
+
+---
+
+# Notas
+
+Esta plataforma deve permanecer operacional mesmo sem:
+
+- ESP32-S3
+- Home Assistant
+- ESPHome
+- Câmara
+- Áudio
+
+Todos os subsistemas futuros dependerão desta plataforma.
+A estabilidade da camada motora tem prioridade sobre novas funcionalidades.
+
+
+================================================================================
+FILE: docs\physical-layout.md
+================================================================================
+
+# Physical Layout
+
+> AEGIS - Physical Layout Reference
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir a organização física oficial do AEGIS.
+
+Este documento descreve:
+
+- distribuição dos pisos;
+- localização dos componentes;
+- organização da cablagem;
+- ocupação prevista das plataformas.
+
+As dimensões oficiais encontram-se em:
+
+```text
+docs/dimensional-reference.md
+```
+
+---
+
+# Arquitetura Física
+
+O AEGIS utiliza uma arquitetura modular organizada por níveis.
+
+```text
+
+Piso 3
+Perceção
+
+Piso 2
+Controlo Superior e Energia
+
+Piso 1
+Movimento e Sensores Locais
+
+```
+
+---
+
+# Piso 1
+
+## Estrutura
+
+Componentes instalados no chassis original.
+
+Função principal:
+
+```text
+Movimento
+Navegação local
+Sensores base
+```
+
+---
+
+## Componentes
+
+### RP2040
+
+Função:
+
+Controlo de movimento.
+
+---
+
+### Grove Base para XIAO
+
+Função:
+
+Expansão de interfaces.
+
+Interfaces principais:
+
+- I²C
+- UART
+- Grove Digital
+
+---
+
+### MPU-6050
+
+Posição prevista:
+
+Centro do robô.
+
+Objetivo:
+
+- IMU
+- orientação
+- aceleração
+
+---
+
+### HC-SR04
+
+Posição prevista:
+
+Frente do robô.
+
+Objetivo:
+
+Deteção de obstáculos.
+
+---
+
+### Driver de Motores
+
+Estado:
+
+Em avaliação.
+
+Opções:
+
+- TB6612FNG convencional
+- Grove Motor Driver I²C
+
+---
+
+# Piso 2
+
+## Estrutura
+
+Plataforma circular.
+
+Características:
+
+```text
+Acrílico transparente
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Distância ao Piso 1:
+
+```text
+30 mm
+```
+
+Estado:
+
+Validado fisicamente.
+
+Observações:
+
+- Rodas totalmente livres.
+- Espaço suficiente para integração.
+- Perfil compacto.
+
+---
+
+## Utilização
+
+Função principal:
+
+```text
+Energia
+Processamento principal
+Distribuição
+```
+
+---
+
+## Componentes Planeados
+
+### ESP32-S3
+
+Função:
+
+Controlador principal.
+
+---
+
+### Distribuição de Energia
+
+Função:
+
+Distribuição de:
+
+- 5V
+- GND
+
+---
+
+### Áudio
+
+Componentes previstos:
+
+- MAX98357A
+
+---
+
+# Powerbank
+
+## Localização
+
+Face inferior do Piso 2.
+
+```text
+
+Piso 2
+════════════
+
+Powerbank
+(suspenso)
+
+════════════
+
+Piso 1
+
+```
+
+---
+
+## Objetivos
+
+- redução do centro de gravidade;
+- libertação da superfície superior;
+- simplificação de cablagem.
+
+---
+
+# Piso 3
+
+## Estrutura
+
+Plataforma circular.
+
+Características:
+
+```text
+Acrílico transparente
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Distância ao Piso 2:
+
+```text
+30 mm
+```
+
+Estado:
+
+Configuração de referência.
+
+---
+
+## Utilização
+
+Função principal:
+
+```text
+Perceção
+Vigilância
+Interação
+```
+
+---
+
+## Componentes Planeados
+
+### Câmara
+
+Posição:
+
+Frente superior.
+
+---
+
+### INMP441
+
+Quantidade:
+
+3
+
+Distribuição prevista:
+
+- Frente
+- Esquerda
+- Direita
+
+---
+
+### LEDs RGB
+
+Hardware:
+
+```text
+5 × KY-009
+```
+
+Funções:
+
+- feedback visual;
+- iluminação da saia;
+- estados do sistema.
+
+---
+
+# Cablagem
+
+## Filosofia
+
+Sempre que possível utilizar:
+
+```text
+Grove
+```
+
+em vez de:
+
+```text
+Cablagem individual
+```
+
+---
+
+## I²C
+
+Dispositivos previstos:
+
+- MPU6050
+- Motor Driver I²C (se selecionado)
+- PCA9685 (futuro)
+
+Distribuição:
+
+- Grove I²C Hub
+ou
+- bloco de terminais + pigtail
+
+---
+
+## UART
+
+Reserva:
+
+```text
+RP2040 ↔ ESP32-S3
+```
+
+---
+
+# Montagem Inicial
+
+A fase inicial utilizará:
+
+- fita dupla-face;
+- abraçadeiras;
+- fixação temporária.
+
+Objetivo:
+
+Validar:
+
+- posicionamento;
+- cablagem;
+- acessibilidade;
+- manutenção.
+
+Apenas após validação serão criadas fixações definitivas.
+
+---
+
+# Geometria Atual de Referência
+
+```text
+
+Piso 3
+Ø300 mm
+
+      ▲
+      │
+      │ 30 mm
+      ▼
+
+Piso 2
+Ø300 mm
+
+      ▲
+      │
+      │ 30 mm
+      ▼
+
+Piso 1
+260 × 155 × 65 mm
+
+```
+
+---
+
+# Estado
+
+## Validado
+
+- Chassis 260 × 155 × 65 mm
+- Rodas Ø70 mm
+- Piso 2 Ø300 mm
+- Piso 3 Ø300 mm
+- Espaçamento Piso 1 → Piso 2 = 30 mm
+
+---
+
+## Em Evolução
+
+- Espaçamento definitivo Piso 2 → Piso 3
+- Driver de motores final
+- Distribuição elétrica definitiva
+- Sistema de docking
+
+
+================================================================================
+FILE: docs\power-budget.md
+================================================================================
+
+# Power Budget
+
+> AEGIS - Energy Consumption and Power Analysis
+
+Versão: 1.0
+Estado: Planeamento Inicial
+
+---
+
+# Objetivo
+
+Este documento define a estratégia de análise energética do AEGIS.
+
+Tem como objetivos:
+
+- identificar os consumidores de energia;
+- medir consumos reais;
+- calcular autonomia;
+- otimizar utilização da bateria;
+- validar futuras integrações solares.
+
+---
+
+# Filosofia
+
+Todas as decisões energéticas devem basear-se em medições reais.
+
+Não devem ser assumidos valores teóricos sem validação experimental.
+
+---
+
+# Arquitetura Energética
+
+```mermaid
+flowchart LR
+
+    SOLAR["Painel Solar<br/>(Futuro)"]
+
+    SCH1["Schottky"]
+
+    INDU["Carregamento por Indução"]
+
+    SCH2["Schottky"]
+
+    Y["USB em Y"]
+
+    PB["Powerbank"]
+
+    ROBOT["AEGIS"]
+
+    SOLAR --> SCH1
+
+    INDU --> SCH2
+
+    SCH1 --> Y
+    SCH2 --> Y
+
+    Y --> PB
+
+    PB --> ROBOT
+```
+
+---
+
+# Fontes de Energia
+
+## Principal
+
+| Fonte | Função |
+|---------|---------|
+| Powerbank | Alimentação principal |
+
+---
+
+## Complementares
+
+| Fonte | Função |
+|---------|---------|
+| Carregamento por indução | Recarga automática |
+| Painel solar | Apoio energético futuro |
+
+---
+
+# Consumidores de Energia
+
+## Movimento
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| Motores DC | 4 | Pendente |
+| TB6612FNG | 1 | Pendente |
+| Servo | 1 | Pendente |
+
+---
+
+## Controladores
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| XIAO RP2040 | 1 | Pendente |
+| ESP32-S3 | 1 | Pendente |
+
+---
+
+## Sensores
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| MPU-6050 | 1 | Pendente |
+| HC-SR04 | 1 | Pendente |
+| INMP441 | 3 | Pendente |
+| Encoders | 4 | Futuro |
+
+---
+
+## Vídeo
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| Câmara | 1 | Pendente |
+
+---
+
+## Áudio
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| PAM8302 | 2 | Pendente |
+| Altifalantes | 2 | Pendente |
+
+---
+
+## Iluminação
+
+| Componente | Qt. | Medição |
+|------------|------|----------|
+| KY-009 RGB | 5 | Pendente |
+| Foco LED | 1 | Pendente |
+| Olhos LED | 2 | Pendente |
+
+---
+
+# Perfis de Operação
+
+## Idle
+
+Características:
+
+- sem movimento
+- sensores ativos
+- Wi-Fi ativo
+
+Medição:
+
+```text
+Pendente
+```
+
+---
+
+## Patrulha
+
+Características:
+
+- motores ativos
+- sensores ativos
+- comunicação ativa
+
+Medição:
+
+```text
+Pendente
+```
+
+---
+
+## Docking
+
+Características:
+
+- velocidade reduzida
+- sensores de navegação ativos
+
+Medição:
+
+```text
+Pendente
+```
+
+---
+
+## Carregamento
+
+Características:
+
+- motores desligados
+- comunicações ativas
+
+Medição:
+
+```text
+Pendente
+```
+
+---
+
+## Vigilância
+
+Características:
+
+- câmara ativa
+- áudio ativo
+- sem deslocação
+
+Medição:
+
+```text
+Pendente
+```
+
+---
+
+# Medições
+
+## Plataforma Motora
+
+| Cenário | Corrente | Tensão | Observações |
+|-----------|-----------|-----------|-----------|
+| Parado | | | |
+| Frente | | | |
+| Rotação | | | |
+| Travagem | | | |
+
+---
+
+## ESP32-S3
+
+| Cenário | Corrente | Tensão | Observações |
+|-----------|-----------|-----------|-----------|
+| Idle | | | |
+| Wi-Fi ativo | | | |
+| Áudio ativo | | | |
+| Câmara ativa | | | |
+
+---
+
+## Iluminação
+
+| Estado | Corrente | Observações |
+|-----------|-----------|-----------|
+| LEDs desligados | | |
+| RGB ativo | | |
+| Foco LED | | |
+| Sistema completo | | |
+
+---
+
+# Autonomia
+
+## Powerbank
+
+Capacidade:
+
+```text
+A definir
+```
+
+---
+
+## Fórmula
+
+```text
+Autonomia = Capacidade Utilizável / Consumo Médio
+```
+
+---
+
+## Resultados
+
+| Cenário | Consumo | Autonomia |
+|-----------|-----------|-----------|
+| Idle | | |
+| Patrulha | | |
+| Vigilância | | |
+| Misto | | |
+
+---
+
+# Painel Solar
+
+## Objetivo
+
+Avaliar contribuição energética real.
+
+---
+
+## Métricas
+
+| Parâmetro | Valor |
+|------------|------------|
+| Potência nominal | |
+| Tensão nominal | |
+| Corrente nominal | |
+| Produção medida | |
+
+---
+
+## Testes
+
+### Interior
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+### Exterior
+
+Resultado:
+
+```text
+Pendente
+```
+
+---
+
+# Carregamento por Indução
+
+## Objetivos
+
+Medir:
+
+- eficiência;
+- corrente de carga;
+- tempo de carregamento.
+
+---
+
+## Resultados
+
+| Teste | Resultado |
+|---------|---------|
+| Corrente máxima | |
+| Tempo de carga | |
+| Eficiência | |
+
+---
+
+# Orçamento Energético
+
+## Prioridades
+
+```text
+1. Movimento
+2. Comunicações
+3. Sensores
+4. Áudio
+5. Vídeo
+6. Iluminação
+```
+
+---
+
+# Modo Economia
+
+Objetivos:
+
+- aumentar autonomia;
+- permitir regresso à base.
+
+---
+
+## Ações Possíveis
+
+- reduzir brilho RGB;
+- desligar foco LED;
+- suspender vídeo;
+- desativar serviços não críticos.
+
+---
+
+# Critérios de Validação
+
+O orçamento energético será considerado validado quando:
+
+- [ ] Todos os consumos forem medidos.
+- [ ] A autonomia for conhecida.
+- [ ] A eficiência do docking for medida.
+- [ ] A contribuição solar for quantificada.
+- [ ] O modo economia estiver implementado.
+
+---
+
+# Notas de Projeto
+
+Este documento deverá conter apenas:
+
+- medições reais;
+- resultados experimentais;
+- dados verificados.
+
+Evitar estimativas sem testes.
+
+O objetivo é que este ficheiro se torne a referência oficial de desempenho energético do AEGIS.
+
+
+================================================================================
+FILE: docs\power-system.md
+================================================================================
+
+# Power System
+
+> AEGIS - Power Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir a arquitetura energética do AEGIS.
+
+O sistema foi concebido para:
+
+- operação contínua;
+- carregamento autónomo;
+- integração com Home Assistant;
+- elevada modularidade;
+- manutenção simplificada.
+
+---
+
+# Filosofia
+
+O AEGIS utiliza uma única fonte energética principal.
+
+Todos os subsistemas são alimentados a partir dessa fonte comum.
+
+```text
+Powerbank
+    │
+    ▼
+
+Barramento 5V
+
+    ├── RP2040
+    ├── ESP32-S3
+    ├── Sensores
+    ├── Áudio
+    ├── LEDs
+    └── Motores
+```
+
+---
+
+# Fonte Principal
+
+## Powerbank
+
+O powerbank constitui a bateria principal do sistema.
+
+Funções:
+
+- armazenamento de energia;
+- fornecimento de alimentação;
+- suporte ao carregamento autónomo.
+
+---
+
+## Requisitos Obrigatórios
+
+O powerbank selecionado deverá suportar:
+
+- pass-through charging;
+- funcionamento durante carregamento;
+- reinício automático da saída;
+- alimentação estável a 5V.
+
+Powerbanks que não cumpram estes requisitos são considerados incompatíveis com o projeto.
+
+---
+
+# Pass-Through Charging
+
+## Definição
+
+O sistema deverá continuar operacional enquanto o powerbank estiver a carregar.
+
+Objetivo:
+
+```text
+Carregar
++
+Continuar ligado
+```
+
+---
+
+## Necessidade
+
+Fundamental para:
+
+- docking autónomo;
+- monitorização da carga;
+- atualizações OTA;
+- integração Home Assistant;
+- funcionamento contínuo.
+
+---
+
+# Arquitetura de Carregamento
+
+## Configuração de Referência
+
+```text
+
+Base de Carga
+      │
+      ▼
+
+Indução
+      │
+      ▼
+
+USB-C
+      │
+      ▼
+
+Powerbank
+(pass-through)
+
+      │
+      ▼
+
+Barramento 5V AEGIS
+
+```
+
+---
+
+## Vantagens
+
+- simplicidade;
+- baixo custo;
+- elevada disponibilidade;
+- manutenção fácil.
+
+---
+
+# Distribuição Elétrica
+
+## Barramento Principal
+
+Tensão:
+
+```text
+5V
+```
+
+---
+
+## Consumidores
+
+### RP2040
+
+Função:
+
+- movimento
+- sensores base
+
+---
+
+### ESP32-S3
+
+Função:
+
+- processamento principal
+- áudio
+- comunicações
+
+---
+
+### Sensores
+
+Exemplos:
+
+- MPU6050
+- HC-SR04
+- INMP441
+
+---
+
+### Sistema Áudio
+
+Componentes:
+
+- MAX98357A
+- Altifalantes
+
+---
+
+### Sistema LED
+
+Componentes:
+
+- 5 × KY-009
+
+---
+
+### Driver de Motores
+
+Estado:
+
+Em avaliação.
+
+Opções:
+
+- TB6612FNG convencional;
+- Grove Motor Driver I²C.
+
+---
+
+# Posicionamento do Powerbank
+
+## Localização
+
+Face inferior do Piso 2.
+
+```text
+
+Piso 2
+═══════════════
+
+Powerbank
+
+═══════════════
+
+Piso 1
+```
+
+---
+
+## Justificação
+
+- redução do centro de gravidade;
+- libertação do Piso 2;
+- simplificação da cablagem;
+- melhor equilíbrio.
+
+---
+
+# Integração Grove Base
+
+## Função
+
+A Grove Base do XIAO inclui:
+
+- carregamento de bateria 3.7V;
+- gestão de energia local;
+- LED de carregamento;
+- LED de carga completa.
+
+---
+
+## Utilização no Projeto
+
+A Grove Base não é a fonte energética principal.
+
+Função prevista:
+
+- alimentação local do XIAO;
+- diagnóstico energético;
+- monitorização de estado.
+
+---
+
+# Monitorização Futura
+
+## Estados de Energia
+
+Objetivos futuros:
+
+```text
+Charging
+
+Battery Full
+
+Docked
+
+Undocked
+```
+
+---
+
+## Integração Home Assistant
+
+O sistema deverá publicar:
+
+- estado de carga;
+- estado da docking;
+- disponibilidade energética.
+
+---
+
+# Sistema Solar
+
+## Estado
+
+Planeado.
+
+Não faz parte da arquitetura inicial.
+
+---
+
+## Objetivo Futuro
+
+Fornecer energia complementar.
+
+Não substituirá o sistema principal baseado em powerbank.
+
+---
+
+# Segurança
+
+## Requisitos
+
+Quando a energia atingir níveis críticos:
+
+- terminar patrulha;
+- regressar à base;
+- iniciar carregamento.
+
+---
+
+## Falha de Energia
+
+Em caso de perda de alimentação:
+
+- preservar integridade dos controladores;
+- reiniciar automaticamente quando a energia regressar.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+- Powerbank será a fonte energética principal.
+- Pass-through charging é obrigatório.
+- Powerbank ficará suspenso sob o Piso 2.
+- Arquitetura principal baseada em alimentação 5V.
+
+---
+
+## Em Avaliação
+
+- Modelo final do powerbank.
+- Sistema de docking definitivo.
+- Estratégia de monitorização da carga.
+
+---
+
+# Referências
+
+Documentos relacionados:
+
+- dimensional-reference.md
+- hardware-inventory.md
+- project-decisions.md
+- physical-layout.md
+
+
+================================================================================
+FILE: docs\project-decisions.md
+================================================================================
+
+# Project Decisions
+
+> AEGIS - Architectural Decision Record (ADR)
+
+Versão: 1.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Este documento regista as decisões estruturais do projeto AEGIS.
+
+Sempre que uma decisão relevante seja aprovada:
+
+1. Registar neste documento.
+2. Atualizar a documentação associada.
+3. Atualizar o development-log.md.
+
+---
+
+# Estado das Decisões
+
+## Estados Possíveis
+
+### Proposed
+
+Em discussão.
+
+---
+
+### Accepted
+
+Aprovada.
+
+---
+
+### Deprecated
+
+Substituída por outra decisão.
+
+---
+
+### Rejected
+
+Avaliada e rejeitada.
+
+---
+
+# PD-001
+
+## Título
+
+Arquitetura dual-controller
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-08-31
+
+## Decisão
+
+Utilizar:
+
+- Seeed XIAO RP2040
+- ESP32-S3
+
+## Justificação
+
+Separação entre:
+
+- movimento;
+- sensores de navegação;
+- multimédia;
+- comunicações.
+
+## Impacto
+
+Maior modularidade.
+
+---
+
+# PD-002
+
+## Título
+
+Arquitetura por pisos
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-08-31
+
+## Decisão
+
+Organização física em três níveis:
+
+- Chassis Base
+- Piso 2
+- Piso 3
+
+## Justificação
+
+Facilita:
+
+- manutenção;
+- cablagem;
+- expansão futura.
+
+---
+
+# PD-003
+
+## Título
+
+Utilização de plataformas circulares
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Utilizar duas plataformas circulares adicionais.
+
+## Dimensões
+
+```text
+Piso 2 = Ø300 mm
+
+Piso 3 = Ø300 mm
+```
+
+## Justificação
+
+- espaço disponível;
+- estabilidade;
+- expansão futura.
+
+---
+
+# PD-004
+
+## Título
+
+Powerbank como fonte principal
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+O sistema será alimentado por um powerbank central.
+
+## Justificação
+
+- simplicidade;
+- disponibilidade;
+- segurança.
+
+---
+
+# PD-005
+
+## Título
+
+Pass-through obrigatório
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+O powerbank final deverá obrigatoriamente suportar:
+
+- carregamento em utilização;
+- alimentação contínua durante carregamento.
+
+## Justificação
+
+Necessário para:
+
+- docking;
+- carregamento autónomo;
+- funcionamento contínuo.
+
+---
+
+# PD-006
+
+## Título
+
+Powerbank suspenso sob o Piso 2
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Montar o powerbank na face inferior do Piso 2.
+
+## Justificação
+
+- redução do centro de gravidade;
+- libertação da superfície do Piso 2;
+- melhor distribuição de massas.
+
+---
+
+# PD-007
+
+## Título
+
+Montagem inicial não definitiva
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Utilizar inicialmente:
+
+- fita dupla-face;
+- abraçadeiras;
+- fixações temporárias.
+
+## Justificação
+
+Validar:
+
+- layout;
+- cablagem;
+- acessibilidade.
+
+Antes da criação de suportes definitivos.
+
+---
+
+# PD-008
+
+## Título
+
+Integração nativa com Home Assistant
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-08-31
+
+## Decisão
+
+O AEGIS será concebido como um componente do ecossistema Home Assistant.
+
+## Justificação
+
+Permitir:
+
+- automações;
+- telemetria;
+- Assist;
+- controlo centralizado.
+
+---
+
+# PD-009
+
+## Título
+
+Utilização de Grove como barramento preferencial
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Sempre que possível deverão ser utilizados módulos Grove.
+
+## Justificação
+
+- menor cablagem;
+- maior modularidade;
+- menor risco de ligação incorreta.
+
+---
+
+# PD-010
+
+## Título
+
+Sensores de queda
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Sensores de queda fazem parte da arquitetura oficial.
+
+## Prioridade
+
+Baixa.
+
+## Justificação
+
+A instalação de referência não possui escadas.
+
+No entanto, o projeto é público e deve suportar ambientes genéricos.
+
+---
+
+# PD-011
+
+## Título
+
+Sistema LED distribuído
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Utilizar:
+
+```text
+5 × KY-009 RGB
+```
+
+## Justificação
+
+- feedback visual;
+- iluminação da saia;
+- integração com Assist.
+
+---
+
+# PD-012
+
+## Título
+
+Sistema áudio distribuído
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-01
+
+## Decisão
+
+Utilizar:
+
+```text
+3 × INMP441
+3 × MAX98357A
+2 × Altifalantes
+```
+
+## Justificação
+
+Permitir:
+
+- Assist;
+- áudio bidirecional;
+- expansão futura.
+
+---
+
+# Em Avaliação
+
+## PD-013
+
+### Título
+
+Altura do Piso 2
+
+### Estado
+
+Proposed
+
+### Opções
+
+```text
+45 mm
+
+50 mm
+```
+
+### Critério
+
+Validação física.
+
+---
+
+# PD-014
+
+## Título
+
+Motor Driver - TB6612FNG Convencional
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-02
+
+## Decisão
+
+Utilizar TB6612FNG em modo convencional com ligações GPIO diretas.
+
+## Justificação
+
+Motivos da escolha:
+
+- maior documentação disponível;
+- compatibilidade comprovada com RP2040;
+- simplicidade de implementação;
+- menor custo;
+- melhor integração com bibliotecas existentes.
+
+## Alternativa Rejeitada
+
+TB6612FNG Grove I²C:
+- Menor documentação;
+- Ainda em avaliação;
+- Complexidade desnecessária;
+- Reservado para futuras expansões.
+
+## Impacto
+
+- Pinout exato em gpio-allocation.md;
+- Esquemático em firmware-protocol.md;
+- Código firmware no repositório de firmware.
+
+---
+
+## PD-015
+
+## Título
+
+Hub I²C - Grove I²C Hub
+
+## Estado
+
+Accepted
+
+## Data
+
+2026-09-02
+
+## Decisão
+
+Utilizar Grove I²C Hub como expansor principal do barramento I²C.
+
+## Justificação
+
+Motivos da escolha:
+
+- alinhado com filosofia modular do AEGIS;
+- reduz complexidade de cablagem;
+- compatibilidade automática com Grove;
+- facilita futura expansão de sensores;
+- melhor manutenibilidade.
+
+## Alternativa Rejeitada
+
+Bloco de terminais + Pigtails:
+- Menos modular;
+- Maior potencial de erros de ligação;
+- Menos profissional;
+- Reservado para futuros subsistemas críticos.
+
+## Especificação
+
+Modelo: Grove I²C Hub
+Part Number: 103020006 (ou compatível)
+
+Capacidade: 4 × I²C
+
+Ocupação em Grove Shield: 1 porta I²C
+
+## Impacto
+
+- Simplificação do layout físico;
+- Redução de cabos I²C em Piso 1;
+- Facilita integração de MPU-6050, PCA9685, Grove Motor Driver.
+
+---
+
+---
+
+# Regras
+
+Uma decisão só deve aparecer neste documento quando existir consenso suficiente para orientar a evolução futura do projeto.
+
+Este documento constitui a referência oficial para decisões arquiteturais do AEGIS.
+
+---
+
+# Glossário
+
+## Terminologia de Pisos
+
+Padronização oficial para referências a estrutura física:
+
+### Piso 1 - Chassis Base (Movimento)
+
+Também referido como:
+- Piso 1
+- Chassis Base
+- Plataforma de Movimento
+- Camada 1
+
+Componentes:
+- Chassis 4WD
+- RP2040
+- Motores e rodas
+- Sensores de movimento (MPU-6050, HC-SR04)
+
+---
+
+### Piso 2 - Plataforma Principal (Inteligência)
+
+Também referido como:
+- Piso 2
+- Plataforma Principal
+- Camada 2
+- Plataforma de Inteligência
+
+Componentes:
+- ESP32-S3
+- Sistema de Áudio (MAX98357A, INMP441)
+- Powerbank (energia)
+- Distribuição elétrica
+
+---
+
+### Piso 3 - Plataforma Superior (Percepção)
+
+Também referido como:
+- Piso 3
+- Plataforma Superior
+- Camada 3
+- Plataforma de Percepção
+
+Componentes:
+- LEDs RGB
+- Câmara (futura)
+- Microfones
+- Altifalantes
+
+---
+
+## Nomenclatura Recomendada
+
+Para novos documentos, usar:
+```
+"Piso 1 - Movimento"
+"Piso 2 - Inteligência"
+"Piso 3 - Percepção"
+```
+
+Evitar:
+```
+❌ "Chassis"
+❌ "Top platform"
+❌ "Middle layer"
+```
+
+---
+
+``
+
+
+================================================================================
+FILE: docs\project_state.md
+================================================================================
+
+# AEGIS - Project State
+
+Última atualização: 2026-09-01
+
+---
+
+# Estado Geral
+
+Projeto em fase de arquitetura e preparação da plataforma motora.
+
+Estado atual:
+- Arquitetura definida e congelada
+- Componentes estruturais adquiridos
+- Componentes eletrónicos em validação
+- Fase de assembling e integração planejada
+- Construção física em preparação
+
+Versão:
+- AEGIS v0.1 (Em Desenvolvimento - Fase de Prototipagem)
+
+---
+
+# Objetivo
+
+Desenvolver um robô autónomo de vigilância doméstica inspirado no EBO, totalmente integrado com Home Assistant e ESPHome.
+
+Capacidades pretendidas:
+
+- Patrulha autónoma
+- Regresso automático à base
+- Vigilância por vídeo
+- Áudio bidirecional
+- Assistente por voz
+- Integração com Home Assistant
+- Gestão inteligente de energia
+- Expansibilidade modular
+
+---
+
+# Arquitetura Congelada
+
+## Controlador de Movimento
+
+Hardware:
+- Seeed XIAO RP2040
+
+Funções:
+- Controlo dos motores
+- Leitura dos sensores de movimento
+- Navegação local
+- Gestão do servo
+- Interface UART com ESP32
+
+
+================================================================================
+FILE: docs\security-and-failsafe.md
+================================================================================
+
+# Security and Failsafe
+
+> AEGIS - Safety, Security and Failsafe Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir os mecanismos de segurança do AEGIS.
+
+A segurança tem prioridade absoluta sobre:
+
+- patrulha;
+- navegação;
+- docking;
+- áudio;
+- vigilância.
+
+Sempre que existir conflito entre uma função operacional e uma função de segurança:
+
+```text
+Segurança vence.
+```
+
+---
+
+# Filosofia
+
+O AEGIS deve falhar de forma segura.
+
+Objetivos:
+
+- evitar colisões;
+- evitar movimentos descontrolados;
+- evitar danos materiais;
+- proteger pessoas;
+- proteger animais domésticos;
+- proteger a própria plataforma.
+
+---
+
+# Arquitetura de Segurança
+
+```text
+
+Home Assistant
+       │
+
+ESP32-S3
+       │
+
+UART
+
+       │
+
+RP2040
+       │
+
+Motores
+
+```
+
+---
+
+# Responsabilidades
+
+## RP2040
+
+Responsável por:
+
+- paragem de emergência;
+- controlo dos motores;
+- deteção de obstáculos;
+- ações de segurança imediatas.
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- supervisão;
+- telemetria;
+- integração Home Assistant;
+- lógica de alto nível.
+
+---
+
+## Home Assistant
+
+Responsável por:
+
+- automações;
+- alertas;
+- monitorização;
+- supervisão remota.
+
+---
+
+# Princípio Fundamental
+
+A capacidade de parar o robô nunca depende de:
+
+- Wi-Fi;
+- Home Assistant;
+- Internet;
+- cloud;
+- ESP32-S3.
+
+A capacidade de parar o robô deve existir sempre no:
+
+```text
+RP2040
+```
+
+---
+
+# Obstáculos
+
+## Sensor
+
+HC-SR04
+
+---
+
+## Reação
+
+Quando um obstáculo for detetado abaixo do limite configurado:
+
+```text
+Parar
+```
+
+---
+
+## Ações Possíveis
+
+```text
+Stop
+
+Recuar
+
+Rodar
+```
+
+---
+
+# Falha de Comunicação UART
+
+## Situação
+
+Perda de comunicação entre:
+
+```text
+ESP32-S3
+↔
+RP2040
+```
+
+---
+
+## Resposta
+
+```text
+STOP
+```
+
+---
+
+## Objetivo
+
+Garantir que a perda do controlador principal não provoca movimento descontrolado.
+
+---
+
+# Falha de Wi-Fi
+
+## Situação
+
+Perda de rede sem fios.
+
+---
+
+## Consequência
+
+Não deverá impedir:
+
+- navegação básica;
+- paragem;
+- proteção local.
+
+---
+
+## Responsável
+
+```text
+RP2040
+```
+
+---
+
+# Falha do ESP32-S3
+
+## Situação
+
+ESP32-S3 bloqueado ou reiniciado.
+
+---
+
+## Consequência
+
+O RP2040 continua responsável por:
+
+- motores;
+- sensores;
+- segurança.
+
+---
+
+## Comportamento
+
+```text
+STOP
+```
+
+seguido de:
+
+```text
+Estado Seguro
+```
+
+---
+
+# Falha do RP2040
+
+## Situação
+
+Falha do controlador de movimento.
+
+---
+
+## Consequência
+
+Perda do movimento.
+
+---
+
+## Resultado Esperado
+
+O robô deve permanecer parado.
+
+---
+
+# Energia Crítica
+
+## Situação
+
+Bateria abaixo do limite mínimo.
+
+---
+
+## Ações
+
+```text
+Terminar patrulha
+
+Procurar docking
+
+Iniciar carregamento
+```
+
+---
+
+# Perda de Alimentação
+
+## Situação
+
+Falha de energia.
+
+---
+
+## Requisitos
+
+- preservar hardware;
+- permitir reinicialização automática;
+- evitar movimentos inesperados.
+
+---
+
+# Docking
+
+## Durante aproximação
+
+Prioridade:
+
+```text
+Segurança
+```
+
+---
+
+## Comportamentos permitidos
+
+```text
+Aproximação lenta
+
+Paragem imediata
+
+Nova tentativa
+```
+
+---
+
+## Comportamentos proibidos
+
+```text
+Impacto deliberado
+
+Aceleração cega
+```
+
+---
+
+# Sensores de Queda
+
+## Estado
+
+Planeados
+
+---
+
+## Prioridade
+
+Baixa para a instalação atual.
+
+---
+
+## Justificação
+
+O ambiente de referência não possui:
+
+- escadas;
+- desníveis significativos.
+
+---
+
+## Obrigatoriedade
+
+Apesar disso, o projeto considera os sensores de queda como parte integrante da arquitetura de segurança.
+
+---
+
+## Funções Futuras
+
+- deteção de escadas;
+- deteção de varandas;
+- proteção anti-queda.
+
+---
+
+# Watchdog
+
+## RP2040
+
+Recomendado.
+
+Objetivo:
+
+Recuperar de bloqueios inesperados.
+
+---
+
+## ESP32-S3
+
+Recomendado.
+
+Objetivo:
+
+Reinício automático após falhas.
+
+---
+
+# Estados Seguros
+
+## Idle
+
+```text
+Sem movimento
+```
+
+---
+
+## Stop
+
+```text
+Motores parados
+```
+
+---
+
+## Charging
+
+```text
+Robot imobilizado
+```
+
+---
+
+## Error
+
+```text
+Motores desativados
+```
+
+---
+
+# Home Assistant
+
+## Alertas Futuros
+
+Eventos a publicar:
+
+```text
+Obstacle Detected
+
+UART Failure
+
+ESP32 Failure
+
+Low Battery
+
+Docking Failure
+```
+
+---
+
+# Segurança Física
+
+## Estrutura
+
+Objetivos:
+
+- evitar arestas cortantes;
+- proteger componentes;
+- evitar cabos expostos.
+
+---
+
+## Cablagem
+
+Deverá ser:
+
+- organizada;
+- protegida;
+- fixada.
+
+---
+
+# Requisitos de Projeto
+
+## Obrigatórios
+
+✅ Paragem segura
+
+✅ Falha segura
+
+✅ Controlo local no RP2040
+
+✅ Sem dependência da cloud
+
+✅ Sem dependência de Internet
+
+---
+
+## Futuros
+
+🔲 Sensores de queda
+
+🔲 Sensores de docking avançados
+
+🔲 Monitorização energética avançada
+
+🔲 Diagnóstico automático
+
+---
+
+# Estado Atual
+
+## Implementado Arquiteturalmente
+
+✅ HC-SR04
+
+✅ MPU6050
+
+✅ RP2040 dedicado ao movimento
+
+✅ ESP32-S3 dedicado à lógica principal
+
+✅ UART entre controladores
+
+✅ Home Assistant como camada estratégica
+
+---
+
+## Em Evolução
+
+- Docking
+- Energia
+- Gestão de bateria
+- Sensores de queda
+
+---
+
+# Documentos Relacionados
+
+- sensors.md
+- power-system.md
+- communication-system.md
+- firmware-protocol.md
+- home-assistant-integration.md
+- project-decisions.md
+
+
+================================================================================
+FILE: docs\sensors.md
+================================================================================
+
+# Sensors
+
+> AEGIS - Sensor Architecture
+
+Versão: 2.0
+Estado: Ativo
+
+---
+
+# Objetivo
+
+Definir os sensores utilizados pelo AEGIS.
+
+Os sensores são responsáveis por:
+
+- navegação;
+- deteção de obstáculos;
+- orientação;
+- vigilância;
+- interação;
+- segurança.
+
+---
+
+# Filosofia
+
+Os sensores estão distribuídos por camadas funcionais.
+
+```text
+
+Piso 3
+Perceção e Interação
+
+Piso 2
+Processamento
+
+Piso 1
+Movimento e Segurança
+
+```
+
+---
+
+# Sensores Ativos na V1
+
+## MPU-6050
+
+### Estado
+
+```text
+Adquirido
+```
+
+---
+
+### Localização
+
+```text
+Piso 1
+```
+
+Preferencialmente próximo do centro geométrico do robô.
+
+---
+
+### Funções
+
+- orientação;
+- aceleração;
+- deteção de inclinação;
+- estabilidade;
+- telemetria.
+
+---
+
+### Controlador
+
+```text
+RP2040
+```
+
+---
+
+### Interface
+
+```text
+I²C
+```
+
+---
+
+# HC-SR04
+
+### Estado
+
+```text
+Adquirido
+```
+
+---
+
+### Localização
+
+```text
+Frente do robô
+```
+
+---
+
+### Funções
+
+- deteção de obstáculos;
+- prevenção de colisões;
+- apoio à navegação;
+- apoio ao docking.
+
+---
+
+### Controlador
+
+```text
+RP2040
+```
+
+---
+
+### Interface
+
+```text
+Grove Digital
+```
+
+através de Grove-Pigtail.
+
+---
+
+# Sistema de Áudio
+
+## INMP441
+
+### Estado
+
+```text
+3 unidades adquiridas
+```
+
+---
+
+### Localização
+
+```text
+Piso 3
+```
+
+---
+
+### Distribuição Prevista
+
+```text
+
+          Frente
+
+            M1
+
+      M2         M3
+
+Esquerda      Direita
+
+```
+
+---
+
+### Funções
+
+- captura de voz;
+- Home Assistant Assist;
+- monitorização sonora;
+- futura localização aproximada de origem sonora.
+
+---
+
+### Controlador
+
+```text
+ESP32-S3
+```
+
+---
+
+### Interface
+
+```text
+I²S
+```
+
+---
+
+# Sistema de Visão
+
+## Câmara
+
+### Estado
+
+Planeada
+
+---
+
+### Localização
+
+```text
+Frente superior
+```
+
+---
+
+### Funções
+
+- vigilância;
+- streaming remoto;
+- snapshots;
+- integração Home Assistant.
+
+---
+
+### Controlador
+
+```text
+ESP32-S3
+```
+
+---
+
+# Sensores de Queda
+
+## Estado
+
+Planeados
+
+---
+
+## Prioridade
+
+Baixa
+
+---
+
+## Justificação
+
+A instalação de referência do AEGIS é:
+
+```text
+Interior
+Sem escadas
+Sem desníveis significativos
+```
+
+No entanto o projeto é público e deve prever:
+
+- utilização em habitações com escadas;
+- utilização em ambientes desconhecidos;
+- proteção contra quedas.
+
+---
+
+## Funções Futuras
+
+- deteção de escadas;
+- deteção de varandas;
+- prevenção de quedas;
+- recuo automático.
+
+---
+
+# Sensores de Docking
+
+## Estado
+
+Planeados
+
+---
+
+## Funções
+
+- aproximação à base;
+- alinhamento;
+- confirmação de contacto;
+- monitorização de carregamento.
+
+---
+
+## Tecnologias em Avaliação
+
+```text
+Infravermelhos
+
+Contactos elétricos
+
+Indução
+
+Base Roomba (experimental)
+```
+
+---
+
+# Sensores Virtuais
+
+## Origem
+
+Home Assistant
+
+---
+
+## Funções Futuras
+
+Permitir que o AEGIS utilize informação proveniente de:
+
+- presença;
+- alarmes;
+- sensores ambientais;
+- estados da habitação.
+
+---
+
+## Exemplos
+
+```text
+Casa Ocupada
+
+Casa Vazia
+
+Modo Noite
+
+Alarme Ativo
+```
+
+---
+
+# Integração com Robôs Existentes
+
+## Roomba i1
+
+### Estado
+
+Investigação futura
+
+---
+
+### Objetivos
+
+Possível utilização de:
+
+- informação de mapas;
+- telemetria;
+- zonas;
+- estados de docking.
+
+---
+
+# Distribuição por Controlador
+
+## RP2040
+
+Responsável por:
+
+- MPU-6050
+- HC-SR04
+- sensores de movimento
+- segurança local
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- INMP441
+- Câmara
+- sensores multimédia
+- integração Home Assistant
+
+---
+
+# Prioridades da V1
+
+## Obrigatórios
+
+✅ MPU-6050
+
+✅ HC-SR04
+
+✅ INMP441
+
+---
+
+## Planeados
+
+🔲 Câmara
+
+🔲 Docking
+
+🔲 Sensores de queda
+
+---
+
+# Segurança
+
+Os sensores ligados ao RP2040 têm prioridade máxima.
+
+A perda do ESP32-S3 não deverá impedir:
+
+- deteção de obstáculos;
+- paragem segura;
+- prevenção de colisões.
+
+---
+
+# Estado Atual
+
+## Confirmado
+
+✅ MPU-6050 adquirido
+
+✅ HC-SR04 adquirido
+
+✅ 3 × INMP441 adquiridos
+
+✅ Arquitetura RP2040 + ESP32-S3 definida
+
+---
+
+## Em Evolução
+
+- Câmara
+- Sensores de docking
+- Sensores de queda
+- Integração com Home Assistant
+
+---
+
+# Documentos Relacionados
+
+- mechanical-design.md
+- physical-layout.md
+- gpio-allocation.md
+- communication-system.md
+- home-assistant-integration.md
+- security-and-failsafe.md
+
+
+================================================================================
+FILE: docs\software-roadmap.md
+================================================================================
+
+# Software Roadmap
+
+> AEGIS - Software Architecture and Development Plan
+
+Versão: 1.0
+Estado: Em desenvolvimento
+
+---
+
+# Objetivo
+
+Definir a evolução do software do AEGIS desde a primeira plataforma motora até ao robô autónomo totalmente integrado com Home Assistant.
+
+A arquitetura segue uma filosofia distribuída:
+
+- RP2040 para controlo em tempo real
+- ESP32-S3 para coordenação e comunicações
+- Home Assistant para automações e supervisão
+
+---
+
+# Arquitetura Global
+
+```mermaid
+flowchart TD
+
+    HA["Home Assistant"]
+
+    ESP["ESP32-S3"]
+
+    RP["RP2040"]
+
+    HA <-->|Wi-Fi / ESPHome| ESP
+
+    ESP <-->|UART| RP
+```
+
+---
+
+# Responsabilidades
+
+## RP2040
+
+Funções de tempo real.
+
+```mermaid
+flowchart LR
+
+    RP["RP2040"]
+
+    MOTOR["Motores"]
+    IMU["MPU-6050"]
+    SONAR["HC-SR04"]
+    ENCODER["Encoders"]
+
+    RP --> MOTOR
+
+    IMU --> RP
+    SONAR --> RP
+    ENCODER --> RP
+```
+
+### Responsabilidades
+
+- controlo de motores
+- leitura de sensores de movimento
+- controlo do servo
+- prevenção de colisões
+- navegação local
+- telemetria
+
+---
+
+## ESP32-S3
+
+Controlador principal.
+
+```mermaid
+flowchart LR
+
+    ESP["ESP32-S3"]
+
+    CAMERA["Câmara"]
+    AUDIO["INMP441"]
+    SPEAKER["PAM8302"]
+
+    CAMERA --> ESP
+    AUDIO --> ESP
+
+    ESP --> SPEAKER
+```
+
+### Responsabilidades
+
+- comunicação Wi-Fi
+- ESPHome
+- Home Assistant
+- gestão energética
+- câmara
+- áudio
+- coordenação global
+
+---
+
+## Home Assistant
+
+Supervisor do sistema.
+
+```mermaid
+flowchart LR
+
+    HOME["Home Assistant"]
+
+    AUTO["Automações"]
+
+    DASH["Dashboards"]
+
+    ASSIST["Assist"]
+
+    HOME --> AUTO
+    HOME --> DASH
+    HOME --> ASSIST
+```
+
+### Responsabilidades
+
+- automações
+- notificações
+- histórico
+- dashboards
+- assistente de voz
+- lógica avançada
+
+---
+
+# Roadmap por Fases
+
+---
+
+# Fase 1 - Plataforma Motora
+
+Estado:
+- Próxima fase
+
+Objetivo:
+
+Criar base funcional de movimento.
+
+---
+
+## Funcionalidades
+
+### RP2040
+
+- inicialização
+- controlo dos motores
+- travagem
+- curvas
+- leitura HC-SR04
+- leitura MPU-6050
+
+---
+
+## Testes
+
+- movimento frente
+- movimento trás
+- rotação esquerda
+- rotação direita
+- paragem
+- deteção de obstáculos
+
+---
+
+# Fase 2 - Navegação Básica
+
+Objetivo:
+
+Movimento inteligente.
+
+---
+
+## Funcionalidades
+
+### RP2040
+
+- controlo orientado por IMU
+- curvas com ângulo alvo
+- limitação de velocidade
+- prevenção de colisões
+
+---
+
+## Futuro
+
+- encoders
+- correção de trajetória
+
+---
+
+# Fase 3 - Integração ESP32-S3
+
+Objetivo:
+
+Separação definitiva entre movimento e lógica.
+
+---
+
+## Funcionalidades
+
+### UART
+
+Comandos previstos:
+
+```text
+MOVE_FORWARD
+MOVE_BACKWARD
+TURN_LEFT
+TURN_RIGHT
+STOP
+DOCK
+PATROL
+```
+
+---
+
+### Telemetria
+
+```text
+BATTERY
+DISTANCE
+ANGLE
+STATUS
+```
+
+---
+
+# Fase 4 - Home Assistant
+
+Objetivo:
+
+Tornar o AEGIS um dispositivo da casa inteligente.
+
+---
+
+## Entidades ESPHome
+
+```yaml
+sensor:
+  - battery
+  - sound_level
+  - distance
+
+binary_sensor:
+  - obstacle
+  - charging
+
+switch:
+  - patrol_mode
+
+button:
+  - return_to_base
+```
+
+---
+
+## Automações
+
+Exemplos:
+
+```text
+Bateria baixa
+↓
+Regresso à base
+```
+
+```text
+Modo ausência
+↓
+Iniciar patrulha
+```
+
+---
+
+# Fase 5 - Sistema de Docking
+
+Objetivo:
+
+Regresso automático à estação.
+
+---
+
+## Funcionalidades
+
+### RP2040
+
+- procura local
+- alinhamento
+- aproximação
+
+### ESP32-S3
+
+- supervisão
+- estado
+
+### Home Assistant
+
+- monitorização
+- alertas
+
+---
+
+# Fase 6 - Áudio
+
+Objetivo:
+
+Interação sonora.
+
+---
+
+## Hardware
+
+- INMP441
+- PAM8302
+- Altifalantes
+
+---
+
+## Funcionalidades
+
+### Inicial
+
+- reprodução de alertas
+- anúncios
+
+### Intermédia
+
+- streaming áudio
+- intercomunicador
+
+### Avançada
+
+- localização de som
+- resposta inteligente
+
+---
+
+# Fase 7 - Assist
+
+Objetivo:
+
+Utilização do Assist do Home Assistant.
+
+---
+
+## Fluxo
+
+```mermaid
+flowchart LR
+
+
+================================================================================
+FILE: docs\system-overview.md
+================================================================================
+
+# System Overview
+
+> AEGIS - Autonomous Electronic Guardian Integrated System
+
+Versão: 0.1  
+Estado: Em Desenvolvimento
+
+---
+
+# O que é o AEGIS?
+
+O AEGIS (Autonomous Electronic Guardian Integrated System) é um robô autónomo de vigilância doméstica desenvolvido como projeto open-source.
+
+O objetivo é criar uma plataforma modular integrada com:
+
+- Home Assistant;
+- ESPHome;
+- Assist;
+- automações domésticas.
+
+O projeto inspira-se em soluções comerciais de vigilância móvel, mantendo total controlo local da operação.
+
+---
+
+# Princípios do Projeto
+
+## Modularidade
+
+Cada subsistema deve poder ser:
+
+- desenvolvido;
+- testado;
+- substituído;
+
+independentemente.
+
+---
+
+## Integração Local
+
+O sistema deverá funcionar sem dependências obrigatórias da cloud.
+
+---
+
+## Segurança
+
+A segurança tem prioridade sobre:
+
+- patrulha;
+- docking;
+- interação;
+- vigilância.
+
+---
+
+## Evolução Incremental
+
+O robô é desenvolvido em blocos funcionais sucessivos.
+
+---
+
+# Arquitetura Global
+
+```text
+
+        Home Assistant
+               ▲
+               │
+               ▼
+
+           ESP32-S3
+               ▲
+               │ UART
+               ▼
+
+            RP2040
+
+               │
+               ▼
+
+            Motores
+
+```
+
+---
+
+# Controladores
+
+## RP2040
+
+Responsável por:
+
+- motores;
+- sensores de navegação;
+- movimento;
+- segurança local.
+
+Principais sensores:
+
+- MPU6050
+- HC-SR04
+
+---
+
+## ESP32-S3
+
+Responsável por:
+
+- Home Assistant;
+- ESPHome;
+- Wi-Fi;
+- áudio;
+- vídeo;
+- Assist;
+- telemetria.
+
+---
+
+# Estrutura Física
+
+## Piso 1
+
+Função:
+
+Movimento e sensores base.
+
+Hardware principal:
+
+- Chassis 4WD
+- RP2040
+- Grove Base
+- MPU6050
+- HC-SR04
+- Driver de motores
+
+---
+
+## Piso 2
+
+Função:
+
+Energia e processamento.
+
+Hardware principal:
+
+- ESP32-S3
+- Distribuição elétrica
+- Sistema áudio
+- Powerbank
+
+---
+
+## Piso 3
+
+Função:
+
+Perceção e interação.
+
+Hardware principal:
+
+- Microfones
+- LEDs
+- Câmara (futura)
+
+---
+
+# Dimensões Principais
+
+## Chassis
+
+```text
+260 × 155 × 65 mm
+```
+
+---
+
+## Rodas
+
+```text
+Ø70 mm
+```
+
+---
+
+## Piso 2
+
+```text
+Ø300 mm
+```
+
+---
+
+## Piso 3
+
+```text
+Ø300 mm
+```
+
+---
+
+## Espaçamento
+
+Configuração atualmente validada:
+
+```text
+30 mm
+```
+
+entre:
+
+- Piso 1 ↔ Piso 2
+
+Configuração de referência:
+
+```text
+30 mm
+```
+
+entre:
+
+- Piso 2 ↔ Piso 3
+
+---
+
+# Energia
+
+## Fonte Principal
+
+Powerbank.
+
+Requisito obrigatório:
+
+```text
+Pass-through charging
+```
+
+---
+
+## Localização
+
+```text
+Face inferior do Piso 2
+```
+
+---
+
+## Carregamento
+
+Planeado:
+
+- docking autónomo;
+- monitorização do estado de carga;
+- integração Home Assistant.
+
+---
+
+# Sensores
+
+## Atuais
+
+### MPU6050
+
+- aceleração;
+- orientação;
+- estabilidade.
+
+---
+
+### HC-SR04
+
+- deteção de obstáculos;
+- prevenção de colisões.
+
+---
+
+### INMP441
+
+3 unidades.
+
+Funções:
+
+- voz;
+- Assist;
+- monitorização sonora.
+
+---
+
+## Planeados
+
+- Câmara
+- Sensores de docking
+- Sensores de queda
+
+---
+
+# Áudio
+
+Hardware atual:
+
+```text
+3 × INMP441
+
+3 × MAX98357A
+
+2 × Altifalantes
+```
+
+Funções:
+
+- Assist;
+- notificações;
+- comunicação bidirecional.
+
+---
+
+# Iluminação
+
+Hardware atual:
+
+```text
+5 × KY-009 RGB
+```
+
+Funções:
+
+- estado do sistema;
+- carregamento;
+- patrulha;
+- alertas.
+
+---
+
+# Integração Home Assistant
+
+O Home Assistant funciona como:
+
+```text
+Camada Estratégica
+```
+
+O AEGIS funciona como:
+
+```text
+Agente Físico Móvel
+```
+
+O sistema deverá permitir:
+
+- patrulha;
+- notificações;
+- automações;
+- integração Assist;
+- monitorização remota.
+
+---
+
+# Segurança
+
+Princípios fundamentais:
+
+- paragem segura;
+- funcionamento local;
+- independência da cloud;
+- independência da Internet.
+
+O RP2040 mantém sempre controlo de segurança sobre os motores.
+
+---
+
+# Estado Atual
+
+## Concluído
+
+✅ Arquitetura principal
+
+✅ Estrutura mecânica base
+
+✅ Arquitetura energética
+
+✅ Sistema áudio
+
+✅ Sistema LED
+
+✅ Integração Home Assistant
+
+✅ Comunicação RP2040 ↔ ESP32-S3
+
+---
+
+## Em Implementação
+
+🔄 Block 01 - Plataforma Motora
+
+---
+
+## Em Desenvolvimento Futuro
+
+- docking;
+- vídeo;
+- sensores de queda;
+- painel solar;
+- navegação avançada.
+
+---
+
+# Documentação Principal
+
+Leitura recomendada:
+
+1. system-overview.md
+2. project-decisions.md
+3. dimensional-reference.md
+4. hardware-inventory.md
+5. physical-layout.md
+
+---
+
+# Estado do Projeto
+
+Fase atual:
+
+```text
+Pré-Construção / Prototipagem Física
+```
+
+A arquitetura encontra-se consolidada e o foco principal passou para a montagem e validação do Block 01.
+
+
+================================================================================
+FILE: firmware\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: hardware\README.md
+================================================================================
+
+
+
+
+================================================================================
+FILE: tools\export.ps1
+================================================================================
+
+$RepositoryRoot = Split-Path $PSScriptRoot -Parent
+
+$ToolkitScript = Join-Path `
+    (Split-Path $RepositoryRoot -Parent) `
+    "Cravo-Toolkit\exporters\repository-export.ps1"
+
+Push-Location $RepositoryRoot
+
+try
+{
+    & $ToolkitScript
+}
+finally
+{
+    Pop-Location
+}
+
