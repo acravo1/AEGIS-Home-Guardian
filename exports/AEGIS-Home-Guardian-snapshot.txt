@@ -1,0 +1,15 @@
+﻿PROJECT SNAPSHOT
+
+Repository : AEGIS-Home-Guardian
+Date       : 2026-11-18 20:30:28
+Branch     : main
+
+Files Exported : 39
+Files Skipped  : 22
+
+Generated Files
+
+AEGIS-Home-Guardian-content-01.txt
+AEGIS-Home-Guardian-context.txt
+AEGIS-Home-Guardian-git.txt
+AEGIS-Home-Guardian-manifest.txt

@@ -1,0 +1,119 @@
+﻿Folder PATH listing for volume Windows
+Volume serial number is F4E1-4F90
+C:.
+|   .gitignore
+|   export.ps1
+|   LICENSE
+|   README.md
+|   
++---assets
+|   +---diagrams
+|   |       README.md
+|   |       
+|   +---images
+|   |   +---architecture
+|   |   |       README.md
+|   |   |       
+|   |   +---audio
+|   |   |       README.md
+|   |   |       
+|   |   +---camera
+|   |   |       README.md
+|   |   |       
+|   |   +---docking
+|   |   |       README.md
+|   |   |       
+|   |   +---hardware
+|   |   |       README.md
+|   |   |       
+|   |   +---mechanical
+|   |   |       README.md
+|   |   |       
+|   |   +---testing
+|   |   |       README.md
+|   |   |       
+|   |   \---wiring
+|   |           README.md
+|   |           
+|   \---logo
+|           61klg0KdxdL._AC_SL1000_.jpg
+|           AEGIS.svg
+|           Projecto AEGIS.png
+|           README.md
+|           
++---docs
+|   |   architecture.md
+|   |   audio-system.md
+|   |   bloc01-build-guide.md
+|   |   bloc01-layout.md
+|   |   bloc01-wiring.md
+|   |   bom.md
+|   |   camera-system.md
+|   |   communication-system.md
+|   |   development-log.md
+|   |   dimensional-reference.md
+|   |   docking-system.md
+|   |   esphome-design.md
+|   |   firmware-protocol.md
+|   |   gpio-allocation.md
+|   |   hardware-inventory.md
+|   |   home-assistant-integration.md
+|   |   led-system.md
+|   |   mechanical-design.md
+|   |   motor-platform.md
+|   |   physical-layout.md
+|   |   power-budget.md
+|   |   power-system.md
+|   |   project-decisions.md
+|   |   project_state.md
+|   |   security-and-failsafe.md
+|   |   sensors.md
+|   |   software-roadmap.md
+|   |   system-overview.md
+|   |   
+|   +---Architecture
+|   |       AEGIS-System-Architecture.md
+|   |       Architecture-Decisions.md
+|   |       
+|   +---Electronics
+|   |       AEGIS-I2C-Bus-Specification.md
+|   |       
+|   +---Floor1
+|   |       AEGIS-Floor1-Hardware-Specification-v1.0.md
+|   |       AEGIS-Floor1-Test-Plan.md
+|   |       README.md
+|   |       
+|   +---Floor2
+|   +---Floor3
+|   +---Mechanical
+|   +---Project-Log
+|   |       Project-Journal.md
+|   |       
+|   \---Testing
++---exports
+|       AEGIS-Home-Guardian-content-01.txt
+|       AEGIS-Home-Guardian-context.txt
+|       AEGIS-Home-Guardian-git.txt
+|       AEGIS-Home-Guardian-manifest.txt
+|       AEGIS-Home-Guardian-snapshot.txt
+|       
++---firmware
+|   |   README.md
+|   |   
+|   +---floor1-rp2040
+|   +---floor2-esp32s3
+|   \---floor3-vision
++---hardware
+|   |   README.md
+|   |   
+|   +---bom
+|   |       Floor1-BOM.md
+|   |       
+|   +---pcb
+|   +---schematics
+|   \---wiring
+|           Floor1-Pinout.md
+|           
+\---tools
+        export.ps1
+        

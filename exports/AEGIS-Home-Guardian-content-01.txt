@@ -1,19 +1,288 @@
-﻿================================================================================
-Repository Export
-================================================================================
+﻿REPOSITORY CONTENT
 
 Repository : AEGIS-Home-Guardian
-Date       : 2026-09-16 22:27:25
+Date       : 2026-11-18 20:30:28
 Root       : C:\Users\silva\OneDrive\GitHub\AEGIS-Home-Guardian
 
+----------------------------------------------------------------
+FILE: .gitignore
+----------------------------------------------------------------
 
-================================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#   Usually these files are written by a python script from a template
+#   before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+# Pipfile.lock
+
+# UV
+#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+# uv.lock
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+# poetry.lock
+# poetry.toml
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#   pdm recommends including project-wide configuration in pdm.toml, but excluding .pdm-python.
+#   https://pdm-project.org/en/latest/usage/project/#working-with-version-control
+# pdm.lock
+# pdm.toml
+.pdm-python
+.pdm-build/
+
+# pixi
+#   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.
+# pixi.lock
+#   Pixi creates a virtual environment in the .pixi directory, just like venv module creates one
+#   in the .venv directory. It is recommended not to include this directory in version control.
+.pixi
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# Redis
+*.rdb
+*.aof
+*.pid
+
+# RabbitMQ
+mnesia/
+rabbitmq/
+rabbitmq-data/
+
+# ActiveMQ
+activemq-data/
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#   JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#   be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#   and can be added to the global gitignore or merged into this file.  For a more nuclear
+#   option (not recommended) you can uncomment the following to ignore the entire idea folder.
+# .idea/
+
+# Abstra
+#   Abstra is an AI-powered process automation framework.
+#   Ignore directories containing user credentials, local state, and settings.
+#   Learn more at https://abstra.io/docs
+.abstra/
+
+# Visual Studio Code
+#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
+#   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+#   and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#   you could uncomment the following to ignore the entire vscode folder
+# .vscode/
+# Temporary file for partial code execution
+tempCodeRunnerFile.py
+
+# Ruff stuff:
+.ruff_cache/
+
+# PyPI configuration file
+.pypirc
+
+# Marimo
+marimo/_static/
+marimo/_lsp/
+__marimo__/
+
+# Streamlit
+.streamlit/secrets.toml
+
+
+
+----------------------------------------------------------------
+FILE: export.ps1
+----------------------------------------------------------------
+
+$ToolkitScript = Resolve-Path (
+    Join-Path `
+        $PSScriptRoot `
+        "..\Cravo-Toolkit\exporters\repository-export.ps1"
+)
+
+& $ToolkitScript
+
+
+----------------------------------------------------------------
+FILE: LICENSE
+----------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2026 acravo1
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+----------------------------------------------------------------
 FILE: README.md
-================================================================================
+----------------------------------------------------------------
 
-<p align="center"><img src="assets/logo/AEGIS.svg" alt="AEGIS Logo" width="220"></p>
-<H1 align="center">Autonomous Electronic Guardian Integrated System</h1>
-<p align="center">Robô autónomo de vigilância doméstica integrado com Home Assistant e ESPHome.</p>
+<p align="center">
+  <img src="assets/logo/AEGIS.svg" alt="AEGIS Logo" width="220">
+</p>
+
+<h1 align="center">Autonomous Electronic Guardian Integrated System</h1>
+
+<p align="center">
+Robô autónomo de vigilância doméstica integrado com Home Assistant e ESPHome.
+</p>
 
 ---
 
@@ -21,140 +290,245 @@ FILE: README.md
 
 > Autonomous Electronic Guardian Integrated System
 
-AEGIS é um robô autónomo de vigilância doméstica desenvolvido como projeto open-source e integrado com Home Assistant e ESPHome.
+AEGIS é um robô autónomo de vigilância doméstica desenvolvido como projeto open-source e integrado com Home Assistant, ESPHome e automação residencial.
 
-O objetivo é criar uma plataforma robótica modular inspirada em sistemas comerciais como o EBO, mas totalmente personalizável e baseada em hardware acessível e componentes reutilizados.
+O objetivo é criar uma plataforma robótica modular inspirada em sistemas comerciais como o EBO, mas totalmente personalizável, expansível e baseada em hardware acessível.
+
+O projeto segue uma arquitetura em camadas que separa locomoção, computação e perceção, permitindo desenvolvimento incremental e validação independente de cada subsistema.
 
 ---
 
-## Objetivos
+# Objetivos
 
 - Vigilância autónoma da habitação
 - Integração nativa com Home Assistant
-- Controlo e monitorização através de ESPHome
+- Integração com ESPHome
 - Patrulha automática
 - Regresso autónomo à base de carregamento
 - Interação por voz
 - Áudio bidirecional
 - Visão remota por câmara
+- Mapeamento do ambiente
 - Gestão inteligente de energia
-- Construção modular por blocos funcionais
+- Arquitetura modular e expansível
+- Evolução progressiva para IA embarcada
 
 ---
 
-## Filosofia do Projeto
+# Filosofia do Projeto
 
 AEGIS foi concebido para ser desenvolvido por etapas.
 
-Cada subsistema é construído e validado individualmente antes da integração no sistema completo.
+Cada subsistema é projetado, implementado e validado individualmente antes da integração com o sistema completo.
 
 Esta abordagem permite:
 
-- menor complexidade de desenvolvimento
-- manutenção simplificada
-- evolução gradual do hardware
-- reutilização de componentes
-- expansão futura sem alterações profundas
+- Menor complexidade de desenvolvimento
+- Maior facilidade de manutenção
+- Evolução gradual do hardware
+- Reutilização de componentes
+- Redução do risco técnico
+- Escalabilidade futura
+- Integração incremental de novas funcionalidades
 
 ---
 
-# Arquitetura
+# Arquitetura Geral
 
-## Camada de Movimento
+O sistema encontra-se dividido em três níveis principais.
 
-Responsável pela locomoção e navegação de baixo nível.
+```text
+┌──────────────────────────────┐
+│           Piso 3             │
+│        Perceção Avançada     │
+├──────────────────────────────┤
+│           Piso 2             │
+│  Computação e Comunicações   │
+├──────────────────────────────┤
+│           Piso 1             │
+│  Locomoção e Segurança       │
+└──────────────────────────────┘
+```
 
-### Hardware
+---
 
-- Seeed XIAO RP2040
-- TB6612FNG
-- Motores DC
-- MPU-6050
+# Piso 1 - Locomoção e Segurança
+
+Responsável pelo controlo de movimento, segurança e navegação local em tempo real.
+
+## Hardware
+
+- Seeed Studio XIAO RP2040
+- PCF8574 I²C I/O Expander
+- 2 × TB6612FNG
+- 4 × Motores DC TT 3–6V
 - HC-SR04
-- Encoders (planeados)
+- MPU6050
+- 2 × Sensores anti-queda KY-033
 
-### Funções
+## Características
 
-- controlo dos motores
-- controlo PID
-- leitura dos sensores de movimento
-- deteção de obstáculos
--
+- Controlo independente dos quatro motores
+- Preparado para futura conversão para rodas Mecanum
+- Controlo PWM individual
+- Controlo de direção através do PCF8574
+- Deteção de obstáculos frontais
+- Deteção de queda
+- Monitorização de inclinação
+- Fail-safe de segurança
+- Interface I²C para os pisos superiores
+
+## Funções
+
+- Controlo dos motores
+- Navegação local
+- Proteção anti-queda
+- Proteção anti-colisão
+- Paragem de emergência
+- Gestão de movimento de baixo nível
+
+---
+
+# Piso 2 - Computação e Comunicações
+
+Responsável pela lógica principal do robô.
+
+## Hardware
+
+- ESP32-S3
+- INMP441
+- PAM8302
+- Altifalantes 3W
+- Interfaces Wi-Fi e Bluetooth
+
+## Funções
+
+- Integração Home Assistant
+- Integração ESPHome
+- Processamento de voz
+- Gestão de missões
+- Comunicação entre módulos
+- Telemetria
+- Automação residencial
+
+---
+
+# Piso 3 - Perceção Avançada
+
+Responsável pela observação e interpretação do ambiente.
+
+## Hardware
+
+- LiDAR T-mini
+- ESP32-CAM
+- Plataforma Pan/Tilt com 2 graus de liberdade
+
+## Funções
+
+- Mapeamento do ambiente
+- Navegação assistida por LiDAR
+- Visão computacional
+- Inspeção visual
+- Reconhecimento de objetos
+- Validação visual dos alvos detetados
+
+---
+
+# Tecnologias
+
+## Microcontroladores
+
+- Raspberry Pi RP2040
+- ESP32-S3
+
+## Comunicações
+
+- I²C
+- UART
+- Wi-Fi
+- Bluetooth
+- MQTT
+
+## Sensores
+
+- MPU6050
+- HC-SR04
+- KY-033
+- LiDAR T-mini
+- ESP32-CAM
+
+## Software
+
+- Arduino Framework
+- ESPHome
+- Home Assistant
+- MQTT
+- GitHub
+
+---
+
+# Estado Atual
+
+## Concluído
+
+- Arquitetura modular definida
+- Plataforma física base selecionada
+- Piso 1 documentado
+- Integração de motores definida
+- Arquitetura I²C definida
+- Arquitetura Mecanum-ready definida
+
+## Em Desenvolvimento
+
+- Implementação do Piso 1
+- Firmware RP2040
+- Testes dos motores
+- Testes de navegação
+- Integração dos sensores
+
+## Futuro
+
+- Integração do ESP32-S3
+- Sistema de áudio
+- Integração Home Assistant
+- LiDAR
+- ESP32-CAM
+- Base de carregamento
+- Navegação autónoma avançada
+
+---
+
+# Estrutura do Repositório
+
+```text
+AEGIS-Home-Guardian
+│
+├── assets/
+├── docs/
+├── exports/
+├── firmware/
+├── hardware/
+└── tools/
+```
+
+---
+
+# Licença
+
+Este projeto é disponibilizado como plataforma aberta para desenvolvimento, aprendizagem e experimentação em robótica doméstica autónoma.
+
+---
+
+# Autor
+
+António Augusto da Silva Cravo
+
+Projeto AEGIS - Autonomous Electronic Guardian Integrated System
 
 
-================================================================================
-FILE: assets\diagrams\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\architecture\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\audio\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\camera\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\docking\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\hardware\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\mechanical\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\testing\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\images\wiring\README.md
-================================================================================
-
-
-
-
-================================================================================
-FILE: assets\logo\README.md
-================================================================================
-
-
-
-
-================================================================================
+----------------------------------------------------------------
 FILE: docs\architecture.md
-================================================================================
+----------------------------------------------------------------
 
 ## Arquitetura Global
 
@@ -373,9 +747,10 @@ stateDiagram-v2
 ```
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\audio-system.md
-================================================================================
+----------------------------------------------------------------
 
 # Audio System
 
@@ -719,9 +1094,10 @@ Nenhum componente crítico identificado.
 - power-system.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\bloc01-build-guide.md
-================================================================================
+----------------------------------------------------------------
 
 # Block 01 Build Guide
 
@@ -1144,9 +1520,10 @@ Docking e Navegação
 O objetivo é adicionar capacidades de localização da base e preparação para carregamento autónomo.
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\bloc01-layout.md
-================================================================================
+----------------------------------------------------------------
 
 # Block 01 Layout
 
@@ -1368,9 +1745,10 @@ Powerbank
 A colocação do powerbank deverá ficar o mais próxima possível do centro 
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\bloc01-wiring.md
-================================================================================
+----------------------------------------------------------------
 
 # Block 01 Wiring
 
@@ -1399,9 +1777,10 @@ O Block 01 é composto por:
 
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\bom.md
-================================================================================
+----------------------------------------------------------------
 
 # Bill of Materials (BOM)
 
@@ -1441,9 +1820,10 @@ Sempre que possível:
 # Controladores
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\camera-system.md
-================================================================================
+----------------------------------------------------------------
 
 # Camera System
 
@@ -1833,9 +2213,10 @@ A visão computacional será tratada como uma camada adicional de capacidades e 
 A arquitetura foi concebida para permitir evolução gradual desde simples streaming até funcionalidades avançadas de visão assistida.
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\communication-system.md
-================================================================================
+----------------------------------------------------------------
 
 # Communication System
 
@@ -2278,9 +2659,10 @@ Objetivos:
 - project-decisions.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\development-log.md
-================================================================================
+----------------------------------------------------------------
 
 # Development Log
 
@@ -2970,9 +3352,10 @@ Referência:
 - PD-007
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\dimensional-reference.md
-================================================================================
+----------------------------------------------------------------
 
 # Dimensional Reference
 
@@ -3173,9 +3556,10 @@ Dimensões confirmadas:
 - Separador Piso 3 = 30 mm
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\docking-system.md
-================================================================================
+----------------------------------------------------------------
 
 # Docking System
 
@@ -3610,9 +3994,10 @@ Esta combinação deverá proporcionar elevada fiabilidade na localização da e
 ``
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\esphome-design.md
-================================================================================
+----------------------------------------------------------------
 
 # ESPHome Design
 
@@ -4206,9 +4591,10 @@ Toda a complexidade interna:
 deve permanecer transparente para o utilizador final.
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\firmware-protocol.md
-================================================================================
+----------------------------------------------------------------
 
 # Firmware Protocol
 
@@ -4684,9 +5070,10 @@ A perda de comunicação nunca deverá causar movimento não controlado.
 - project-decisions.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\gpio-allocation.md
-================================================================================
+----------------------------------------------------------------
 
 # GPIO Allocation
 
@@ -5116,9 +5503,10 @@ A UART RP2040 ↔ ESP32-S3 é dedicada e não deverá ser reutilizada.
 - communication-system.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\hardware-inventory.md
-================================================================================
+----------------------------------------------------------------
 
 # Hardware Inventory
 
@@ -5765,9 +6153,10 @@ Este documento tem prioridade sobre qualquer informação presente em conversas.
 - power-system.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\home-assistant-integration.md
-================================================================================
+----------------------------------------------------------------
 
 # Home Assistant Integration
 
@@ -6243,9 +6632,10 @@ Streaming remoto.
 - firmware-protocol.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\led-system.md
-================================================================================
+----------------------------------------------------------------
 
 # LED System
 
@@ -6637,9 +7027,10 @@ O sistema LED deverá:
 - power-system.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\mechanical-design.md
-================================================================================
+----------------------------------------------------------------
 
 # Mechanical Design
 
@@ -7089,9 +7480,10 @@ Documentos relacionados:
 - power-system.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\motor-platform.md
-================================================================================
+----------------------------------------------------------------
 
 # Motor Platform
 
@@ -7365,9 +7757,10 @@ Todos os subsistemas futuros dependerão desta plataforma.
 A estabilidade da camada motora tem prioridade sobre novas funcionalidades.
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\physical-layout.md
-================================================================================
+----------------------------------------------------------------
 
 # Physical Layout
 
@@ -7794,9 +8187,10 @@ Piso 1
 - Sistema de docking
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\power-budget.md
-================================================================================
+----------------------------------------------------------------
 
 # Power Budget
 
@@ -8207,9 +8601,10 @@ Evitar estimativas sem testes.
 O objetivo é que este ficheiro se torne a referência oficial de desempenho energético do AEGIS.
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\power-system.md
-================================================================================
+----------------------------------------------------------------
 
 # Power System
 
@@ -8574,9 +8969,10 @@ Documentos relacionados:
 - physical-layout.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\project-decisions.md
-================================================================================
+----------------------------------------------------------------
 
 # Project Decisions
 
@@ -9203,9 +9599,10 @@ Evitar:
 ``
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\project_state.md
-================================================================================
+----------------------------------------------------------------
 
 # AEGIS - Project State
 
@@ -9261,9 +9658,10 @@ Funções:
 - Interface UART com ESP32
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\security-and-failsafe.md
-================================================================================
+----------------------------------------------------------------
 
 # Security and Failsafe
 
@@ -9791,9 +10189,10 @@ Deverá ser:
 - project-decisions.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\sensors.md
-================================================================================
+----------------------------------------------------------------
 
 # Sensors
 
@@ -10244,9 +10643,10 @@ A perda do ESP32-S3 não deverá impedir:
 - security-and-failsafe.md
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\software-roadmap.md
-================================================================================
+----------------------------------------------------------------
 
 # Software Roadmap
 
@@ -10609,9 +11009,10 @@ Utilização do Assist do Home Assistant.
 flowchart LR
 
 
-================================================================================
+
+----------------------------------------------------------------
 FILE: docs\system-overview.md
-================================================================================
+----------------------------------------------------------------
 
 # System Overview
 
@@ -11041,23 +11442,1874 @@ Pré-Construção / Prototipagem Física
 A arquitetura encontra-se consolidada e o foco principal passou para a montagem e validação do Block 01.
 
 
-================================================================================
-FILE: firmware\README.md
-================================================================================
+
+----------------------------------------------------------------
+FILE: docs\Architecture\AEGIS-System-Architecture.md
+----------------------------------------------------------------
+
+\# AEGIS System Architecture
+
+
+
+\## Overview
+
+
+
+AEGIS (Autonomous Electronic Guardian Integrated System) is a modular autonomous home guardian robot designed around three independent functional layers.
+
+
+
+The architecture separates locomotion, computation and perception, reducing complexity and allowing each subsystem to be developed and tested independently.
+
+
+
+\---
+
+
+
+\# Architecture Layers
+
+
+
+```text
+
+┌─────────────────────────────┐
+
+│          Floor 3            │
+
+│      Perception Layer       │
+
+├─────────────────────────────┤
+
+│          Floor 2            │
+
+│  Computing \& Communications │
+
+├─────────────────────────────┤
+
+│          Floor 1            │
+
+│ Locomotion \& Safety Layer   │
+
+└─────────────────────────────┘
+
+```
+
+
+
+\---
+
+
+
+\# Floor 1 - Locomotion \& Safety
+
+
+
+\## Controller
+
+
+
+\- Seeed Studio XIAO RP2040
+
+
+
+\## Functions
+
+
+
+\- Motor control
+
+\- Navigation control
+
+\- Obstacle avoidance
+
+\- Cliff detection
+
+\- Safety monitoring
+
+\- Motion execution
+
+
+
+\## Hardware
+
+
+
+\- XIAO RP2040
+
+\- PCF8574 I²C I/O Expander
+
+\- 2 × TB6612FNG
+
+\- 4 × TT DC Motors
+
+\- HC-SR04
+
+\- MPU6050
+
+\- 2 × KY-033 Cliff Sensors
+
+
+
+\## Design Goals
+
+
+
+\- Real-time operation
+
+\- Autonomous safety decisions
+
+\- Operates independently from higher layers
+
+\- Mecanum-ready architecture
+
+\- Future encoder support
+
+
+
+\---
+
+
+
+\# Floor 2 - Computing \& Communications
+
+
+
+\## Controller
+
+
+
+\- ESP32-S3
+
+
+
+\## Functions
+
+
+
+\- Home Assistant integration
+
+\- MQTT communications
+
+\- Voice interaction
+
+\- Audio processing
+
+\- Mission control
+
+\- Robot behaviour management
+
+
+
+\## Planned Hardware
+
+
+
+\- ESP32-S3
+
+\- INMP441 microphone
+
+\- PAM8302 amplifier
+
+\- 3W speakers
+
+\- Wireless communications
+
+
+
+\---
+
+
+
+\# Floor 3 - Perception
+
+
+
+\## Functions
+
+
+
+\- Environmental observation
+
+\- Mapping support
+
+\- Visual validation
+
+\- Future object recognition
+
+
+
+\## Planned Hardware
+
+
+
+\- LiDAR T-mini
+
+\- ESP32-CAM
+
+\- Pan/Tilt camera mount
+
+
+
+\## Design Concept
+
+
+
+The LiDAR remains fixed and provides navigation data.
+
+
+
+The ESP32-CAM is mounted on a two-axis pan/tilt mechanism allowing active observation of areas of interest identified by the LiDAR or the higher-level control software.
+
+
+
+\---
+
+
+
+\# Inter-Processor Communications
+
+
+
+\## I²C Bus
+
+
+
+Shared between:
+
+
+
+\- RP2040
+
+\- ESP32-S3
+
+\- Future modules
+
+
+
+Signals:
+
+
+
+\- SDA
+
+\- SCL
+
+\- GND
+
+\- 5V
+
+
+
+Optional:
+
+
+
+\- INT
+
+
+
+\---
+
+
+
+\# Safety Philosophy
+
+
+
+Safety has priority over mission execution.
+
+
+
+Any of the following conditions may stop robot movement:
+
+
+
+\- Cliff detection
+
+\- Excessive tilt
+
+\- Motor driver failure
+
+\- I²C communication failure
+
+\- Obstacle detection
+
+\- Emergency stop command
+
+
+
+\---
+
+
+
+\# Future Upgrades
+
+
+
+\## Navigation
+
+
+
+\- Wheel encoders
+
+\- Mecanum wheels
+
+\- Dead reckoning
+
+\- SLAM
+
+
+
+\## Perception
+
+
+
+\- Vision processing
+
+\- Voice source localization
+
+\- Environmental recognition
+
+
+
+\## Integration
+
+
+
+\- Home Assistant
+
+\- MQTT
+
+\- Local AI
+
+\- Cloud AI assistance
+
+
+
+\---
+
+
+
+\# Revision History
+
+
+
+| Version | Description |
+
+|----------|-------------|
+
+| 1.0 | Initial architecture definition |
 
 
 
 
-================================================================================
-FILE: hardware\README.md
-================================================================================
+----------------------------------------------------------------
+FILE: docs\Electronics\AEGIS-I2C-Bus-Specification.md
+----------------------------------------------------------------
+
+\# AEGIS I2C Bus Specification
+
+
+
+\## Purpose
+
+
+
+The I2C bus provides communication between controllers and peripheral devices throughout the AEGIS platform.
+
+
+
+\---
+
+
+
+\# Physical Bus
+
+
+
+Signals:
+
+
+
+\- SDA
+
+\- SCL
+
+\- GND
+
+\- 5V
+
+
+
+Optional:
+
+
+
+\- INT
+
+
+
+\---
+
+
+
+\# Bus Master
+
+
+
+Current:
+
+
+
+\- XIAO RP2040
+
+
+
+Future:
+
+
+
+\- ESP32-S3 coordination
+
+
+
+\---
+
+
+
+\# Device Addresses
+
+
+
+| Device | Address |
+
+|----------|----------|
+
+| MPU6050 | 0x68 |
+
+| PCF8574 | 0x20 |
+
+
+
+Reserved:
+
+
+
+| Device | Address |
+
+|----------|----------|
+
+| Magnetometer | TBD |
+
+| OLED Display | TBD |
+
+| Floor 2 Controller | TBD |
+
+
+
+\---
+
+
+
+\# Bus Policy
+
+
+
+\- All grounds common
+
+\- Pull-ups validated only once
+
+\- New devices must not conflict with existing addresses
+
+\- All devices must tolerate 3.3V logic levels
+
+
+
+\---
+
+
+
+\# Expansion Connector
+
+
+
+Pin 1 → 5V
+
+Pin 2 → GND
+
+Pin 3 → SDA
+
+Pin 4 → SCL
+
+Pin 5 → INT
 
 
 
 
-================================================================================
+----------------------------------------------------------------
+FILE: docs\Floor1\AEGIS-Floor1-Hardware-Specification-v1.0.md
+----------------------------------------------------------------
+
+\# AEGIS Floor 1 Hardware Specification v1.0
+
+
+
+\## Purpose
+
+
+
+Floor 1 is responsible for locomotion, low-level navigation and safety-related functions.
+
+
+
+The floor must remain operational even if higher-level systems become unavailable.
+
+
+
+\---
+
+
+
+\# Architecture
+
+
+
+```text
+
+Powerbank
+
+&#x20;   |
+
+&#x20;   +---- Control Electronics
+
+&#x20;   |
+
+&#x20;   +---- Motor Electronics
+
+
+
+&#x20;               HC-SR04
+
+
+
+&#x20;    KY-033             KY-033
+
+
+
+&#x20;              MPU6050
+
+
+
+&#x20;             PCF8574
+
+
+
+&#x20;          XIAO RP2040
+
+
+
+&#x20;     TB6612-L    TB6612-R
+
+
+
+&#x20;     FL   RL     FR   RR
+
+```
+
+
+
+\---
+
+
+
+\# Main Controller
+
+
+
+\## XIAO RP2040
+
+
+
+Responsibilities:
+
+
+
+\- Motor PWM control
+
+\- Safety monitoring
+
+\- Cliff detection
+
+\- Obstacle detection
+
+\- Motion execution
+
+\- I²C communication
+
+
+
+\---
+
+
+
+\# Motor System
+
+
+
+\## Drivers
+
+
+
+\- 2 × SparkFun TB6612FNG
+
+
+
+\### Left Driver
+
+
+
+Channel A:
+
+\- Front Left Motor
+
+
+
+Channel B:
+
+\- Rear Left Motor
+
+
+
+\### Right Driver
+
+
+
+Channel A:
+
+\- Front Right Motor
+
+
+
+Channel B:
+
+\- Rear Right Motor
+
+
+
+\---
+
+
+
+\# Motor Configuration
+
+
+
+The architecture supports:
+
+
+
+\- Standard differential drive
+
+\- Independent motor control
+
+\- Future Mecanum wheel upgrade
+
+
+
+No rewiring shall be required for future migration to Mecanum wheels.
+
+
+
+\---
+
+
+
+\# Sensors
+
+
+
+\## Cliff Detection
+
+
+
+\- KY-033 Left
+
+\- KY-033 Right
+
+
+
+Purpose:
+
+
+
+\- Stair detection
+
+\- Edge detection
+
+\- Fall prevention
+
+
+
+\---
+
+
+
+\## Obstacle Detection
+
+
+
+\### HC-SR04
+
+
+
+Purpose:
+
+
+
+\- Forward obstacle detection
+
+\- Collision avoidance
+
+
+
+Configured threshold:
+
+
+
+```text
+
+25 cm
+
+```
+
+
+
+\---
+
+
+
+\## Motion Monitoring
+
+
+
+\### MPU6050
+
+
+
+Provides:
+
+
+
+\- Accelerometer
+
+\- Gyroscope
+
+
+
+Purpose:
+
+
+
+\- Tilt detection
+
+\- Motion analysis
+
+\- Future dead-reckoning support
+
+
+
+\---
+
+
+
+\# I²C Expansion
+
+
+
+\## Bus Devices
+
+
+
+\### MPU6050
+
+
+
+Address:
+
+
+
+```text
+
+0x68
+
+```
+
+
+
+\### PCF8574
+
+
+
+Address:
+
+
+
+```text
+
+0x20
+
+```
+
+
+
+\### Future Expansion
+
+
+
+Reserved:
+
+
+
+\- Floor 2 ESP32-S3
+
+\- Additional sensors
+
+\- Displays
+
+\- Magnetometer
+
+
+
+\---
+
+
+
+\# Power Architecture
+
+
+
+Control Electronics:
+
+
+
+\- XIAO RP2040
+
+\- MPU6050
+
+\- HC-SR04
+
+\- KY-033
+
+\- PCF8574
+
+
+
+Motor Electronics:
+
+
+
+\- TB6612 Left
+
+\- TB6612 Right
+
+
+
+Power source:
+
+
+
+\- Tronic 10000 mAh Powerbank
+
+
+
+Ground:
+
+
+
+\- Common ground shared by all subsystems
+
+
+
+\---
+
+
+
+\# GPIO Allocation
+
+
+
+| RP2040 Pin | Function |
+
+|------------|----------|
+
+| D0 | Right Driver PWMA |
+
+| D1 | Right Driver PWMB |
+
+| D2 | Left Driver PWMA |
+
+| D3 | Left Driver PWMB |
+
+| D4 | SDA |
+
+| D5 | SCL |
+
+| D6 | Left Cliff Sensor |
+
+| D7 | Right Cliff Sensor |
+
+| D8 | HC-SR04 TRIG |
+
+| D9 | HC-SR04 ECHO |
+
+| D10 | Common STBY |
+
+
+
+\---
+
+
+
+\# PCF8574 Allocation
+
+
+
+| Pin | Function |
+
+|------|----------|
+
+| P0 | Left AIN1 |
+
+| P1 | Left AIN2 |
+
+| P2 | Left BIN1 |
+
+| P3 | Left BIN2 |
+
+| P4 | Right AIN1 |
+
+| P5 | Right AIN2 |
+
+| P6 | Right BIN1 |
+
+| P7 | Right BIN2 |
+
+
+
+\---
+
+
+
+\# Safety Features
+
+
+
+Movement is stopped when:
+
+
+
+\- Cliff detected
+
+\- Excessive tilt
+
+\- Ultrasonic sensor fault
+
+\- PCF8574 communication loss
+
+\- Obstacle detected
+
+\- Driver standby disabled
+
+
+
+\---
+
+
+
+\# Future Enhancements
+
+
+
+\- Encoders
+
+\- Mecanum wheels
+
+\- Magnetometer
+
+\- LiDAR integration
+
+\- Autonomous navigation
+
+\- SLAM support
+
+
+
+\---
+
+
+
+\# Revision History
+
+
+
+\## v1.0
+
+
+
+Initial Floor 1 architecture definition.
+
+
+
+
+----------------------------------------------------------------
+FILE: docs\Floor1\AEGIS-Floor1-Test-Plan.md
+----------------------------------------------------------------
+
+\# AEGIS Floor 1 Test Plan
+
+
+
+\## Objective
+
+
+
+Validate all Floor 1 hardware and firmware components before integration with higher-level systems.
+
+
+
+\---
+
+
+
+\# Phase 1 - Power Verification
+
+
+
+\## Test 1.1
+
+
+
+Objective:
+
+
+
+Verify power distribution.
+
+
+
+Procedure:
+
+
+
+\- Connect powerbank.
+
+\- Verify 5V rail.
+
+\- Verify 3.3V rail.
+
+
+
+Expected Result:
+
+
+
+\- Stable voltage.
+
+\- No unexpected heating.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\---
+
+
+
+\# Phase 2 - RP2040 Validation
+
+
+
+\## Test 2.1
+
+
+
+Objective:
+
+
+
+Verify RP2040 boot.
+
+
+
+Procedure:
+
+
+
+\- Upload test firmware.
+
+\- Verify serial output.
+
+
+
+Expected Result:
+
+
+
+\- Successful startup.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\---
+
+
+
+\# Phase 3 - PCF8574 Validation
+
+
+
+\## Test 3.1
+
+
+
+Objective:
+
+
+
+Verify I²C communication.
+
+
+
+Procedure:
+
+
+
+\- Run I²C scanner.
+
+\- Confirm PCF8574 address.
+
+
+
+Expected Result:
+
+
+
+\- Device detected at 0x20.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\---
+
+
+
+\# Phase 4 - MPU6050 Validation
+
+
+
+\## Test 4.1
+
+
+
+Objective:
+
+
+
+Verify IMU detection.
+
+
+
+Procedure:
+
+
+
+\- Run I²C scanner.
+
+\- Initialize MPU6050.
+
+
+
+Expected Result:
+
+
+
+\- Device detected at 0x68.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\## Test 4.2
+
+
+
+Objective:
+
+
+
+Verify tilt sensing.
+
+
+
+Procedure:
+
+
+
+\- Move robot manually.
+
+\- Observe accelerometer values.
+
+
+
+Expected Result:
+
+
+
+\- Values change consistently.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\---
+
+
+
+\# Phase 5 - Motor Driver Validation
+
+
+
+\## Test 5.1
+
+
+
+Objective:
+
+
+
+Verify left motor driver.
+
+
+
+Procedure:
+
+
+
+\- Drive Front Left motor.
+
+\- Drive Rear Left motor.
+
+
+
+Expected Result:
+
+
+
+\- Correct operation.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\## Test 5.2
+
+
+
+Objective:
+
+
+
+Verify right motor driver.
+
+
+
+Procedure:
+
+
+
+\- Drive Front Right motor.
+
+\- Drive Rear Right motor.
+
+
+
+Expected Result:
+
+
+
+\- Correct operation.
+
+
+
+Status:
+
+
+
+\- \[ ] Not Started
+
+\- \[ ] Pass
+
+\- \[ ] Fail
+
+
+
+\---
+
+
+
+\# Phase 6 - Individual Motor Validation
+
+
+
+\## Front Left
+
+
+
+\- \[ ] Forward
+
+\- \[ ] Reverse
+
+
+
+\## Rear Left
+
+
+
+\- \[ ] Forward
+
+\- \[ ] Reverse
+
+
+
+\## Front Right
+
+
+
+\- \[ ] Forward
+
+\- \[ ] Reverse
+
+
+
+\## Rear Right
+
+
+
+\- \[ ] Forward
+
+\- \[ ] Reverse
+
+
+
+\---
+
+
+
+\# Phase 7 - Sensors
+
+
+
+\## HC-SR04
+
+
+
+\- \[ ] Distance measurement
+
+\- \[ ] Obstacle detection
+
+\- \[ ] Safety stop
+
+
+
+\## KY-033 Left
+
+
+
+\- \[ ] Detect cliff condition
+
+
+
+\## KY-033 Right
+
+
+
+\- \[ ] Detect cliff condition
+
+
+
+\---
+
+
+
+\# Phase 8 - Safety Validation
+
+
+
+\## Tilt Protection
+
+
+
+\- \[ ] Movement stops on excessive tilt
+
+
+
+\## Cliff Protection
+
+
+
+\- \[ ] Movement stops on detected cliff
+
+
+
+\## Obstacle Protection
+
+
+
+\- \[ ] Movement stops below 25 cm
+
+
+
+\## I²C Failure
+
+
+
+\- \[ ] Robot enters safe state
+
+
+
+\---
+
+
+
+\# Phase 9 - Motion Validation
+
+
+
+\## Forward
+
+
+
+\- \[ ] Successful
+
+
+
+\## Reverse
+
+
+
+\- \[ ] Successful
+
+
+
+\## Left Turn
+
+
+
+\- \[ ] Successful
+
+
+
+\## Right Turn
+
+
+
+\- \[ ] Successful
+
+
+
+\---
+
+
+
+\# Notes
+
+
+
+Record observations, failures and corrective actions here.
+
+
+
+\---
+
+
+
+\# Revision History
+
+
+
+| Version | Description |
+
+|----------|-------------|
+
+| 1.0 | Initial Floor 1 validation plan |
+
+
+
+
+
+
+----------------------------------------------------------------
+FILE: docs\Floor1\README.md
+----------------------------------------------------------------
+
+\# AEGIS Floor 1
+
+
+
+\## Overview
+
+
+
+Floor 1 is responsible for locomotion, real-time navigation and safety systems.
+
+
+
+It operates independently from the upper layers and remains capable of stopping the robot even if higher-level systems fail.
+
+
+
+\---
+
+
+
+\# Hardware
+
+
+
+\- Seeed Studio XIAO RP2040
+
+\- PCF8574 I²C I/O Expander
+
+\- 2 × TB6612FNG
+
+\- 4 × TT Gear Motors
+
+\- MPU6050
+
+\- HC-SR04
+
+\- 2 × KY-033 Cliff Sensors
+
+
+
+\---
+
+
+
+\# Documentation
+
+
+
+\## Specifications
+
+
+
+\- AEGIS-Floor1-Hardware-Specification-v1.0.md
+
+
+
+\## Validation
+
+
+
+\- AEGIS-Floor1-Test-Plan.md
+
+
+
+\---
+
+
+
+\# Architecture
+
+
+
+```text
+
+HC-SR04
+
+
+
+KY033     KY033
+
+
+
+&#x20;MPU6050
+
+
+
+&#x20;PCF8574
+
+
+
+RP2040
+
+
+
+TB6612   TB6612
+
+
+
+FL RL    FR RR
+
+```
+
+
+
+\---
+
+
+
+\# Status
+
+
+
+Current status:
+
+
+
+\- Architecture defined
+
+\- Wiring defined
+
+\- Firmware prototype available
+
+\- Hardware integration pending
+
+
+
+\---
+
+
+
+\# Future Upgrades
+
+
+
+\- Encoders
+
+\- Mecanum wheels
+
+\- Dead reckoning
+
+\- SLAM support
+
+\- LiDAR integration
+
+
+
+
+----------------------------------------------------------------
+FILE: docs\Project-Log\Project-Journal.md
+----------------------------------------------------------------
+
+\# AEGIS Project Journal
+
+
+
+\## 2026-11-16
+
+
+
+\### Milestone
+
+
+
+Floor 1 Architecture v1.0 Defined
+
+
+
+\### Decisions
+
+
+
+\- Adopted Seeed Studio XIAO RP2040 as Floor 1 controller.
+
+\- Adopted dual TB6612FNG motor drivers.
+
+\- Adopted PCF8574 for motor direction control.
+
+\- Adopted four independent motor architecture.
+
+\- Reserved support for future Mecanum wheel conversion.
+
+\- Adopted MPU6050 for tilt detection and inertial measurements.
+
+\- Adopted HC-SR04 for obstacle avoidance.
+
+\- Adopted KY-033 sensors for cliff detection.
+
+\- Defined I²C expansion bus for Floor 2 integration.
+
+\- Created Floor 1 Hardware Specification.
+
+\- Created Floor 1 Validation Test Plan.
+
+\- Created I²C Bus Specification.
+
+
+
+\### Current Status
+
+
+
+Floor 1 architecture frozen.
+
+
+
+Hardware assembly pending.
+
+
+
+\### Next Actions
+
+
+
+\- Assemble RP2040 test bench
+
+\- Validate PCF8574 communication
+
+\- Validate TB6612 operation
+
+\- Validate sensor operation
+
+\- Execute Floor 1 Test Plan
+
+
+
+\### Notes
+
+
+
+Architecture remains compatible with future:
+
+
+
+\- ESP32-S3
+
+\- LiDAR T-mini
+
+\- ESP32-CAM
+
+\- Pan/Tilt camera system
+
+\- Mecanum wheels
+
+\- Wheel encoders
+
+
+
+\## Próxima Fase
+
+
+
+\### Bancada Piso 1
+
+
+
+Objetivo:
+
+Validar hardware real.
+
+
+
+Ordem de testes:
+
+
+
+1\. RP2040
+
+2\. I²C Scanner
+
+3\. MPU6050
+
+4\. PCF8574
+
+5\. TB6612 Esquerdo
+
+6\. TB6612 Direito
+
+7\. HC-SR04
+
+8\. KY-033
+
+9\. Movimento dos 4 motores
+
+10\. Safety Logic
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
 FILE: tools\export.ps1
-================================================================================
+----------------------------------------------------------------
 
 $RepositoryRoot = Split-Path $PSScriptRoot -Parent
 
@@ -11075,4 +13327,10 @@ finally
 {
     Pop-Location
 }
+
+
+EXPORT SUMMARY
+
+Files Exported : 39
+Files Skipped  : 22
 

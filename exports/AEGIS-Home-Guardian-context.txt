@@ -1,0 +1,33 @@
+﻿REPOSITORY CONTEXT
+
+Repository : AEGIS-Home-Guardian
+Date       : 2026-11-18 20:30:28
+Root       : C:\Users\silva\OneDrive\GitHub\AEGIS-Home-Guardian
+
+FILES
+
+Git      : AEGIS-Home-Guardian-git.txt
+Tree     : AEGIS-Home-Guardian-tree.txt
+Manifest : AEGIS-Home-Guardian-manifest.txt
+Snapshot : AEGIS-Home-Guardian-snapshot.txt
+Content  : AEGIS-Home-Guardian-content-*.txt
+
+PURPOSE
+
+context.txt :
+Project summary and metadata.
+
+git.txt :
+Branch, status and recent commits.
+
+tree.txt :
+Repository structure.
+
+manifest.txt :
+Inventory of all repository files.
+
+snapshot.txt :
+High-level repository summary.
+
+content.txt :
+Text content of exported files.

@@ -1,0 +1,42 @@
+﻿REPOSITORY GIT INFORMATION
+
+Repository : AEGIS-Home-Guardian
+Date       : 2026-11-18 20:30:28
+Branch     : main
+
+GIT STATUS
+
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   export.ps1
+	deleted:    exports/AEGIS-Home-Guardian_export.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+LAST 20 COMMITS
+
+b72f5f9 docs: add architecture decisions, pinout, bom and firmware roadmap
+cf16101 docs: record Floor 1 architecture freeze milestone
+ba8071c docs: add AEGIS I2C bus specification
+3a1fde5 docs: add Floor 1 documentation index
+3d18bc0 docs: create Floor 1 validation test plan
+56b6322 docs: create Floor 1 hardware specification v1.0
+400b36c docs: reorganize architecture and create Floor 1 documentation structure
+9afbef8 Daily Update 2026-09-16
+7e13845 Daily Update 2026-09-06
+5575538 Daily Update 2026-09-05
+0136124 Daily Update 2026-09-03
+284473d Daily Update 2026-09-03
+0856ada Daily Update 2026-09-03
+60803e5 Apply small consistency fixes: audio V1 count, confirm Grove I2C Hub, add development-log entry
+62b58c3 Resolve documentation consistency issues: standardize version, hardware state, components, and finalize decisions
+e9375c7 Create system overview documentation for AEGIS
+05cb026 Revise hardware inventory to version 2.0
+52ef383 Revise security and failsafe documentation for version 2.0
+c4f96a5 Revise sensors documentation for version 2.0
+f2a4568 Add Home Assistant integration documentation

@@ -1,0 +1,57 @@
+﻿.gitignore                                                                            4 846 bytes
+assets\diagrams\README.md                                                                 2 bytes
+assets\images\architecture\README.md                                                      2 bytes
+assets\images\audio\README.md                                                             2 bytes
+assets\images\camera\README.md                                                            2 bytes
+assets\images\docking\README.md                                                           2 bytes
+assets\images\hardware\README.md                                                          2 bytes
+assets\images\mechanical\README.md                                                        2 bytes
+assets\images\testing\README.md                                                           2 bytes
+assets\images\wiring\README.md                                                            2 bytes
+assets\logo\61klg0KdxdL._AC_SL1000_.jpg                                              67 545 bytes
+assets\logo\AEGIS.svg                                                                   999 bytes
+assets\logo\Projecto AEGIS.png                                                      735 993 bytes
+assets\logo\README.md                                                                     2 bytes
+docs\architecture.md                                                                  3 500 bytes
+docs\Architecture\AEGIS-System-Architecture.md                                        3 737 bytes
+docs\Architecture\Architecture-Decisions.md                                               0 bytes
+docs\audio-system.md                                                                  3 713 bytes
+docs\bloc01-build-guide.md                                                            4 548 bytes
+docs\bloc01-layout.md                                                                 3 600 bytes
+docs\bloc01-wiring.md                                                                   323 bytes
+docs\bom.md                                                                             672 bytes
+docs\camera-system.md                                                                 5 094 bytes
+docs\communication-system.md                                                          4 341 bytes
+docs\development-log.md                                                               9 062 bytes
+docs\dimensional-reference.md                                                         2 387 bytes
+docs\docking-system.md                                                                6 070 bytes
+docs\Electronics\AEGIS-I2C-Bus-Specification.md                                       1 043 bytes
+docs\esphome-design.md                                                                5 799 bytes
+docs\firmware-protocol.md                                                             4 201 bytes
+docs\Floor1\AEGIS-Floor1-Hardware-Specification-v1.0.md                               3 903 bytes
+docs\Floor1\AEGIS-Floor1-Test-Plan.md                                                 3 812 bytes
+docs\Floor1\README.md                                                                 1 146 bytes
+docs\gpio-allocation.md                                                               4 232 bytes
+docs\hardware-inventory.md                                                            5 903 bytes
+docs\home-assistant-integration.md                                                    5 034 bytes
+docs\led-system.md                                                                    4 011 bytes
+docs\mechanical-design.md                                                             4 774 bytes
+docs\motor-platform.md                                                                3 299 bytes
+docs\physical-layout.md                                                               4 365 bytes
+docs\power-budget.md                                                                  5 630 bytes
+docs\power-system.md                                                                  4 736 bytes
+docs\project_state.md                                                                 1 093 bytes
+docs\project-decisions.md                                                             7 697 bytes
+docs\Project-Log\Project-Journal.md                                                   1 565 bytes
+docs\security-and-failsafe.md                                                         5 624 bytes
+docs\sensors.md                                                                       4 688 bytes
+docs\software-roadmap.md                                                              4 195 bytes
+docs\system-overview.md                                                               4 991 bytes
+export.ps1                                                                              156 bytes
+firmware\README.md                                                                        2 bytes
+hardware\bom\Floor1-BOM.md                                                                0 bytes
+hardware\README.md                                                                        2 bytes
+hardware\wiring\Floor1-Pinout.md                                                          0 bytes
+LICENSE                                                                               1 085 bytes
+README.md                                                                             5 540 bytes
+tools\export.ps1                                                                        280 bytes
