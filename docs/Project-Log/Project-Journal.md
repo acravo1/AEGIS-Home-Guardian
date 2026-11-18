@@ -94,5 +94,45 @@ Architecture remains compatible with future:
 
 
 
+\## Próxima Fase
+
+
+
+\### Bancada Piso 1
+
+
+
+Objetivo:
+
+Validar hardware real.
+
+
+
+Ordem de testes:
+
+
+
+1\. RP2040
+
+2\. I²C Scanner
+
+3\. MPU6050
+
+4\. PCF8574
+
+5\. TB6612 Esquerdo
+
+6\. TB6612 Direito
+
+7\. HC-SR04
+
+8\. KY-033
+
+9\. Movimento dos 4 motores
+
+10\. Safety Logic
+
+
+
 
 
